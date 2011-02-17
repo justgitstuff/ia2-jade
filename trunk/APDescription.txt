@@ -1,0 +1,1 @@
+( ap-description  :name "roger-HP-EliteBook-8440p:1099/JADE" :ap-services (set ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://roger-HP-EliteBook-8440p:7778/acc))))
