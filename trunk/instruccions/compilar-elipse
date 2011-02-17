@@ -1,0 +1,5 @@
+Després de fer el Checkout del trunk fer els següents passos:
+
+run-> run configurations-> Java aplication (new) 
+		main class: jade.Boot
+		Arguments -> Program arguments: -gui first:MySecondAgent  (canviar depenent de quina classe es vol executar).
