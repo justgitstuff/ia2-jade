@@ -12,6 +12,9 @@ Continguts de la reunió:
   * Resum d'alternatives analitzades
   * Acord del pla final
   * Definició de responsabilitats dels Agents.
+
+= Feina a fer =
+
   * Definim els responsables i terminis les tasques a realitzar de la següent forma:
         * Roger: Document formal de l'esborrall -> limit dimecres 16 de març
         * Ferran: Revisor del document formal -> limit dilluns 21 de març
