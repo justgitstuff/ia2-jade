@@ -1,5 +1,5 @@
 #summary Definició del contingut de la presentació i tasques de documentació
-#labels Reunio,Presentacio,Analisi
+#labels Reunio,Presentacio,Analisi,Acta
 
 = Introducció =
 
