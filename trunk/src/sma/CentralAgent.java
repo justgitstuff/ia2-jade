@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import jade.util.leap.ArrayList;
 import jade.util.leap.List;
+import jade.wrapper.AgentController;
 import jade.core.*;
+import jade.core.Runtime;
 import jade.core.behaviours.*;
 import jade.domain.*;
 import jade.domain.FIPAAgentManagement.*;
@@ -36,6 +38,8 @@ public class CentralAgent extends Agent {
   private sma.ontology.InfoGame game;
 
   private AID coordinatorAgent;
+  
+  private jade.wrapper.AgentContainer ac;
 
   public CentralAgent() {
     super();
@@ -57,7 +61,6 @@ public class CentralAgent extends Agent {
         ((currentGame.getMap())[9+k][9]).addAgent(b);
         agents.add(currentGame.getCell(9+k,9));
       }
-
       for(int k=0; k<currentGame.getInfo().getNumHarvesters(); k++) {
     	InfoAgent p = new InfoAgent(InfoAgent.HARVESTER);
         ((currentGame.getMap())[k+2][0]).addAgent(p);
@@ -124,6 +127,10 @@ public class CentralAgent extends Agent {
    
    /**************************************************/
    this.game.getInfo().fillAgentsInitialPositions(agents, game);
+   
+   //Create real Agents and fill AID
+   createAgents();
+ 
 
    //add behaviours
 
@@ -146,6 +153,187 @@ public class CentralAgent extends Agent {
   } //endof setup
 
   
+  private void initContainer()
+  {
+	  // Get a hold on JADE runtime
+	    Runtime rt = Runtime.instance();
+	    // Exit the JVM when there are no more containers around
+	    rt.setCloseVM(true);
+	    Profile p = new ProfileImpl(true);
+	    System.out.println(getLocalName()+": Launching the agent container ...\n-Profile: " + p);
+	    ac = rt.createAgentContainer(p);
+  }
+  
+private AID createAgent(String name, String type, String args)
+{
+	AID itsAID=null;
+	try{
+	    AgentController another = null;
+	    
+	    if(args=="") {
+	       System.out.println(getLocalName()+" Creating NEW agent ("+name+", "+type+") without arguments ...");
+	       another = ac.createNewAgent(name, type, new Object[0]);
+	    } else {
+	        System.out.println(getLocalName()+": Trying to start "+name+" with arguments ...");
+	        Object[] arguments = new Object[1];
+	        arguments[0] = args;
+	        another = ac.createNewAgent(name, type, arguments);
+	      }
+	      another.start();
+	      //Return its AID
+	      ServiceDescription searchCriterion = new ServiceDescription();
+	      searchCriterion.setName(name);
+	      itsAID = UtilsAgents.searchAgent(this, searchCriterion);
+	} catch (jade.wrapper.StaleProxyException e) {
+		System.err.println("ERROR for creating the agent. Reason: "+e.toString());
+		e.printStackTrace();
+	} catch (Exception e4) {
+		System.err.println("Error in reading config file"+e4.toString());
+	}
+	return itsAID;
+}
+  
+  /**
+   * Create Real Agents and fill AID
+   */
+	@SuppressWarnings("unchecked")
+	protected void createAgents() 
+	{
+		AuxInfo info=game.getInfo();
+	    initContainer();
+        HashMap hm = info.getAgentsInitialPosition();
+	    Iterator it = hm.keySet().iterator();
+	    int agentNumber=1;
+	    while (it.hasNext())
+	    {
+	        	  InfoAgent ia = (InfoAgent)it.next();
+	              //Creating the agent
+	              AID aid=null;
+	              try{
+		              switch (ia.getAgentType())
+		              {
+			              case 0: aid=createAgent(ia.getAgent()+agentNumber, "sma.scout.Scout", ""); break;
+			              case 1: aid=createAgent(ia.getAgent()+agentNumber, "sma.harvester.Harvester", ""); break;
+		              }
+		              ia.setAID(aid);
+	              }catch(Exception e){
+	            	  showMessage("Could not create the agent specified in the game");
+	              }
+	              agentNumber++;
+	    }
+}
+  
+  
+  /**
+   * 
+   * @author roger
+   *	A simple emulation of a real game with random moves
+   */
+  private class Simulator extends OneShotBehaviour{
+
+	  public Simulator(){
+		super ();
+	  }
+	/**
+	 * Action
+	 */
+	private static final long serialVersionUID = 8803529649791935988L;
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void action() {
+        int destX,destY;
+		boolean fatalError=false;
+		Cell agentPosition;
+		showMessage("Simulation Step");
+		
+        HashMap hm = game.getInfo().getAgentsInitialPosition();
+        Iterator it = hm.keySet().iterator();
+        while (it.hasNext()){
+      	  InfoAgent ia = (InfoAgent)it.next();
+      	  try {
+			showMessage("Moving "+ia.getAgent());
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+        agentPosition=null;
+		for(int x=1;x<game.getMap().length-1;x++)
+			for(int y=1;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x,y);
+	         	  if(c.isThereAnAgent())
+	         		  if(c.getAgent().equals(ia)){
+	         			  agentPosition=c; 
+	         			  showMessage("Found!");
+	         		  }
+			}
+		
+          /*java.util.List<Cell> pos = (java.util.List<Cell>)hm.get(ia);
+          //this is the cell containing the agent
+           Iterator it2 = pos.iterator();
+
+           while (it2.hasNext()){
+         	  Cell c = (Cell)it2.next();
+         	  if(c.isThereAnAgent())
+         		  if(c.getAgent().equals(ia)){
+         			  agentPosition=c; 			  
+         		  }
+           }*/
+           if(agentPosition!=null)
+           {
+	            int dx=0,dy=0;
+	            int action=(int) (Math.random()*4);
+	            switch (action)
+	            {
+	            case 0: dx=0;dy=-1;break;
+	            case 1: dx=1;dy=0;break;
+	            case 2: dx=0;dy=1;break;
+	            case 3: dx=-1;dy=0;break;
+	            }
+	            
+	
+	            destX=agentPosition.getColumn()+dx;
+	            destY=agentPosition.getRow()+dy;
+	            
+	
+	            
+	            try {
+	                Cell agentDestination = game.getMap()[destY][destX];
+	                System.out.println("I have the destination cell");
+					agentPosition.removeAgent(ia);
+	                System.out.println("Agent removed from previous position");
+					agentDestination.addAgent(ia);
+					System.out.println("Agent added");
+					System.out.println("******* EUREKA **********");
+				} catch (Exception e) {
+					try {
+						e.printStackTrace();
+						if(!agentPosition.isThereAnAgent()) agentPosition.addAgent(ia);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						showMessage("FATAL ERROR: Cannot Undo this action");
+						fatalError=true;
+						//e1.printStackTrace();
+					}
+					System.out.println("The random move did not suceed");
+				}
+           }
+            
+        }
+
+		//do it again
+		if(!fatalError)
+		{
+			SequentialBehaviour sb = new SequentialBehaviour();
+			sb.addSubBehaviour(new Simulator());
+			try {Thread.sleep(1000);} catch ( InterruptedException e ) {}
+			this.myAgent.addBehaviour(sb);
+		}
+	}
+	  
+  }
+  
   /*************************************************************************/
 
   /**
@@ -158,7 +346,7 @@ public class CentralAgent extends Agent {
    * <p><b>Copyright:</b> Copyright (c) 2009</p>
    * <p><b>Company:</b> Universitat Rovira i Virgili (<a
    * href="http://www.urv.cat">URV</a>)</p>
-   * @author David Isern and Joan Albert López
+   * @author David Isern and Joan Albert Lï¿½pez
    * @see sma.ontology.Cell
    * @see sma.ontology.InfoGame
    * @see sma.ontology.CellList
@@ -191,6 +379,7 @@ public class CentralAgent extends Agent {
         e.printStackTrace();
       }
       showMessage("Answer sent"); //: \n"+reply.toString());
+      
       return reply;
     } //endof prepareResponse
 
@@ -222,7 +411,13 @@ public class CentralAgent extends Agent {
         System.err.println(e.toString());
         e.printStackTrace();
       }
-      showMessage("Answer sent"); //+reply.toString());
+      showMessage("Answer sent"); //+reply.toString());  
+      
+      // Call the simulator
+		SequentialBehaviour sb = new SequentialBehaviour();
+		sb.addSubBehaviour(new Simulator());
+		this.myAgent.addBehaviour(sb);
+      
       return reply;
 
     } //endof prepareResultNotification

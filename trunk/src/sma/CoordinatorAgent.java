@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import jade.util.leap.ArrayList;
 import jade.util.leap.List;
+import jade.wrapper.AgentController;
 import jade.core.*;
+import jade.core.Runtime;
 import jade.core.behaviours.*;
 import jade.domain.*;
 import jade.domain.FIPAAgentManagement.*;
@@ -35,7 +37,6 @@ public class CoordinatorAgent extends Agent {
   private AID centralAgent;
 
   private java.util.List<Cell> agentList;
-
 
   public CoordinatorAgent() {
   }
@@ -123,13 +124,17 @@ public class CoordinatorAgent extends Agent {
     * <p><b>Copyright:</b> Copyright (c) 2011</p>
     * <p><b>Company:</b> Universitat Rovira i Virgili (<a
     * href="http://www.urv.cat">URV</a>)</p>
-    * @author David Isern and Joan Albert López
+    * @author David Isern and Joan Albert Lï¿½pez
     * @see sma.ontology.Cell
     * @see sma.ontology.InfoGame
     * @see sma.ontology.CellList
    */
   class RequesterBehaviour extends AchieveREInitiator {
 	  
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3102064470122523141L;
 	private ACLMessage msgSent = null;
     private boolean finish = false;
     
@@ -151,30 +156,31 @@ public class CoordinatorAgent extends Agent {
      * Handle INFORM messages
      * @param msg Message
      */
-    protected void handleInform(ACLMessage msg) {
+    @SuppressWarnings("unchecked")
+	protected void handleInform(ACLMessage msg) {
       showMessage("INFORM received from "+ ( (AID)msg.getSender()).getLocalName()+" ... [OK]");
       try {
         info = (AuxInfo)msg.getContentObject();
         if (info instanceof AuxInfo) {
-          showMessage("Visual range for each agent: ");
+          //showMessage("Visual range for each agent: ");
           HashMap hm = info.getAgentsInitialPosition();
           Iterator it = hm.keySet().iterator();
           while (it.hasNext()){
         	  InfoAgent ia = (InfoAgent)it.next();
-              System.out.println(ia);
+              //System.out.println(ia);
               java.util.List<Cell> pos = (java.util.List<Cell>)hm.get(ia);
               Iterator it2 = pos.iterator();
               while (it2.hasNext()){
             	  Cell c = (Cell)it2.next();
-            	  System.out.println("cell: " + c);  
+            	  //System.out.println("cell: " + c);  
               }
-              System.out.println();
+              //System.out.println();              
           }
           System.out.println();
-          showMessage("Cells with recycling centers: ");
+          //showMessage("Cells with recycling centers: ");
           it = info.getRecyclingCenters().iterator();
           while (it.hasNext()){
-        	  System.out.println("cell: " + it.next()); 
+        	 // System.out.println("cell: " + it.next()); 
           }
         
          
