@@ -22,7 +22,7 @@ import jade.wrapper.StaleProxyException;
  * <p><b>Copyright:</b> Copyright (c) 2009</p>
  * <p><b>Company:</b> Universitat Rovira i Virgili (<a
  * href="http://www.urv.cat">URV</a>)</p>
- * @author David Isern & Joan Albert López
+ * @author David Isern & Joan Albert Lï¿½pez
  * @version 2.0
  */
 public class UtilsAgents {
@@ -33,6 +33,9 @@ public class UtilsAgents {
 
   public static String SCOUT_AGENT = "scout";
   public static String HARVESTER_AGENT = "harvester";
+  
+  public static String HARVESTER_MANAGER_AGENT = "harvester manager";
+  public static String SCOUT_MANAGER_AGENT = "scout manager";
 
   public static String OWNER = "urv";
 

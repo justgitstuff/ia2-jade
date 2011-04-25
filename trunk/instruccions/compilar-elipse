@@ -1,5 +1,5 @@
-Després de fer el Checkout del trunk fer els següents passos:
+Desprï¿½s de fer el Checkout del trunk fer els segï¿½ents passos:
 
 run-> run configurations-> Java aplication (new) 
 		main class: jade.Boot
-		Arguments -> Program arguments: -gui first:MySecondAgent  (canviar depenent de quina classe es vol executar).
+		Arguments -> Program arguments: -gui central:sma.CentralAgent coordinator:sma.CoordinatorAgent scoutmanager:sma.scout_manager.ScoutManagerAgent harvestermanager:sma.harvester_manager.HarvesterManagerAgent
