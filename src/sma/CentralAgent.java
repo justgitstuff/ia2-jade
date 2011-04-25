@@ -245,7 +245,7 @@ private AID createAgent(String name, String type, String args)
         int destX,destY;
 		boolean fatalError=false;
 		Cell agentPosition;
-		showMessage("Simulation Step");
+		showMessage("Simulation Step. Turn "+game.getInfo().getTurn());
 		
         HashMap hm = game.getInfo().getAgentsInitialPosition();
         Iterator it = hm.keySet().iterator();
@@ -258,15 +258,16 @@ private AID createAgent(String name, String type, String args)
 			e2.printStackTrace();
 		}
         agentPosition=null;
-		for(int x=1;x<game.getMap().length-1;x++)
-			for(int y=1;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
 			{
 				Cell c=game.getCell(x,y);
 	         	  if(c.isThereAnAgent())
-	         		  if(c.getAgent().equals(ia)){
+	         	  {
+	         		  if(c.getAgent().getAID().equals(ia.getAID())){
 	         			  agentPosition=c; 
-	         			  showMessage("Found!");
 	         		  }
+	         	  }
 			}
 		
           /*java.util.List<Cell> pos = (java.util.List<Cell>)hm.get(ia);
@@ -308,7 +309,7 @@ private AID createAgent(String name, String type, String args)
 					System.out.println("******* EUREKA **********");
 				} catch (Exception e) {
 					try {
-						e.printStackTrace();
+						//e.printStackTrace();
 						if(!agentPosition.isThereAnAgent()) agentPosition.addAgent(ia);
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
@@ -325,10 +326,26 @@ private AID createAgent(String name, String type, String args)
 		//do it again
 		if(!fatalError)
 		{
-			SequentialBehaviour sb = new SequentialBehaviour();
-			sb.addSubBehaviour(new Simulator());
-			try {Thread.sleep(1000);} catch ( InterruptedException e ) {}
-			this.myAgent.addBehaviour(sb);
+			gui.repaint();
+			if (game.getInfo().getTurn()<game.getInfo().getGameDuration())
+			{
+				game.getInfo().incrTurn();
+				try {Thread.sleep(game.getInfo().getTimeout());} catch ( InterruptedException e ) {}
+				SequentialBehaviour sb = new SequentialBehaviour();
+				sb.addSubBehaviour(new Simulator());
+				this.myAgent.addBehaviour(sb);
+			}else{
+				showMessage("Game Finished");
+				try {
+					game.writeGameResult("result.txt", game.getMap());
+				} catch (IOException e) {
+					showMessage("Cannot write the game results");
+					e.printStackTrace();
+				} catch (Exception e) {
+					showMessage("General error writing game results");
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	  

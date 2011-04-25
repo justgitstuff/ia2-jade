@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 import javax.swing.*; // For JPanel, etc.
@@ -23,7 +24,7 @@ import sma.ontology.*;
  * <p><b>Copyright:</b> Copyright (c) 2011</p>
  * <p><b>Company:</b> Universitat Rovira i Virgili (<a
  * href="http://www.urv.cat">URV</a>)</p>
- * @author David Isern & Joan Albert López
+ * @author David Isern & Joan Albert Lï¿½pez
  * @version 2.0
  */
 public class GraphicInterface extends JFrame {
@@ -176,7 +177,7 @@ public class GraphicInterface extends JFrame {
 
 
   /**
-   * Mostra una cadena en el panell destinat a stadístiques
+   * Mostra una cadena en el panell destinat a stadï¿½stiques
    * @param msg String per mostrar
    */
   public void showStatistics(String msg) {
@@ -190,5 +191,12 @@ public class GraphicInterface extends JFrame {
     graphicinterface.setVisible(true);
   }
 
+@Override
+public void paint(Graphics g) {
+	jGamePanel.paintComponents(g);
+	super.paint(g);
+}
+
+  
 
 }
