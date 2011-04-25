@@ -212,8 +212,8 @@ private AID createAgent(String name, String type, String args)
 	              try{
 		              switch (ia.getAgentType())
 		              {
-			              case 0: aid=createAgent(ia.getAgent()+agentNumber, "sma.scout.Scout", ""); break;
-			              case 1: aid=createAgent(ia.getAgent()+agentNumber, "sma.harvester.Harvester", ""); break;
+			              case 0: aid=createAgent(ia.getAgent()+agentNumber, "sma.scout.ScoutAgent", ""); break;
+			              case 1: aid=createAgent(ia.getAgent()+agentNumber, "sma.harvester.HarvesterAgent", ""); break;
 		              }
 		              ia.setAID(aid);
 	              }catch(Exception e){

@@ -7,7 +7,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
-public class Scout extends Agent {
+public class ScoutAgent extends Agent {
 
 	  /**
 	   * A message is shown in the log area of the GUI
@@ -48,7 +48,7 @@ public class Scout extends Agent {
 	 */
 	private static final long serialVersionUID = -1956175742934189946L;
 //   �� 
-	public Scout()
+	public ScoutAgent()
 	{
 		super();
 	}
