@@ -164,21 +164,21 @@ public class CentralAgent extends Agent {
 	    ac = rt.createAgentContainer(p);
   }
   
-private AID createAgent(String name, String type, String args)
+private AID createAgent(String name, String type, Object args[])
 {
 	AID itsAID=null;
 	try{
-	    AgentController another = null;
-	    
-	    if(args=="") {
+		System.out.println(getLocalName()+" Creating NEW agent ("+name+", "+type+")...");
+	    AgentController another= ac.createNewAgent(name, type, new Object[0]);
+	    /*if(args[0]==null) {
 	       System.out.println(getLocalName()+" Creating NEW agent ("+name+", "+type+") without arguments ...");
 	       another = ac.createNewAgent(name, type, new Object[0]);
 	    } else {
 	        System.out.println(getLocalName()+": Trying to start "+name+" with arguments ...");
-	        Object[] arguments = new Object[1];
-	        arguments[0] = args;
-	        another = ac.createNewAgent(name, type, arguments);
-	      }
+	        //Object[] arguments = new Object[1];
+	        //arguments[0] = args;
+	        another = ac.createNewAgent(name, type, args);
+	      }*/
 	      another.start();
 	      //Return its AID
 	      ServiceDescription searchCriterion = new ServiceDescription();
@@ -209,11 +209,14 @@ private AID createAgent(String name, String type, String args)
 	        	  InfoAgent ia = (InfoAgent)it.next();
 	              //Creating the agent
 	              AID aid=null;
+            	  Object[] o;
+            	  o=new Object[1];
+            	  o[0]=game;
 	              try{
 		              switch (ia.getAgentType())
 		              {
-			              case 0: aid=createAgent(ia.getAgent()+agentNumber, "sma.scout.ScoutAgent", ""); break;
-			              case 1: aid=createAgent(ia.getAgent()+agentNumber, "sma.harvester.HarvesterAgent", ""); break;
+			              case 0: aid=createAgent(ia.getAgent()+agentNumber, "sma.scout.ScoutAgent", o); break;
+			              case 1: aid=createAgent(ia.getAgent()+agentNumber, "sma.harvester.HarvesterAgent", o); break;
 		              }
 		              ia.setAID(aid);
 	              }catch(Exception e){
