@@ -1,6 +1,7 @@
 package sma.scout;
 
 import sma.UtilsAgents;
+import sma.ontology.InfoGame;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -9,6 +10,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 public class ScoutAgent extends Agent {
 
+	private sma.ontology.InfoGame game;
 	  /**
 	   * A message is shown in the log area of the GUI
 	   * @param str String to show
@@ -35,7 +37,17 @@ public class ScoutAgent extends Agent {
 	      System.err.println(getLocalName() + " registration with DF " + "unsucceeded. Reason: " + e.getMessage());
 	      doDelete();
 	    }
-
+	    Object[] args = getArguments();
+	    
+	    if(args.length>0)
+	    {
+			this.game=(InfoGame)getArguments()[0];
+			if(this.game!=null)
+			{
+				showMessage("Tinc un joc amb "+game.getInfo().getNumScouts()+" scouts");
+				//game.getInfo().setNumScouts(game.getInfo().getNumScouts()+1);
+			}
+		}
 		super.setup();
 	}
 	@Override
