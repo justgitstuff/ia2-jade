@@ -1,11 +1,16 @@
 package sma.scout_manager;
 
-import sma.UtilsAgents;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.proto.ContractNetInitiator;
+
+import java.util.Vector;
+
+import sma.UtilsAgents;
 
 public class ScoutManagerAgent extends Agent{
 
@@ -40,6 +45,49 @@ public class ScoutManagerAgent extends Agent{
 	      doDelete();
 	    }
 		super.setup();
+	}
+	
+	class ScoutManagerHandler extends ContractNetInitiator {
+		public ScoutManagerHandler(Agent agent, ACLMessage aclMessage) {
+			super(agent, aclMessage);
+		}
+
+        protected void handlePropose(ACLMessage propose, Vector acceptances) {
+            System.out.printf("\n");
+        }
+ 
+        protected void handleRefuse(ACLMessage refuse) {
+            System.out.printf("\n");
+        }
+ 
+        protected void handleFailure(ACLMessage failure) {
+            if (failure.getSender().equals(myAgent.getAMS())) {
+                System.out.println("Error\n");
+            } else {
+                System.out.printf("Error\n");
+            }
+        }
+ 
+        protected void handleAllResponses(Vector responses, Vector acceptances) {
+ 
+            ACLMessage accepted = null;
+            for (Object resp:responses) {
+                ACLMessage message = (ACLMessage) resp;
+                if (message.getPerformative() == ACLMessage.PROPOSE) {
+//                    ACLMessage response = message.createReply();
+//                    response.setPerformative(ACLMessage.REJECT_PROPOSAL);
+//                    acceptances.add(response);
+                    
+                    // TODO determine the best
+                }
+            }
+ 
+            // TODO Actions to realiza for the best
+        }
+ 
+        protected void handleInform(ACLMessage inform) {
+            System.out.printf("\n");
+        }
 	}
 
 }
