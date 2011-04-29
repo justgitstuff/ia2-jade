@@ -1,4 +1,4 @@
-package sma.map;
+package sma;
 
 
 public class Map {
