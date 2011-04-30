@@ -37,6 +37,8 @@ public class ScoutAgent extends Agent {
 	      System.err.println(getLocalName() + " registration with DF " + "unsucceeded. Reason: " + e.getMessage());
 	      doDelete();
 	    }
+	    
+	    //Get the game info
 	    Object[] args = getArguments();
 	    
 	    if(args.length>0)
@@ -45,7 +47,6 @@ public class ScoutAgent extends Agent {
 			if(this.game!=null)
 			{
 				showMessage("Tinc un joc amb "+game.getInfo().getNumScouts()+" scouts");
-				//game.getInfo().setNumScouts(game.getInfo().getNumScouts()+1);
 			}
 		}
 		super.setup();

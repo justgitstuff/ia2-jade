@@ -34,10 +34,16 @@ import java.util.*;
  */
 public class CentralAgent extends Agent {
 
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2738522227375621454L;
   private sma.gui.GraphicInterface gui;
   private sma.ontology.InfoGame game;
+  private sma.ontology.InfoGame publicGame;
 
-  private AID coordinatorAgent;
+  @SuppressWarnings("unused")
+private AID coordinatorAgent;
   
   private jade.wrapper.AgentContainer ac;
 
@@ -105,6 +111,8 @@ public class CentralAgent extends Agent {
 
     try {
       this.game = new InfoGame(); //object with the game data
+      this.publicGame = new InfoGame(); // game data to publish
+      this.publicGame.readGameFile("game.txt");
       this.game.readGameFile("game.txt");
       //game.writeGameResult("result.txt", game.getMap());
     } catch(Exception e) {
@@ -143,7 +151,8 @@ public class CentralAgent extends Agent {
    // add behaviours
 
    // we wait for the initialization of the game
-    MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchProtocol(InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+    @SuppressWarnings("unused")
+	MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchProtocol(InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
     
    this.addBehaviour(new RequestResponseBehaviour(this, null));
 
@@ -168,22 +177,14 @@ private AID createAgent(String name, String type, Object args[])
 {
 	AID itsAID=null;
 	try{
+		//Create Agent in new container
 		System.out.println(getLocalName()+" Creating NEW agent ("+name+", "+type+")...");
-	    AgentController another= ac.createNewAgent(name, type, new Object[0]);
-	    /*if(args[0]==null) {
-	       System.out.println(getLocalName()+" Creating NEW agent ("+name+", "+type+") without arguments ...");
-	       another = ac.createNewAgent(name, type, new Object[0]);
-	    } else {
-	        System.out.println(getLocalName()+": Trying to start "+name+" with arguments ...");
-	        //Object[] arguments = new Object[1];
-	        //arguments[0] = args;
-	        another = ac.createNewAgent(name, type, args);
-	      }*/
-	      another.start();
-	      //Return its AID
-	      ServiceDescription searchCriterion = new ServiceDescription();
-	      searchCriterion.setName(name);
-	      itsAID = UtilsAgents.searchAgent(this, searchCriterion);
+	    AgentController another= ac.createNewAgent(name, type, args);
+	    another.start();
+	    //Return its AID
+	    ServiceDescription searchCriterion = new ServiceDescription();
+	    searchCriterion.setName(name);
+	    itsAID = UtilsAgents.searchAgent(this, searchCriterion);
 	} catch (jade.wrapper.StaleProxyException e) {
 		System.err.println("ERROR for creating the agent. Reason: "+e.toString());
 		e.printStackTrace();
@@ -193,12 +194,28 @@ private AID createAgent(String name, String type, Object args[])
 	return itsAID;
 }
   
+private void updatePublicGame()
+{
+	publicGame.setInfo(game.getInfo());
+	for(int x=0;x<game.getMap().length-1;x++)
+		for(int y=0;y<game.getMap()[x].length-1;y++)
+		{
+			if (game.getCell(x, y).isDiscovered())
+			{
+				publicGame.setCell(x, y, game.getCell(x, y));
+			}else
+				publicGame.setCell(x, y, null);
+		}
+}
+
+
   /**
    * Create Real Agents and fill AID
    */
 	@SuppressWarnings("unchecked")
 	protected void createAgents() 
 	{
+		updatePublicGame();
 		AuxInfo info=game.getInfo();
 	    initContainer();
         HashMap hm = info.getAgentsInitialPosition();
@@ -211,7 +228,7 @@ private AID createAgent(String name, String type, Object args[])
 	              AID aid=null;
             	  Object[] o;
             	  o=new Object[1];
-            	  o[0]=game;
+            	  o[0]=publicGame;
 	              try{
 		              switch (ia.getAgentType())
 		              {
@@ -248,14 +265,14 @@ private AID createAgent(String name, String type, Object args[])
         int destX,destY;
 		boolean fatalError=false;
 		Cell agentPosition;
-		showMessage("Simulation Step. Turn "+game.getInfo().getTurn());
+		//showMessage("Simulation Step. Turn "+game.getInfo().getTurn());
 		
         HashMap hm = game.getInfo().getAgentsInitialPosition();
         Iterator it = hm.keySet().iterator();
         while (it.hasNext()){
       	  InfoAgent ia = (InfoAgent)it.next();
       	  try {
-			showMessage("Moving "+ia.getAgent());
+			//showMessage("Moving "+ia.getAgent());
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -272,18 +289,7 @@ private AID createAgent(String name, String type, Object args[])
 	         		  }
 	         	  }
 			}
-		
-          /*java.util.List<Cell> pos = (java.util.List<Cell>)hm.get(ia);
-          //this is the cell containing the agent
-           Iterator it2 = pos.iterator();
 
-           while (it2.hasNext()){
-         	  Cell c = (Cell)it2.next();
-         	  if(c.isThereAnAgent())
-         		  if(c.getAgent().equals(ia)){
-         			  agentPosition=c; 			  
-         		  }
-           }*/
            if(agentPosition!=null)
            {
 	            int dx=0,dy=0;
@@ -304,18 +310,17 @@ private AID createAgent(String name, String type, Object args[])
 	            
 	            try {
 	                Cell agentDestination = game.getMap()[destY][destX];
-	                System.out.println("I have the destination cell");
+	                //System.out.println("I have the destination cell");
 					agentPosition.removeAgent(ia);
-	                System.out.println("Agent removed from previous position");
+	                //System.out.println("Agent removed from previous position");
 					agentDestination.addAgent(ia);
-					System.out.println("Agent added");
-					System.out.println("******* EUREKA **********");
+					//System.out.println("Agent added");
+					//System.out.println("******* EUREKA **********");
 				} catch (Exception e) {
 					try {
 						//e.printStackTrace();
 						if(!agentPosition.isThereAnAgent()) agentPosition.addAgent(ia);
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						showMessage("FATAL ERROR: Cannot Undo this action");
 						fatalError=true;
 						//e1.printStackTrace();
@@ -352,6 +357,39 @@ private AID createAgent(String name, String type, Object args[])
 		}
 	}
 	  
+  }
+  
+  private class TurnControlBehavior extends TickerBehaviour{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4793117331763237218L;
+
+	public TurnControlBehavior(Agent arg0, long arg1) {
+		super(arg0, arg1);
+		showMessage("Turn Control Initiated timeout is "+game.getInfo().getTimeout());
+	}
+
+	@Override
+	protected void onTick() {
+		game.getInfo().incrTurn();
+		showMessage("Turn "+game.getInfo().getTurn());
+		if (game.getInfo().getTurn()==game.getInfo().getGameDuration())
+		{
+			showMessage("Game Finished");
+			this.stop();
+			try {
+				game.writeGameResult("result.txt", game.getMap());
+			} catch (IOException e) {
+				showMessage("Cannot write the game results");
+				e.printStackTrace();
+			} catch (Exception e) {
+				showMessage("General error writing game results");
+				e.printStackTrace();
+			}
+		}
+	} 
   }
   
   /*************************************************************************/
@@ -434,9 +472,10 @@ private AID createAgent(String name, String type, Object args[])
       showMessage("Answer sent"); //+reply.toString());  
       
       // Call the simulator
-		SequentialBehaviour sb = new SequentialBehaviour();
+		/*SequentialBehaviour sb = new SequentialBehaviour();
 		sb.addSubBehaviour(new Simulator());
-		this.myAgent.addBehaviour(sb);
+		this.myAgent.addBehaviour(sb);*/
+      this.myAgent.addBehaviour(new TurnControlBehavior(this.myAgent, game.getInfo().getTimeout()));
       
       return reply;
 
