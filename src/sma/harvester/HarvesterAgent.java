@@ -1,6 +1,7 @@
 package sma.harvester;
 
 import sma.UtilsAgents;
+import sma.ontology.InfoGame;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -11,6 +12,7 @@ public class HarvesterAgent extends Agent{
 
 	private static final long serialVersionUID = 2649857519665884242L;
 	
+	private sma.ontology.InfoGame game;
 	  /**
 	   * A message is shown in the log area of the GUI
 	   * @param str String to show
@@ -37,7 +39,17 @@ public class HarvesterAgent extends Agent{
 	      System.err.println(getLocalName() + " registration with DF " + "unsucceeded. Reason: " + e.getMessage());
 	      doDelete();
 	    }
-
+	    //Get the game info
+	    Object[] args = getArguments();
+	    
+	    if(args.length>0)
+	    {
+			this.game=(InfoGame)getArguments()[0];
+			if(this.game!=null)
+			{
+				showMessage("Tinc un joc amb "+game.getInfo().getNumScouts()+" scouts");
+			}
+		}
 		super.setup();
 	}
 
