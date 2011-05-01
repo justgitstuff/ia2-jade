@@ -19,6 +19,8 @@ import jade.content.onto.*;
 import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
 
+import sma.moves.Movement;
+import sma.moves.Movement.Order;
 import sma.ontology.*;
 import sma.gui.*;
 import java.util.*;
@@ -412,6 +414,12 @@ private void updatePublicGame()
   private class RequestResponseBehaviour extends AchieveREResponder {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8595737671236286405L;
+
+
+	/**
      * Constructor for the <code>RequestResponseBehaviour</code> class.
      * @param myAgent The agent owning this behaviour
      * @param mt Template to receive future responses in this conversation
@@ -493,5 +501,70 @@ private void updatePublicGame()
 
   /*************************************************************************/
 
+  class MovesReceiver extends AchieveREInitiator
+  {
+	private Cell findAgent(Agent a)
+	{
+        Cell agentPosition=null;
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x,y);
+	         	  if(c.isThereAnAgent())
+	         	  {
+	         		  if(c.getAgent().getAID().equals(a.getAID())){
+	         			  agentPosition=c; 
+	         		  }
+	         	  }
+			}
+		return agentPosition;
+	}
+	@Override
+	protected void handleInform(ACLMessage arg0) {
+		Cell origin = null,destination;
+		InfoAgent ia = null;
+		int dx=0,dy=0,x,y;
+		try {
+			sma.moves.Movement moveOrder=(Movement) arg0.getContentObject();
+			origin=findAgent(moveOrder.getAgent());
+			x=origin.getColumn();
+			y=origin.getRow();
+			switch (moveOrder.getOrder())
+			{
+				case UP:dy=-1;break;
+				case DOWN:dy=1;break;
+				case LEFT:dx=-1;break;
+				case RIGHT:dx=1;break;
+			}
+			destination=game.getCell(x+dx, y+dy);
+			ia=origin.getAgent();
+			origin.removeAgent(ia);
+			destination.addAgent(ia);		
+		} catch (UnreadableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			try {
+				if(!origin.isThereAnAgent()) origin.addAgent(ia);
+			} catch (Exception e1) {
+				showMessage("FATAL ERROR: Cannot Undo this action");
+			}
+		}
+
+		super.handleInform(arg0);
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1637780111859751489L;
+
+	public MovesReceiver(Agent arg0, ACLMessage arg1) {
+		
+		super(arg0, arg1);
+		// TODO Auto-generated constructor stub
+	}
+	  
+  }
 
 } //endof class AgentCentral
