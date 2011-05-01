@@ -135,8 +135,10 @@ public class CoordinatorAgent extends Agent {
 	 * 
 	 */
 	private static final long serialVersionUID = 3102064470122523141L;
+	@SuppressWarnings("unused")
 	private ACLMessage msgSent = null;
-    private boolean finish = false;
+    @SuppressWarnings("unused")
+	private boolean finish = false;
     
     public RequesterBehaviour(Agent myAgent, ACLMessage requestMsg) {
       super(myAgent, requestMsg);
