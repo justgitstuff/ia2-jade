@@ -77,10 +77,10 @@ public class ScoutManagerUtils {
 				notUnchartedZone = true;
 			}
 			for (int j = 0; j < quadrant.y2; j++) {
-				if (map[i][j].getCellType() != Cell.UNCHARTED && notUnchartedZone) {
+				if (map[i][j] != null && notUnchartedZone) {
 					rectangles.add(new Rectangle(iIni, i, jIni, j));
 					notUnchartedZone = false;
-				} else if (map[i][j].getCellType() == Cell.UNCHARTED && !notUnchartedZone) {
+				} else if (map[i][j] == null && !notUnchartedZone) {
 					notUnchartedZone = true;
 					iIni = i;
 					jIni = j;
