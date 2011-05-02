@@ -42,6 +42,10 @@ public class UtilsAgents {
   public static String LANGUAGE = "serialized-object";
 
   public static String ONTOLOGY = "serialized-object";
+  
+  public static String PROTOCOL_QUERY = "Query";
+  public static String PROTOCOL_DOWNLOAD = "Finish_work";
+  public static String BE_SCOUT = "Be_scout";
 
 
   /**
