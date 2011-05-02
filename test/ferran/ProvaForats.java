@@ -31,7 +31,7 @@ public class ProvaForats {
 		    		} else if (character.equals("P")) {
 		    			map[i][j] = new Cell(Cell.BUILDING);
 		    		} else if (character.equals("X")) {
-		    			map[i][j] = new Cell(Cell.UNCHARTED);
+		    			//map[i][j] = new Cell(Cell.UNCHARTED);
 		    		}
 		    	}
 		    }

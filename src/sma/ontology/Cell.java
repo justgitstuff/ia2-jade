@@ -1,6 +1,5 @@
 package sma.ontology;
 
-import java.util.*;
 import java.io.Serializable;
 
 
@@ -20,7 +19,6 @@ public class Cell implements Serializable {
   static public int BUILDING = 1;
   static public int STREET = 2;
   static public int RECYCLING_CENTER = 3;
-  static public int UNCHARTED = -1;
   
   private int type;
 
@@ -43,7 +41,7 @@ public Cell(int type) {
 
   public int getCellType() { return this.type; }
   public void setCellType(int newType) throws Exception {
-    if((newType!=BUILDING) && (newType!=STREET) && (newType!=RECYCLING_CENTER) && (newType!=UNCHARTED))
+    if((newType!=BUILDING) && (newType!=STREET) && (newType!=RECYCLING_CENTER))
       throw new Exception("Unknown type");
     this.type = newType;
   }
