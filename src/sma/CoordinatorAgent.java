@@ -19,6 +19,7 @@ import jade.content.onto.*;
 import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
 import sma.ontology.*;
+import sma.CentralAgent.Informer;
 import sma.gui.*;
 import java.util.*;
 /**
@@ -34,7 +35,7 @@ public class CoordinatorAgent extends Agent {
 
   private AuxInfo info;
 
-  private AID centralAgent;
+  private AID centralAgent, harvesterManagerAgent, scoutManagerAgent;
 
   private java.util.List<Cell> agentList;
 
@@ -81,10 +82,19 @@ public class CoordinatorAgent extends Agent {
     ServiceDescription searchCriterion = new ServiceDescription();
     searchCriterion.setType(UtilsAgents.CENTRAL_AGENT);
     this.centralAgent = UtilsAgents.searchAgent(this, searchCriterion);
-    // searchAgent is a blocking method, so we will obtain always a correct AID
 
+
+    // we search for manager Agents
+    searchCriterion.setType(UtilsAgents.HARVESTER_MANAGER_AGENT);
+    this.harvesterManagerAgent= UtilsAgents.searchAgent(this, searchCriterion);
+    
+    searchCriterion.setType(UtilsAgents.SCOUT_MANAGER_AGENT);
+    this.scoutManagerAgent = UtilsAgents.searchAgent(this, searchCriterion);
+    
+    // searchAgent is a blocking method, so we will obtain always a correct AID
+    
    /**************************************************/
-    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
+/*    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
     requestInicial.clearAllReceiver();
     requestInicial.addReceiver(this.centralAgent);
     requestInicial.setProtocol(InteractionProtocol.FIPA_REQUEST);
@@ -96,17 +106,109 @@ public class CoordinatorAgent extends Agent {
       e.printStackTrace();
     }
 
-    //we add a behaviour that sends the message and waits for an answer
+    //we add a behavior that sends the message and waits for an answer
     this.addBehaviour(new RequesterBehaviour(this, requestInicial));
 
     // setup finished. When we receive the last inform, the agent itself will add
-    // a behaviour to send/receive actions
+    // a behavior to send/receive actions
+    */
     
-   
+    //add a behavior to receive end turns and movement orders
+    this.addBehaviour(new MessageReceiver(this, null));
+    
 
   } //endof setup
 
 
+  class MessageReceiver extends AchieveREResponder
+  {
+
+	@Override
+	protected ACLMessage prepareResultNotification(ACLMessage arg0,
+			ACLMessage arg1) throws FailureException {
+		// TODO Auto-generated method stub
+		return super.prepareResultNotification(arg0, arg1);
+	}
+
+	@Override
+	protected ACLMessage prepareResponse(ACLMessage arg0)
+			throws NotUnderstoodException, RefuseException {
+	      /* method called when the message has been received. If the message to send
+	       * is an AGREE the behaviour will continue with the method prepareResultNotification. */
+
+	      ACLMessage reply = arg0.createReply();
+	      try {
+	        Object contentRebut = (Object)arg0.getContentObject();
+	        if (contentRebut instanceof InfoGame)
+	        {
+	        	InfoGame game=(InfoGame)contentRebut;
+	        	reply.setPerformative(ACLMessage.AGREE);
+	        	showMessage("Turn received: "+game.getInfo().getTurn());
+	        	
+	        	//Send map to all managers
+			    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
+			    requestInicial.clearAllReceiver();
+			    requestInicial.addReceiver(harvesterManagerAgent);
+			    requestInicial.addReceiver(scoutManagerAgent);
+			    requestInicial.setProtocol(InteractionProtocol.FIPA_QUERY);
+			    try {
+			      requestInicial.setContentObject(game);
+			    } catch (Exception e) {
+			      e.printStackTrace();
+			    }
+			    //we add a behavior that sends the message and waits for an answer
+			    this.myAgent.addBehaviour(new MessageSender(this.myAgent, requestInicial));
+
+	        	
+	        }
+	      } catch (Exception e) {
+	        e.printStackTrace();
+	      }
+     
+	      // Send the map to managers
+	      
+	      
+	      return reply;
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5733983393467734330L;
+
+	public MessageReceiver(Agent arg0, MessageTemplate arg1) {
+		super(arg0, arg1);
+		// TODO Auto-generated constructor stub
+	}
+	  
+  }
+  
+  
+  class MessageSender extends AchieveREInitiator
+  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8383729124578338150L;
+
+	public MessageSender(Agent arg0, ACLMessage arg1) {
+		super(arg0, arg1);
+		// TODO Auto-generated constructor stub
+	}
+	  
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 
   /*************************************************************************/
