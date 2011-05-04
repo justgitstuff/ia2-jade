@@ -1,11 +1,6 @@
 package sma;
 
-import java.lang.*;
 import java.io.*;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-import jade.util.leap.ArrayList;
-import jade.util.leap.List;
 import jade.wrapper.AgentController;
 import jade.core.*;
 import jade.core.Runtime;
@@ -14,13 +9,11 @@ import jade.domain.*;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPANames.InteractionProtocol;
 import jade.lang.acl.*;
-import jade.content.*;
-import jade.content.onto.*;
 import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
 
 import sma.moves.Movement;
-import sma.moves.Movement.Order;
+
 import sma.ontology.*;
 import sma.gui.*;
 import java.util.*;
@@ -44,8 +37,7 @@ public class CentralAgent extends Agent {
   private sma.ontology.InfoGame game;
   private sma.ontology.InfoGame publicGame;
 
-  @SuppressWarnings("unused")
-private AID coordinatorAgent;
+  private AID coordinatorAgent;
   
   private jade.wrapper.AgentContainer ac;
 
@@ -144,23 +136,30 @@ private AID coordinatorAgent;
 
    //add behaviours
 
-   // busco AgentCoordinador
+   // Search for coordinator Agent
    ServiceDescription searchCriterion = new ServiceDescription();
    searchCriterion.setType(UtilsAgents.COORDINATOR_AGENT);
    this.coordinatorAgent = UtilsAgents.searchAgent(this, searchCriterion);
    // searchAgent is a blocking method, so we will obtain always a correct AID
 
+  
+   
    // add behaviours
 
    // we wait for the initialization of the game
-    @SuppressWarnings("unused")
+   /* @SuppressWarnings("unused")
 	MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchProtocol(InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
     
    this.addBehaviour(new RequestResponseBehaviour(this, null));
 
    // Setup finished. When the last inform is received, the agent itself will add
    // a behavious to send/receive actions
-
+*/
+   
+   // Start the simulation
+   this.addBehaviour(new TurnControlBehavior(this, game.getInfo().getTimeout()));
+   
+   
   } //endof setup
 
   
@@ -361,6 +360,11 @@ private void updatePublicGame()
 	  
   }
   
+  /**
+   * Cyclic behavior each cycle is a game turn, also controls simulation ending
+   * @author Roger
+   *
+   */
   private class TurnControlBehavior extends TickerBehaviour{
 
 	/**
@@ -390,9 +394,56 @@ private void updatePublicGame()
 				showMessage("General error writing game results");
 				e.printStackTrace();
 			}
+		}else{
+			//Send updated map to all Coordinator Agent
+		    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
+		    requestInicial.clearAllReceiver();
+		    requestInicial.addReceiver(coordinatorAgent);
+		    requestInicial.setProtocol(InteractionProtocol.FIPA_QUERY);
+		    try {
+		      requestInicial.setContentObject(game);
+		    } catch (Exception e) {
+		      e.printStackTrace();
+		    }
+		    //we add a behavior that sends the message and waits for an answer
+		    this.myAgent.addBehaviour(new Informer(this.myAgent, requestInicial));
 		}
 	} 
   }
+  
+  /**
+   * 
+   * @author roger
+   * User to inform the coordinator agent
+   */
+  class Informer extends AchieveREInitiator
+  {
+
+	@Override
+	protected void handleAgree(ACLMessage arg0) {
+		showMessage("AGREE RECEIVED");
+		super.handleAgree(arg0);
+	}
+
+	@Override
+	protected void handleInform(ACLMessage arg0) {
+		// TODO Auto-generated method stub
+		super.handleInform(arg0);
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8199039269513958089L;
+
+	public Informer(Agent arg0, ACLMessage arg1) {
+		super(arg0, arg1);
+		// TODO Auto-generated constructor stub
+	}
+	  
+	
+  }
+  
   
   /*************************************************************************/
 
