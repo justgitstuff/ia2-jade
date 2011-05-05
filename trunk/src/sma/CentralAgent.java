@@ -358,7 +358,7 @@ private void updatePublicGame()
 			origin=findAgent(moveOrder.getAgent());
 			x=origin.getColumn();
 			y=origin.getRow();
-			switch (moveOrder.getOrder())
+			switch (moveOrder.getDirection())
 			{
 				case UP:dy=-1;break;
 				case DOWN:dy=1;break;
