@@ -10,8 +10,6 @@ import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPANames.InteractionProtocol;
 import jade.lang.acl.*;
 import jade.proto.AchieveREInitiator;
-import jade.proto.AchieveREResponder;
-
 import sma.moves.Movement;
 
 import sma.ontology.*;
@@ -213,14 +211,13 @@ private void updatePublicGame()
   /**
    * Create Real Agents and fill AID
    */
-	@SuppressWarnings("unchecked")
 	protected void createAgents() 
 	{
 		updatePublicGame();
 		AuxInfo info=game.getInfo();
 	    initContainer();
-        HashMap hm = info.getAgentsInitialPosition();
-	    Iterator it = hm.keySet().iterator();
+        HashMap<?, ?> hm = info.getAgentsInitialPosition();
+	    Iterator<?> it = hm.keySet().iterator();
 	    int agentNumber=1;
 	    while (it.hasNext())
 	    {
@@ -244,121 +241,6 @@ private void updatePublicGame()
 	    }
 }
   
-  
-  /**
-   * 
-   * @author roger
-   *	A simple emulation of a real game with random moves
-   */
-  private class Simulator extends OneShotBehaviour{
-
-	  public Simulator(){
-		super ();
-	  }
-	/**
-	 * Action
-	 */
-	private static final long serialVersionUID = 8803529649791935988L;
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void action() {
-        int destX,destY;
-		boolean fatalError=false;
-		Cell agentPosition;
-		//showMessage("Simulation Step. Turn "+game.getInfo().getTurn());
-		
-        HashMap hm = game.getInfo().getAgentsInitialPosition();
-        Iterator it = hm.keySet().iterator();
-        while (it.hasNext()){
-      	  InfoAgent ia = (InfoAgent)it.next();
-      	  try {
-			//showMessage("Moving "+ia.getAgent());
-		} catch (Exception e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-        agentPosition=null;
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
-			{
-				Cell c=game.getCell(x,y);
-	         	  if(c.isThereAnAgent())
-	         	  {
-	         		  if(c.getAgent().getAID().equals(ia.getAID())){
-	         			  agentPosition=c; 
-	         		  }
-	         	  }
-			}
-
-           if(agentPosition!=null)
-           {
-	            int dx=0,dy=0;
-	            int action=(int) (Math.random()*4);
-	            switch (action)
-	            {
-	            case 0: dx=0;dy=-1;break;
-	            case 1: dx=1;dy=0;break;
-	            case 2: dx=0;dy=1;break;
-	            case 3: dx=-1;dy=0;break;
-	            }
-	            
-	
-	            destX=agentPosition.getColumn()+dx;
-	            destY=agentPosition.getRow()+dy;
-	            
-	
-	            
-	            try {
-	                Cell agentDestination = game.getMap()[destY][destX];
-	                //System.out.println("I have the destination cell");
-					agentPosition.removeAgent(ia);
-	                //System.out.println("Agent removed from previous position");
-					agentDestination.addAgent(ia);
-					//System.out.println("Agent added");
-					//System.out.println("******* EUREKA **********");
-				} catch (Exception e) {
-					try {
-						//e.printStackTrace();
-						if(!agentPosition.isThereAnAgent()) agentPosition.addAgent(ia);
-					} catch (Exception e1) {
-						showMessage("FATAL ERROR: Cannot Undo this action");
-						fatalError=true;
-						//e1.printStackTrace();
-					}
-					System.out.println("The random move did not suceed");
-				}
-           }
-            
-        }
-
-		//do it again
-		if(!fatalError)
-		{
-			gui.repaint();
-			if (game.getInfo().getTurn()<game.getInfo().getGameDuration())
-			{
-				game.getInfo().incrTurn();
-				try {Thread.sleep(game.getInfo().getTimeout());} catch ( InterruptedException e ) {}
-				SequentialBehaviour sb = new SequentialBehaviour();
-				sb.addSubBehaviour(new Simulator());
-				this.myAgent.addBehaviour(sb);
-			}else{
-				showMessage("Game Finished");
-				try {
-					game.writeGameResult("result.txt", game.getMap());
-				} catch (IOException e) {
-					showMessage("Cannot write the game results");
-					e.printStackTrace();
-				} catch (Exception e) {
-					showMessage("General error writing game results");
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	  
-  }
   
   /**
    * Cyclic behavior each cycle is a game turn, also controls simulation ending
@@ -421,7 +303,6 @@ private void updatePublicGame()
 
 	@Override
 	protected void handleAgree(ACLMessage arg0) {
-		showMessage("AGREE RECEIVED");
 		super.handleAgree(arg0);
 	}
 
@@ -446,109 +327,6 @@ private void updatePublicGame()
   
   
   /*************************************************************************/
-
-  /**
-   * <p><B>Title:</b> IA2-SMA</p>
-   * <p><b>Description:</b> Practical exercise 2010-11. Recycle swarm.</p>
-   * Class that receives the REQUESTs from any agent. Concretely it is used 
-   * at the beginning of the game. The Coordinator Agent sends a REQUEST for all
-   * the information of the game and the CentralAgent sends an AGREE and then
-   * it sends all the required information.
-   * <p><b>Copyright:</b> Copyright (c) 2009</p>
-   * <p><b>Company:</b> Universitat Rovira i Virgili (<a
-   * href="http://www.urv.cat">URV</a>)</p>
-   * @author David Isern and Joan Albert L�pez
-   * @see sma.ontology.Cell
-   * @see sma.ontology.InfoGame
-   * @see sma.ontology.CellList
-   */
-  private class RequestResponseBehaviour extends AchieveREResponder {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 8595737671236286405L;
-
-
-	/**
-     * Constructor for the <code>RequestResponseBehaviour</code> class.
-     * @param myAgent The agent owning this behaviour
-     * @param mt Template to receive future responses in this conversation
-     */
-    public RequestResponseBehaviour(CentralAgent myAgent, MessageTemplate mt) {
-      super(myAgent, mt);
-      showMessage("Waiting REQUESTs from authorized agents");
-    }
-
-    protected ACLMessage prepareResponse(ACLMessage msg) {
-
-      /* method called when the message has been received. If the message to send
-       * is an AGREE the behaviour will continue with the method prepareResultNotification. */
-
-      ACLMessage reply = msg.createReply();
-      try {
-        Object contentRebut = (Object)msg.getContent();
-        if(contentRebut.equals("Initial request")) {
-          showMessage("Initial request received");
-          reply.setPerformative(ACLMessage.AGREE);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      showMessage("Answer sent"); //: \n"+reply.toString());
-      
-      return reply;
-    } //endof prepareResponse
-
-
-   
-
-    /**
-     * This method is called after the response has been sent and only when
-     * one of the following two cases arise: the response was an agree message
-     * OR no response message was sent. This default implementation return null
-     * which has the effect of sending no result notification. Programmers
-     * should override the method in case they need to react to this event.
-     * @param msg ACLMessage the received message
-     * @param response ACLMessage the previously sent response message
-     * @return ACLMessage to be sent as a result notification (i.e. one of
-     * inform, failure).
-     */
-    protected ACLMessage prepareResultNotification(ACLMessage msg, ACLMessage response) {
-
-      // it is important to make the createReply in order to keep the same context of
-      // the conversation
-      ACLMessage reply = msg.createReply();
-      reply.setPerformative(ACLMessage.INFORM);
-
-      try {
-        reply.setContentObject(game.getInfo());
-      } catch (Exception e) {
-        reply.setPerformative(ACLMessage.FAILURE);
-        System.err.println(e.toString());
-        e.printStackTrace();
-      }
-      showMessage("Answer sent"); //+reply.toString());  
-      
-      // Call the simulator
-		/*SequentialBehaviour sb = new SequentialBehaviour();
-		sb.addSubBehaviour(new Simulator());
-		this.myAgent.addBehaviour(sb);*/
-      this.myAgent.addBehaviour(new TurnControlBehavior(this.myAgent, game.getInfo().getTimeout()));
-      
-      return reply;
-
-    } //endof prepareResultNotification
-
-
-    /**
-     *  No need for any specific action to reset this behaviour
-     */
-    public void reset() {
-    }
-
-  } //end of RequestResponseBehaviour
-
 
   /*************************************************************************/
 
