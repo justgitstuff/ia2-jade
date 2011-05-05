@@ -9,6 +9,9 @@ public class ProtocolContractNetInitiator extends ContractNetInitiator{
 	//i el missatge (CFP) a enviar
 	public ProtocolContractNetInitiator (Agent myAgent, ACLMessage msg)
 	{
+		//ficar tots els receivers. el msg ha de portar-ho tot. aquí o a fora quan ho instancies.
+		//msg.addReceiver();
+		
 		super(myAgent, msg); 
 	}
 	
