@@ -6,8 +6,10 @@ import jade.lang.acl.*;
 
 public class SendFinishLoad extends Agent{
 	
+	private String pos;
+	
 	public SendFinishLoad (Agent myAgent, String content)
-	{	//Send to manager harvester that all garbage is load, and content have the distance of central reciclage.
+	{	//Send to manager harvester that all garbage is load, and content have the distance of recycling center.
 		ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
 		msg.setProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
 		msg.setContent(content);
@@ -21,9 +23,9 @@ public class SendFinishLoad extends Agent{
 		//Returns the integer corresponding to the performative, 1 if is agree.
 		if (msg2.getPerformative()==1){
 			//Content have the position of central recycling.
-			String pos = msg2.getContent();
+			setPos(msg2.getContent());						
 			////!!!!!return pos; ficar el pos en alguna variable? que retorni algu el constructor?
-			System.out.println("El manager: "+msg2.getSender()+", ha enviat el content: "+pos);
+			System.out.println("El manager: "+msg2.getSender()+", ha enviat el content: "+getPos()+".");
 			//int 14 is refuse
 		}else if (msg2.getPerformative()==14) System.out.println("El manager: "+msg2.getSender()+", ha refusat.");
 		
@@ -55,6 +57,14 @@ public class SendFinishLoad extends Agent{
 		} catch (FIPAException e) {
 			System.out.println("["+getLocalName()+"]:"+" Receiver not found"); return null;
 		}
+	}
+	
+	public String getPos() {
+		return pos;
+	}
+
+	public void setPos(String pos) {
+		this.pos = pos;
 	}
 
 }
