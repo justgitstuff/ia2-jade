@@ -1,26 +1,14 @@
 package sma;
 
-import java.lang.*;
-import java.io.*;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-import jade.util.leap.ArrayList;
-import jade.util.leap.List;
-import jade.wrapper.AgentController;
 import jade.core.*;
-import jade.core.Runtime;
-import jade.core.behaviours.*;
 import jade.domain.*;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPANames.InteractionProtocol;
 import jade.lang.acl.*;
-import jade.content.*;
-import jade.content.onto.*;
 import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
 import sma.ontology.*;
-import sma.CentralAgent.Informer;
-import sma.gui.*;
+
 import java.util.*;
 /**
  * <p><B>Title:</b> IA2-SMA</p>
@@ -33,11 +21,14 @@ import java.util.*;
  */
 public class CoordinatorAgent extends Agent {
 
-  private AuxInfo info;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2444910571881207948L;
+
+private AuxInfo info;
 
   private AID centralAgent, harvesterManagerAgent, scoutManagerAgent;
-
-  private java.util.List<Cell> agentList;
 
   public CoordinatorAgent() {
   }
@@ -83,7 +74,6 @@ public class CoordinatorAgent extends Agent {
     searchCriterion.setType(UtilsAgents.CENTRAL_AGENT);
     this.centralAgent = UtilsAgents.searchAgent(this, searchCriterion);
 
-
     // we search for manager Agents
     searchCriterion.setType(UtilsAgents.HARVESTER_MANAGER_AGENT);
     this.harvesterManagerAgent= UtilsAgents.searchAgent(this, searchCriterion);
@@ -124,10 +114,8 @@ public class CoordinatorAgent extends Agent {
   {
 
 	@Override
-	protected ACLMessage prepareResultNotification(ACLMessage arg0,
-			ACLMessage arg1) throws FailureException {
-		// TODO Auto-generated method stub
-		return super.prepareResultNotification(arg0, arg1);
+	protected ACLMessage prepareResultNotification(ACLMessage arg0,	ACLMessage arg1) throws FailureException {
+		return null;
 	}
 
 	@Override
@@ -267,16 +255,15 @@ public class CoordinatorAgent extends Agent {
         info = (AuxInfo)msg.getContentObject();
         if (info instanceof AuxInfo) {
           //showMessage("Visual range for each agent: ");
-          HashMap hm = info.getAgentsInitialPosition();
-          Iterator it = hm.keySet().iterator();
+          HashMap<?, ?> hm = info.getAgentsInitialPosition();
+          Iterator<?> it = hm.keySet().iterator();
           while (it.hasNext()){
         	  InfoAgent ia = (InfoAgent)it.next();
               //System.out.println(ia);
               java.util.List<Cell> pos = (java.util.List<Cell>)hm.get(ia);
-              Iterator it2 = pos.iterator();
+              Iterator<Cell> it2 = pos.iterator();
               while (it2.hasNext()){
-            	  Cell c = (Cell)it2.next();
-            	  //System.out.println("cell: " + c);  
+            	  it2.next();
               }
               //System.out.println();              
           }

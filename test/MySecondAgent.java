@@ -2,13 +2,15 @@ import jade.core.*;
 import jade.core.behaviours.*;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.*;
-import jade.proto.*;
-import jade.lang.acl.*;
-import java.util.*;
 
 public class MySecondAgent extends Agent {
 
-  void RegisterDF() {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7270886249073598835L;
+
+void RegisterDF() {
     DFAgentDescription dfd = new DFAgentDescription();
     ServiceDescription sd = new ServiceDescription();
     sd.setName("MyAgent2");
@@ -53,6 +55,11 @@ public class MySecondAgent extends Agent {
 
   class HelloBehaviour extends OneShotBehaviour {
 	  
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -272314131295129668L;
+
 	public HelloBehaviour(){
 		super ();
 	}
@@ -66,6 +73,11 @@ public class MySecondAgent extends Agent {
   
   class GoodbyeBehaviour extends OneShotBehaviour {
 	  
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1699355093844157979L;
+
 		public GoodbyeBehaviour(){
 			super ();
 		}
@@ -79,6 +91,11 @@ public class MySecondAgent extends Agent {
   
   class OnceAgain extends OneShotBehaviour {
 	  
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1586150530550406229L;
+
 		public OnceAgain(Agent myagent){
 			super ();
 			this.myAgent=myagent;
