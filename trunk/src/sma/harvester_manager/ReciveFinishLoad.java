@@ -1,7 +1,5 @@
 package sma.harvester_manager;
 import jade.core.*;
-import jade.domain.FIPAAgentManagement.*;
-import jade.domain.*;
 import jade.lang.acl.*;
 
 public class ReciveFinishLoad extends Agent{
