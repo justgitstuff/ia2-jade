@@ -1,10 +1,67 @@
 package sma.harvester_manager;
+import java.io.IOException;
+import java.util.List;
+
+import sma.ontology.Cell;
+
 import jade.core.*;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.*;
 import jade.lang.acl.*;
+import jade.proto.AchieveREInitiator;
 
-public class SendFinishLoad extends Agent{
+public class SendFinishLoad{
+	
+	//Send to manager harvester that all garbage is load, and content have all the distance of all recycling center (in one list).
+	public void addBehaivour(Agent agent, DistanceList content) throws IOException{
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
+		msg.setProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
+		msg.setContentObject(content);
+		msg.setSender(agent.getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(sma.UtilsAgents.HARVESTER_MANAGER_AGENT);
+		msg.addReceiver(sma.UtilsAgents.searchAgent(agent, sd));
+		agent.addBehaviour(new SendFinishL(agent, msg));
+	}
+	
+	public class SendFinishL extends AchieveREInitiator{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public SendFinishL(Agent arg0, ACLMessage arg1){
+			super(arg0, arg1);
+		}
+		
+		@Override
+		protected void handleAgree(ACLMessage msg) {
+			//Receive agree from the manager harvester, and the content is the position of the recycling center
+			//enviar-li la cell a on vull que vagi perquè ja té la posició.
+			try {
+				sma.ontology.Cell cel = (Cell) msg.getContentObject();
+			} catch (UnreadableException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		protected void handleRefuse(ACLMessage arg0) {
+			//Receive refuse from the manager harvester. The content is null.
+			System.out.println("From Harvester Manager: refuse in finish load.");
+		}
+		
+		
+	}
+	
+	
+}
+
+
+
+
+/*public class SendFinishLoad extends Agent{
 	
 	private String pos;
 	
@@ -68,3 +125,4 @@ public class SendFinishLoad extends Agent{
 	}
 
 }
+*/
