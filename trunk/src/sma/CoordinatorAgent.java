@@ -146,8 +146,6 @@ private AuxInfo info;
 			    }
 			    //we add a behavior that sends the message and waits for an answer
 			    this.myAgent.addBehaviour(new MessageSender(this.myAgent, requestInicial));
-
-	        	
 	        }
 	      } catch (Exception e) {
 	        e.printStackTrace();
@@ -186,19 +184,7 @@ private AuxInfo info;
 	}
 	  
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-
+ 
   /*************************************************************************/
 
   /**

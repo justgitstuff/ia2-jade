@@ -53,6 +53,11 @@ public class HarvesterManagerAgent extends Agent{
 	    // Add a Behavior to receive queries from other agents
 	    this.addBehaviour(new QueriesReceiver(this,null));
 	    
+	    // Add a Behavior to receive finished dropped garbage
+		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
+		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+	    this.addBehaviour(new ReciveFinishDownload(this, MessageTemplate.and(mt1,mt2)));    
+	    
 		super.setup();
 	}
 	
@@ -93,6 +98,9 @@ public class HarvesterManagerAgent extends Agent{
 					game=(InfoGame)objectReceived;
 					showMessage("New turn received from coordinator: "+game.getInfo().getTurn());
 					//TODO pass the game to all my agents
+				}else
+				{
+					showMessage("Message received received a string");
 				}
 				
 			} catch (UnreadableException e) {
