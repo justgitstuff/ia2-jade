@@ -1,8 +1,61 @@
 package sma.harvester_manager;
-import jade.core.*;
-import jade.lang.acl.*;
+import java.io.IOException;
 
-public class ReciveFinishLoad extends Agent{
+import sma.harvester_manager.ReciveFinishDownload.RecieveFinishWork;
+import jade.core.*;
+import jade.domain.FIPAAgentManagement.NotUnderstoodException;
+import jade.domain.FIPAAgentManagement.RefuseException;
+import jade.lang.acl.*;
+import jade.proto.AchieveREResponder;
+
+public class ReciveFinishLoad{
+	
+	public void addBehaivour(Agent agent){
+		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
+		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);
+		agent.addBehaviour(new RecieveFinishL(agent,MessageTemplate.and(mt1, mt2)));
+	}
+	
+	public class RecieveFinishL extends AchieveREResponder{		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public RecieveFinishL(Agent arg0, MessageTemplate arg1){
+			super(arg0, arg1);
+		}
+		
+		@Override
+		protected ACLMessage prepareResponse(ACLMessage arg0)
+				throws NotUnderstoodException, RefuseException {
+			DistanceList dist;			
+			
+			ACLMessage r= arg0.createReply();
+			try {
+				dist = (DistanceList) arg0.getContentObject();
+			} catch (UnreadableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//In dist have all the distance to recycling center.
+			//Choose the cell that i decided and return that cell.
+			r.setPerformative(ACLMessage.AGREE);
+			sma.ontology.Cell cel = new sma.ontology.Cell(1);
+			try {
+				r.setContentObject(cel);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+			return r;
+		}	
+		
+	}
+	
+}
+
+/*public class ReciveFinishLoad extends Agent{
 	
 	private String positions;
 
@@ -20,7 +73,7 @@ public class ReciveFinishLoad extends Agent{
 		//Send to harvester the position of recycling center where is that going to download.
 		ACLMessage msg2 = new ACLMessage(ACLMessage.AGREE);
 		msg2.setProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
-		msg2.setContent("la posició final del centre de reciclatge");
+		msg2.setContent("la posiciï¿½ final del centre de reciclatge");
 		msg2.setSender(myAgent.getAID());
 		msg2.addReceiver(msg.getSender());
 		myAgent.send(msg2);
@@ -31,9 +84,9 @@ public class ReciveFinishLoad extends Agent{
 		//Returns the integer corresponding to the performative, 4 if is confirm.
 		if (msg3.getPerformative()==4){
 			//finish of comunication.						
-			System.out.println("El harverster: "+msg3.getSender()+", ha enviat confirm i es tanca aquesta comunicació.");
+			System.out.println("El harverster: "+msg3.getSender()+", ha enviat confirm i es tanca aquesta comunicaciï¿½.");
 			//int 6 is failure
-		}else if (msg3.getPerformative()==6) System.out.println("El harvester: "+msg3.getSender()+", ha donat error en la comunicació pel motiu "+msg3.getContent()+".");
+		}else if (msg3.getPerformative()==6) System.out.println("El harvester: "+msg3.getSender()+", ha donat error en la comunicaciï¿½ pel motiu "+msg3.getContent()+".");
 	}
 		
 	public String getPositions() {
@@ -43,4 +96,4 @@ public class ReciveFinishLoad extends Agent{
 	public void setPositions(String positions) {
 		this.positions = positions;
 	}
-}
+}*/
