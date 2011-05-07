@@ -1,6 +1,8 @@
 package sma.harvester_manager;
 
 import sma.UtilsAgents;
+import sma.ontology.Cell;
+import sma.ontology.InfoAgent;
 import sma.ontology.InfoGame;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -50,14 +52,16 @@ public class HarvesterManagerAgent extends Agent{
 	      doDelete();
 	    }
 	    
-	    // Add a Behavior to receive queries from other agents
-	    this.addBehaviour(new QueriesReceiver(this,null));
+	    // Add a Behavior to receive Turns
+	    MessageTemplate mt=MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_TURN);
+	    this.addBehaviour(new QueriesReceiver(this,mt));
 	    
 	    // Add a Behavior to receive finished dropped garbage
-		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
+	    new ReciveFinishLoad().addBehavior(this);
+		/*MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 	    this.addBehaviour(new ReciveFinishDownload(this, MessageTemplate.and(mt1,mt2)));    
-	    
+	    */
 		super.setup();
 	}
 	
@@ -97,7 +101,27 @@ public class HarvesterManagerAgent extends Agent{
 					//Is the coordinator informing of a new turn
 					game=(InfoGame)objectReceived;
 					showMessage("New turn received from coordinator: "+game.getInfo().getTurn());
-					//TODO pass the game to all my agents
+					
+					//Find all my agents and send them the new turn
+					ACLMessage message= new ACLMessage(ACLMessage.REQUEST);
+					for(int x=0;x<game.getMap().length-1;x++)
+						for(int y=0;y<game.getMap()[x].length-1;y++)
+						{
+							Cell c=game.getCell(x, y);
+							if(c.isThereAnAgent())
+							{
+								InfoAgent a = c.getAgent();
+								if (a.getAgent().equals("H"))
+								{
+									message.addReceiver(a.getAID());
+								}
+							}
+						}
+					message.setProtocol(sma.UtilsAgents.PROTOCOL_TURN);
+					message.setSender(this.myAgent.getAID());
+					message.setContentObject(game);
+					this.myAgent.send(message);
+					
 				}else
 				{
 					showMessage("Message received received a string");
@@ -105,6 +129,9 @@ public class HarvesterManagerAgent extends Agent{
 				
 			} catch (UnreadableException e) {
 				showMessage("Received an Object that cannot be understood");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return super.handleRequest(arg0);
 		}

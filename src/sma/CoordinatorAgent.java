@@ -7,6 +7,7 @@ import jade.domain.FIPANames.InteractionProtocol;
 import jade.lang.acl.*;
 import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
+import sma.harvester_manager.MovementRely;
 import sma.ontology.*;
 
 import java.util.*;
@@ -80,33 +81,13 @@ private AuxInfo info;
     
     searchCriterion.setType(UtilsAgents.SCOUT_MANAGER_AGENT);
     this.scoutManagerAgent = UtilsAgents.searchAgent(this, searchCriterion);
-    
     // searchAgent is a blocking method, so we will obtain always a correct AID
-    
-   /**************************************************/
-/*    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
-    requestInicial.clearAllReceiver();
-    requestInicial.addReceiver(this.centralAgent);
-    requestInicial.setProtocol(InteractionProtocol.FIPA_REQUEST);
-    showMessage("Message OK");
-    try {
-      requestInicial.setContent("Initial request");
-      showMessage("Content OK" + requestInicial.getContent());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    //we add a behavior that sends the message and waits for an answer
-    this.addBehaviour(new RequesterBehaviour(this, requestInicial));
-
-    // setup finished. When we receive the last inform, the agent itself will add
-    // a behavior to send/receive actions
-    */
     
     //add a behavior to receive end turns and movement orders
     this.addBehaviour(new MessageReceiver(this, null));
+    //add a behavior to rely movement orders to Central Agent
+    new MovementRely().addBehavior(this, sma.UtilsAgents.CENTRAL_AGENT);
     
-
   } //endof setup
 
 
@@ -130,6 +111,7 @@ private AuxInfo info;
 	        if (contentRebut instanceof InfoGame)
 	        {
 	        	InfoGame game=(InfoGame)contentRebut;
+    	
 	        	reply.setPerformative(ACLMessage.AGREE);
 	        	showMessage("Turn received: "+game.getInfo().getTurn());
 	        	
@@ -138,7 +120,7 @@ private AuxInfo info;
 			    requestInicial.clearAllReceiver();
 			    requestInicial.addReceiver(harvesterManagerAgent);
 			    requestInicial.addReceiver(scoutManagerAgent);
-			    requestInicial.setProtocol(InteractionProtocol.FIPA_QUERY);
+			    requestInicial.setProtocol(sma.UtilsAgents.PROTOCOL_TURN);
 			    try {
 			      requestInicial.setContentObject(game);
 			    } catch (Exception e) {

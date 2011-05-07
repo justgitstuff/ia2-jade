@@ -10,7 +10,7 @@ import jade.proto.AchieveREResponder;
 
 public class ReciveFinishLoad{
 	
-	public void addBehaivour(Agent agent){
+	public void addBehavior(Agent agent){
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);
 		agent.addBehaviour(new RecieveFinishL(agent,MessageTemplate.and(mt1, mt2)));
