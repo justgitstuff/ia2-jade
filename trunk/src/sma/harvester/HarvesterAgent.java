@@ -2,13 +2,19 @@ package sma.harvester;
 
 import sma.UtilsAgents;
 import sma.ontology.InfoGame;
-import sma.pathFinding.Path;
 import sma.pathFinding.PathTest;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.FailureException;
+import jade.domain.FIPAAgentManagement.NotUnderstoodException;
+import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
+import jade.proto.AchieveREResponder;
 
 public class HarvesterAgent extends Agent{
 
@@ -79,6 +85,10 @@ public class HarvesterAgent extends Agent{
 				showMessage("Tinc un joc amb "+game.getInfo().getNumScouts()+" scouts");
 			}
 		}
+	    
+	    //Adds a behavior to update game info each turn
+	    addTurnControl();
+	    
 		super.setup();
 	}
 
@@ -88,6 +98,50 @@ public class HarvesterAgent extends Agent{
 		super.takeDown();
 	}
 
+	// TURN CONTROL
+	public void addTurnControl()
+	{
+	    MessageTemplate mt= MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_TURN);
+		this.addBehaviour(new MessageReceiver(this,mt));
+	}
+	
+	class MessageReceiver extends AchieveREResponder
+	{
+		@Override
+		protected ACLMessage prepareResultNotification(ACLMessage arg0,
+				ACLMessage arg1) throws FailureException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected ACLMessage prepareResponse(ACLMessage arg0)
+				throws NotUnderstoodException, RefuseException {
+			ACLMessage response=arg0.createReply();
+			
+			try {
+				if(arg0.getContentObject() instanceof InfoGame)
+				{
+					response.setPerformative(ACLMessage.AGREE);
+					game=(InfoGame) arg0.getContentObject();
+					showMessage("New turn "+ game.getInfo().getTurn());
+					//TODO you have the new game info on game
+				}else{
+					throw new NotUnderstoodException("Not the expected object type");
+				}
+			} catch (UnreadableException e) {
+				response.setPerformative(ACLMessage.FAILURE);
+			}
+			
+			return response;
+		}
+
+		private static final long serialVersionUID = -2066908850596603472L;
+
+		public MessageReceiver(Agent arg0, MessageTemplate arg1) {
+			super(arg0, arg1);
+		}
+	}
 
 
 }

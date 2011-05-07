@@ -22,6 +22,7 @@ public class Cell implements Serializable {
   
   private int type;
 
+  private boolean haveAgent = false;
   private InfoAgent agent = null;
   
   //only for buildings
@@ -100,7 +101,7 @@ public Cell(int type) {
 
 
   public boolean isThereAnAgent() { 
-	  return (agent!=null);
+	  return (this.haveAgent);
   }
   
   public void addAgent(InfoAgent newAgent) throws Exception {
@@ -114,6 +115,7 @@ public Cell(int type) {
 
     // if everything is OK, we add the new agent to the cell
     this.agent=newAgent;
+    this.haveAgent=true;
   }
   
   private boolean isAgent(InfoAgent infoAgent) {
@@ -132,6 +134,7 @@ public Cell(int type) {
     if(!this.isAgent(oldInfoAgent)) throw new Exception("InfoAgent not here");
     // if everything is OK, we remove the agent from the cell
     this.agent=null;
+    this.haveAgent=false;
   }
   
   public InfoAgent getAgent() { return this.agent; }

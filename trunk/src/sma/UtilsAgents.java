@@ -42,6 +42,8 @@ public class UtilsAgents {
   
   public static String PROTOCOL_QUERY = "Query";
   public static String PROTOCOL_DOWNLOAD = "Finish_work";
+  public static String PROTOCOL_MOVEMENT = "Movement";
+  public static String PROTOCOL_TURN = "Turn";
   public static String BE_SCOUT = "Be_scout";
   public static String OK = "OK";
   public static String FAILURE = "failure";

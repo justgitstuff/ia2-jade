@@ -64,9 +64,7 @@ public class MovementSender{
 	    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
 	    requestInicial.clearAllReceiver();
 	    requestInicial.addReceiver(destination);
-	    requestInicial.setProtocol(InteractionProtocol.FIPA_QUERY);
-	    
-
+	    requestInicial.setProtocol(sma.UtilsAgents.PROTOCOL_MOVEMENT);
 	    
 	    try {
 	      requestInicial.setContentObject(m);
