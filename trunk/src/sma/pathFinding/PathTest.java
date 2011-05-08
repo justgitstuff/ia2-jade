@@ -160,7 +160,7 @@ public class PathTest{
 	public int distanciaPesos(Path path){
 		int x,y,dist=0;
 		
-		for(int i=0;i<path.getLength();i++){
+		for(int i=1;i<path.getLength()-1;i++){
 			
 			//System.out.println(" Pas"+ (i+1) + ":  " + path.getStep(i).getX()+" "+ path.getStep(i).getY());
 			 x=path.getStep(i).getX();
