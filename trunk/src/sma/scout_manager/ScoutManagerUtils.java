@@ -1,7 +1,9 @@
 package sma.scout_manager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sma.gui.Quadrant;
 import sma.ontology.Cell;
@@ -62,40 +64,12 @@ public class ScoutManagerUtils {
 	 * @return
 	 */
 	public static Point chooseUnchartedPointToSendScout(Quadrant quadrant, Cell[][] map, Point scoutPosition) {
-		// Divide the quadrant into smaller rectangles
-		List<Rectangle> rectangles = new ArrayList<Rectangle>();
-		
-		int iIni = 0;
-		int jIni = 0;
-		boolean notUnchartedZone = false;
-		for (int i = 0; i < quadrant.x2; i++) {
-			if (notUnchartedZone) {
-				rectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); // For when there is an end of line.
-				notUnchartedZone = false;
-			}
-			if (i == 0) {
-				notUnchartedZone = true;
-			}
-			for (int j = 0; j < quadrant.y2; j++) {
-				if (map[i][j] != null && notUnchartedZone) {
-					rectangles.add(new Rectangle(iIni, i, jIni, j));
-					notUnchartedZone = false;
-				} else if (map[i][j] == null && !notUnchartedZone) {
-					notUnchartedZone = true;
-					iIni = i;
-					jIni = j;
-				}
-			}
-		}
-		if (notUnchartedZone) {
-			rectangles.add(new Rectangle(iIni, quadrant.x2, jIni, quadrant.y2)); // For the last line.
-		}
-		
+		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
 		
 		// Choose a good point to go to discover!
 		Point betterPoint = new Point();
 		double compareValue = Double.MAX_VALUE;
-		for (Rectangle rectangle:rectangles) {
+		for (Rectangle rectangle:unchartedRectangles) {
 			// Calculate the value of omptimality for each rectangle
 			Point center = new Point(rectangle.x1, (rectangle.y2 - rectangle.y1) / 2);
 			double distance = Math.hypot((scoutPosition.x - center.x), (scoutPosition.y - center.y));
@@ -110,4 +84,89 @@ public class ScoutManagerUtils {
 		return betterPoint;
 	}
 
+	
+	private static List<Rectangle> divideQuadrantIntoSmallerRectangles(Quadrant quadrant, Cell[][] map) {
+		List<Rectangle> unchartedRectangles = new ArrayList<Rectangle>();
+		
+		int iIni = 0;
+		int jIni = 0;
+		boolean notUnchartedZone = false;
+		for (int i = 0; i <= quadrant.x2; i++) {
+			if (notUnchartedZone) {
+				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); // For when there is an end of line.
+				notUnchartedZone = false;
+			}
+			if (i == 0) {
+				notUnchartedZone = true;
+			}
+			for (int j = 0; j <= quadrant.y2; j++) {
+				if (map[i][j] != null && notUnchartedZone) {
+					unchartedRectangles.add(new Rectangle(iIni, i, jIni, j));
+					notUnchartedZone = false;
+				} else if (map[i][j] == null && !notUnchartedZone) {
+					notUnchartedZone = true;
+					iIni = i;
+					jIni = j;
+				}
+			}
+		}
+		if (notUnchartedZone) {
+			unchartedRectangles.add(new Rectangle(iIni, quadrant.x2, jIni, quadrant.y2)); // For the last line.
+		}
+		
+		return unchartedRectangles;
+	}
+
+	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map) {
+		// TODO fer la suma de les files sense descobrir
+		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
+		
+		Map<Integer, List<Rectangle>> groups = new HashMap<Integer, List<Rectangle>>();
+		
+		boolean inContact = false;
+		for (Rectangle rectangleToCheck : unchartedRectangles) {
+			inContact = false;
+			for (Integer key : groups.keySet()) {
+				if (groups.get(key).size() > 0) {
+					// Take the last from the group
+					Rectangle rectangle = groups.get(key).get(groups.get(key).size() - 1);
+					// Check if it is in contact
+					if (rectangleToCheck.y1 <= rectangle.y2 && rectangleToCheck.y2 >= rectangle.y1
+							&& rectangleToCheck.x1 - 1 == rectangle.x1) {
+						groups.get(key).add(rectangleToCheck);
+						inContact = true;
+						break;
+					}
+				}
+				
+			}
+			
+			if (!inContact) {
+				List<Rectangle> newRectangleList = new ArrayList<Rectangle>();
+				newRectangleList.add(rectangleToCheck);
+				groups.put(groups.size(), newRectangleList);
+			}
+		}
+		
+		// Determine the biggest group of uncharted rectangles
+		int biggestGroup = 0;
+		int biggestGroupSize = 0;
+		for (Integer key:groups.keySet()) {
+			int groupSize = 0;
+			for (Rectangle rectangle:groups.get(key)) {
+				groupSize += rectangle.y2 - rectangle.y1 + 1;
+			}
+			
+			if (groupSize > biggestGroupSize) {
+				biggestGroup = key;
+				biggestGroupSize = groupSize;
+			}
+		}
+		
+		// Determine a good point in the biggest uncharted zone
+		int x = (groups.get(biggestGroup).size() - 1) / 2;
+		int y = ((groups.get(biggestGroup).get(x).y2 - groups.get(biggestGroup).get(x).y1) / 2);
+		
+		return new Point(x, y);
+	}
 }
