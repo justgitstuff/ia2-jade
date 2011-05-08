@@ -1,5 +1,1 @@
-<<<<<<< .mine
-( ap-description  :name "GX280:1099/JADE" :ap-services (set ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://GX280:7778/acc)) ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://GX280:53062/acc))))
-=======
-( ap-description  :name "GX280:1099/JADE" :ap-services (set ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://GX280:7778/acc)) ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://GX280:56205/acc))))
->>>>>>> .r26
+( ap-description  :name "David22:1099/JADE" :ap-services (set ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://David22:7778/acc))))
