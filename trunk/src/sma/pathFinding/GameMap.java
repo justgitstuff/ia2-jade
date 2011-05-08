@@ -20,8 +20,8 @@ public class GameMap {
 	//public static final int HEIGHT = 30;
 	
 	// MEDIDAS DE NUESTRO SISTEMA VERDADERO
-	public static final int WIDTH=20;
-	public static final int HEIGHT=20;
+	public int WIDTH;
+	public int HEIGHT;
 	
 	
 	
@@ -46,11 +46,11 @@ public class GameMap {
 	public static final int HARVESTER = 5;
 	
 	/** The terrain settings for each tile in the map */
-	private int[][] terrain = new int[WIDTH][HEIGHT];
+	private int[][] terrain ;
 	/** The unit in each tile of the map */
-	private int[][] units = new int[WIDTH][HEIGHT];
+	private int[][] units ;
 	/** Indicator if a given tile has been visited during the search */
-	private boolean[][] visited = new boolean[WIDTH][HEIGHT];
+	private boolean[][] visited;
 	
 	/**
 	 * Create a new test map with some default configuration
@@ -60,21 +60,26 @@ public class GameMap {
 		this.game=infoGame;
 		
 			
-		//this.WIDTH=20;
-		//this.HEIGHT=20;
+		WIDTH=this.game.getMap().length;
+		HEIGHT=this.game.getMap().length;
+		
+		terrain = new int[WIDTH][HEIGHT];
+	    units = new int[WIDTH][HEIGHT];
+		visited = new boolean[WIDTH][HEIGHT];
 		
 		
 		
+	//	System.out.println("long mappppp" + this.game.getMap().length);
 		
 		for(int x=0;x<WIDTH;x++){
 			for(int y=0;y<HEIGHT;y++){
 				
-				if (this.game.getCell(x, y)!=null){
+				if (game.getCell(x, y)!=null){
 					//System.out.println(this.game.getCell(x, y).getCellType());
-					//System.out.println(this.game.getCell(x, y).isThereAnAgent());
+					System.out.println(game.getCell(x, y).isThereAnAgent());
 					//private char garbageType = '-'; //G=Glass, P=Plastic, M=Metal, P=Paper
 					
-					terrain[x][y]=this.game.getCell(x, y).getCellType();
+					terrain[x][y]=game.getCell(x, y).getCellType();
 				
 					
 					// NO SURTEN ELS AGENTS RECONEGUTS
