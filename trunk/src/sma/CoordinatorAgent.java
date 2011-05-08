@@ -8,6 +8,9 @@ import jade.lang.acl.*;
 import jade.proto.AchieveREInitiator;
 import jade.proto.AchieveREResponder;
 import sma.harvester_manager.MovementRely;
+import sma.moves.Movement;
+import sma.moves.MovementSender;
+import sma.moves.Movement.Direction;
 import sma.ontology.*;
 
 import java.util.*;
@@ -114,7 +117,7 @@ private AuxInfo info;
     	
 	        	reply.setPerformative(ACLMessage.AGREE);
 	        	showMessage("Turn received: "+game.getInfo().getTurn());
-	        	
+  	
 	        	//Send map to all managers
 			    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
 			    requestInicial.clearAllReceiver();

@@ -27,7 +27,7 @@ public class Cell implements Serializable {
   
   //only for buildings
   private int garbageUnits = 0;
-  private char garbageType = '-'; //G=Glass, P=Plastic, M=Metal, P=Paper
+  private char garbageType = '-'; //G=Glass, P=Plastic, M=Metal, A=Paper
   
   //only for recycling centers
   private int[] garbagePoints = {0,0,0,0}; //(Glass, Plastic, Metal, Paper)

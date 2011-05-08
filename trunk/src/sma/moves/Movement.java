@@ -2,6 +2,7 @@ package sma.moves;
 
 import java.io.Serializable;
 
+import jade.core.AID;
 import jade.core.Agent;
 
 public class Movement implements Serializable {
@@ -17,18 +18,30 @@ public class Movement implements Serializable {
 	}
 	
 	public enum Type{
-		METAL, PAPER;
+		METAL, PAPER, GLASS, PLASTIC;
+		public boolean equals(char c)
+		{
+			switch (c)
+			{
+			case 'M': return this.equals(METAL);
+			case 'P': return this.equals(PLASTIC);
+			case 'G': return this.equals(GLASS);
+			case 'A': return this.equals(PAPER);
+			}
+			return false;
+		}
+		
 	}
 	
-	private Agent agent;
+	private AID agent;
 	private Direction direction;
 	private Action action;
 	private Type type;
 	
-	public void setAgent(Agent agent) {
+	public void setAgent(AID agent) {
 		this.agent = agent;
 	}
-	public Agent getAgent() {
+	public AID getAgent() {
 		return agent;
 	}
 	/**
@@ -48,7 +61,7 @@ public class Movement implements Serializable {
  * @param action
  * @param direction
  */
-	public Movement(Agent agent, Action action, Direction direction)
+	public Movement(AID agent, Action action, Direction direction)
 	{
 		this.agent=agent;
 		this.action=action;
@@ -65,7 +78,7 @@ public class Movement implements Serializable {
 	 * @param direction
 	 * @param type
 	 */
-	public Movement(Agent agent, Action action, Direction direction, Type type)
+	public Movement(AID agent, Action action, Direction direction, Type type)
 	{
 		this.agent=agent;
 		this.action=action;
