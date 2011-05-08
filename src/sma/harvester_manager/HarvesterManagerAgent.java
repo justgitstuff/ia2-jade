@@ -122,9 +122,6 @@ public class HarvesterManagerAgent extends Agent{
 					message.setContentObject(game);
 					this.myAgent.send(message);
 					
-				}else
-				{
-					showMessage("Message received received a string");
 				}
 				
 			} catch (UnreadableException e) {

@@ -11,17 +11,20 @@ import jade.proto.AchieveREInitiator;
 
 public class MovementSender{
 
-	Agent my;
+	AID my;
 	AID destination;
+	Agent myAgent;
 	
 	/**
 	 * Implements sending turn decisions to a higher Agent
-	 * @param agent - the agent that wants to move
+	 * @param agent - the agent that sends the message
+	 * @param aid - the AID of the Agent that wants to move
 	 * @param destination - the type of agent to send it to. Example: UtilsAgents.COORDINATOR_AGENT
 	 */
-	public MovementSender(Agent agent, String destination)
+	public MovementSender(Agent agent, AID aid, String destination)
 	{
-		this.my=agent;
+		this.my=aid;
+		myAgent=agent;
 		
 		   // Search for destination Agent
 		   ServiceDescription searchCriterion = new ServiceDescription();
@@ -35,7 +38,7 @@ public class MovementSender{
 	 */
 	public void go(Movement.Direction d)
 	{
-	    Movement m=new Movement(my,Action.GO,d);
+	    Movement m=new Movement(this.my,Action.GO,d);
 		send(m);
 	}
 	/**
@@ -72,7 +75,7 @@ public class MovementSender{
 	      e.printStackTrace();
 	    }
 	    //we add a behavior that sends the message and waits for an answer
-		my.addBehaviour(new MessageSender(my,requestInicial));
+		myAgent.addBehaviour(new MessageSender(myAgent,requestInicial));
 	}
 
 	class MessageSender extends AchieveREInitiator

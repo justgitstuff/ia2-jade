@@ -10,6 +10,7 @@ import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPANames.InteractionProtocol;
 import jade.lang.acl.*;
 import jade.proto.AchieveREInitiator;
+import jade.proto.AchieveREResponder;
 import sma.moves.Movement;
 
 import sma.ontology.*;
@@ -156,6 +157,10 @@ public class CentralAgent extends Agent {
    
    // Start the simulation
    this.addBehaviour(new TurnControlBehavior(this, game.getInfo().getTimeout()));
+   
+   // Add a behavior to receive movement orders
+   MessageTemplate mt=MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_MOVEMENT);
+   this.addBehaviour(new MovesReceiver(this, mt));
    
    
   } //endof setup
@@ -330,9 +335,144 @@ private void updatePublicGame()
 
   /*************************************************************************/
 
-  class MovesReceiver extends AchieveREInitiator
+  class MovesReceiver extends AchieveREResponder
   {
-	private Cell findAgent(Agent a)
+	public MovesReceiver(Agent arg0, MessageTemplate arg1) {
+		super(arg0, arg1);
+	}
+	
+	@Override
+	protected ACLMessage prepareResponse(ACLMessage arg0)
+			throws NotUnderstoodException, RefuseException {
+		Cell origin = null,destination;
+		InfoAgent ia = null;
+		ACLMessage response=arg0.createReply();
+		int dx=0,dy=0,x,y;
+		sma.moves.Movement moveOrder;
+		try {
+			moveOrder = (Movement) arg0.getContentObject();
+		} catch (UnreadableException e1) {
+			moveOrder=null;
+			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+		}
+		if(moveOrder!=null)
+		{
+			//showMessage("Received movement order from "+moveOrder.getAgent().getLocalName());
+			origin=findAgent(moveOrder.getAgent());	
+			x=origin.getColumn();
+			y=origin.getRow();
+			//showMessage("I have its position "+origin);
+			switch (moveOrder.getDirection())
+			{
+				case UP:dy=-1;/*showMessage("UP");*/break;
+				case DOWN:dy=1;/*showMessage("DOWN");*/break;
+				case LEFT:dx=-1;/*showMessage("LEFT");*/break;
+				case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
+			}
+			//showMessage("Will move "+dx+" "+dy);
+			destination=game.getMap()[y+dy][x+dx];
+			//showMessage("I have its destination "+destination);
+			
+			switch (moveOrder.getAction())
+			{
+			case GO:
+				try{
+					//showMessage("Its a go order");
+					ia=origin.getAgent();
+					//showMessage("Have the agent to remove");
+					origin.removeAgent(ia);
+					//showMessage("Agent Removed");
+					destination.addAgent(ia);
+					//showMessage("Agent added to new position");
+					response.setPerformative(ACLMessage.AGREE);
+				}catch (Exception e) {
+					response.setPerformative(ACLMessage.FAILURE);
+					//showMessage("Could not move to that position");
+					if(!origin.isThereAnAgent())
+						try {
+							origin.addAgent(ia);
+						} catch (Exception e1) {
+							showMessage("FATAL ERROR: Cannot Undo this action");
+						}
+				}break;
+			case GET:
+				try
+				{
+					getGarbage(moveOrder, origin, destination);
+					response.setPerformative(ACLMessage.AGREE);
+				}catch(Exception e){
+					response.setPerformative(ACLMessage.FAILURE);
+				}
+				break;
+			case PUT:
+				break;
+			}
+		}
+
+		return response;
+	}
+	
+	private boolean agentIsAbleToCarry(InfoAgent agent, char garbageType)
+	{
+		switch (garbageType)
+		{
+		case 'G': return agent.getGarbageType()[0];
+		case 'P': return agent.getGarbageType()[1];
+		case 'M': return agent.getGarbageType()[2];
+		case 'A': return agent.getGarbageType()[3];
+		}
+		return false;
+	}
+	
+	private void getGarbage(Movement moveOrder, Cell origin, Cell destination) throws Exception {
+		// Check if destination is a Building
+		if (destination.getCellType()!=Cell.BUILDING) throw new Exception();
+		// Check if destination has the type of garbage we want to get
+		if (!moveOrder.getType().equals(destination.getGarbageType())) throw new Exception();
+		// Check if destination has enough garbage units 
+		int gu=destination.getGarbageUnits();
+		if (gu<1) throw new Exception();
+		// Check if agent has enough room to carry more garbage
+		InfoAgent agent=origin.getAgent();
+		int au=agent.getUnits();
+		if (au==agent.getMaxUnits()) throw new Exception();
+		// Check if agent has the ability to carry that type of garbage
+		if(!agentIsAbleToCarry(agent, destination.getGarbageType())) throw new Exception();
+	
+		// All OK, go ahead with getting garbage
+		destination.setGarbageUnits(gu-1);
+		agent.setUnits(au+1);
+		agent.setCurrentType(destination.getGarbageType());
+		
+		// TODO discrimine when agent already has garbage and tries to get a different type of garbage
+	}
+	
+	private void putGarbage(Movement moveOrder, Cell origin, Cell destination) throws Exception
+	{
+		// Check if destination is a recycling center
+		if (destination.getCellType()!=Cell.RECYCLING_CENTER) throw new Exception();
+		// Check if destination accepts this type of garbage
+		InfoAgent agent=origin.getAgent();
+		int garbageType =agent.getCurrentType();
+		int points;
+		points=destination.getGarbagePoints()[garbageType];
+		if(points==0) throw new Exception();
+		// Check if agent has garbage
+		int au=agent.getUnits();
+		if(au==0) throw new Exception();
+		
+		// All OK, go ahead putting garbage
+		agent.setUnits(au-1);
+		// TODO complete this
+		
+	}
+
+	@Override
+	protected ACLMessage prepareResultNotification(ACLMessage arg0,
+			ACLMessage arg1) throws FailureException {
+		return null;
+	}
+	private Cell findAgent(AID a)
 	{
         Cell agentPosition=null;
 		for(int x=0;x<game.getMap().length-1;x++)
@@ -341,58 +481,17 @@ private void updatePublicGame()
 				Cell c=game.getCell(x,y);
 	         	  if(c.isThereAnAgent())
 	         	  {
-	         		  if(c.getAgent().getAID().equals(a.getAID())){
+	         		  if(c.getAgent().getAID().equals(a)){
 	         			  agentPosition=c; 
 	         		  }
 	         	  }
 			}
 		return agentPosition;
 	}
-	@Override
-	protected void handleInform(ACLMessage arg0) {
-		Cell origin = null,destination;
-		InfoAgent ia = null;
-		int dx=0,dy=0,x,y;
-		try {
-			sma.moves.Movement moveOrder=(Movement) arg0.getContentObject();
-			origin=findAgent(moveOrder.getAgent());
-			x=origin.getColumn();
-			y=origin.getRow();
-			switch (moveOrder.getDirection())
-			{
-				case UP:dy=-1;break;
-				case DOWN:dy=1;break;
-				case LEFT:dx=-1;break;
-				case RIGHT:dx=1;break;
-			}
-			destination=game.getCell(x+dx, y+dy);
-			ia=origin.getAgent();
-			origin.removeAgent(ia);
-			destination.addAgent(ia);		
-		} catch (UnreadableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			try {
-				if(!origin.isThereAnAgent()) origin.addAgent(ia);
-			} catch (Exception e1) {
-				showMessage("FATAL ERROR: Cannot Undo this action");
-			}
-		}
 
-		super.handleInform(arg0);
-	}
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1637780111859751489L;
 
-	public MovesReceiver(Agent arg0, ACLMessage arg1) {
-		
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
-	}
+
 	  
   }
 
