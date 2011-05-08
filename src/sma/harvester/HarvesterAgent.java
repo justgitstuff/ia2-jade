@@ -57,9 +57,40 @@ public class HarvesterAgent extends Agent{
 			{
 				
 				// CONTROL MAPA, el carragem i funcions d'us
-				PathTest test = new PathTest(this.game);	
-					
-				//test.PosicioInicial(15,15,1);
+				//PathTest test = new PathTest(this.game);	
+				/*
+				int xPositionAgent;
+				int yPositionAgent;
+				boolean trobat=false;
+				
+				
+				
+				System.out.println("ssssssssssss" + dfd.getName());
+				
+				for(int x=0;x<game.getMap().length-1 && !trobat;x++){
+					for(int y=0;y<game.getMap()[x].length-1 && !trobat;y++){
+						
+						if (game.getCell(x, y)!=null){
+							System.out.println(game.getCell(x, y).isThereAnAgent());
+													
+							// MIRAR AGENT
+							if(game.getCell(x,y).isThereAnAgent()==true){
+								System.out.println("AGENT TROBATTTT");
+								if(game.getCell(x,y).getAgent().getAID()==dfd.getName()){
+									 xPositionAgent= x;
+									 yPositionAgent= y;
+									 trobat= true;
+								}
+								
+								
+								
+							} 
+						}
+					}	
+				}
+				*/
+				
+				//test.PosicioInicial(xPositionAgent,xPositionAgent,1);
 				//Path stepsPathFinal= test.PosicioFinal(25,8,1);
 				
 				//distancia(stepsPathFinal);
@@ -68,7 +99,7 @@ public class HarvesterAgent extends Agent{
 				
 						
 				// OPCIOOOOO 2
-				//test.PosicioInicial(15,15,2);
+				//test.PosicioInicial(xPositionAgent,yPositionAgent,2);
 				//Path stepsPathFinal2= test.PosicioFinal(25,8,2);
 				
 				//int distPesosOp2 = test.distanciaPesos(stepsPathFinal2);
@@ -122,9 +153,11 @@ public class HarvesterAgent extends Agent{
 			try {
 				if(arg0.getContentObject() instanceof InfoGame)
 				{
+					//PathTest test = new PathTest(game);
 					response.setPerformative(ACLMessage.AGREE);
 					game=(InfoGame) arg0.getContentObject();
 					showMessage("New turn "+ game.getInfo().getTurn());
+					
 					//TODO you have the new game info on game
 				}else{
 					throw new NotUnderstoodException("Not the expected object type");
