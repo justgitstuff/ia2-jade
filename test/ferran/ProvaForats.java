@@ -18,7 +18,7 @@ public class ProvaForats {
 	public static void main(String[] args) {
 		try {
 			Cell[][] map = new Cell[10][10];
-			FileInputStream fstream = new FileInputStream("test/ferran/map.txt");
+			FileInputStream fstream = new FileInputStream("test/ferran/map2.txt");
 			// Get the object of DataInputStream
 		    BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(fstream)));
 		    for (int i = 0; i < 10; i++) {
@@ -39,6 +39,8 @@ public class ProvaForats {
 		    Point point = ScoutManagerUtils.chooseUnchartedPointToSendScout(new Quadrant(0, 9, 0, 9), map, new Point(2, 9));
 		    System.out.println("El millor punt és el " + point);
 		    
+		    point = ScoutManagerUtils.chooseUnchartedPointInAQuadrant(new Quadrant(0, 9, 0, 9), map);
+		    System.out.println("El millor2 punt és el " + point);
 		    
 		} catch (Exception e) {
 			e.printStackTrace();
