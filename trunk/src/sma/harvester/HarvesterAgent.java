@@ -94,7 +94,10 @@ public class HarvesterAgent extends Agent{
 				//Path stepsPathFinal= test.PosicioFinal(25,8,1);
 				
 				//distancia(stepsPathFinal);
+				
+				//No fa falta, directament mostrem lestep seguent(mirar d controlar tema index i problemes)
 				//stepsFinals(stepsPathFinal);
+				
 				//int distPesosOp1= test.distanciaPesos(stepsPathFinal);
 				
 						
