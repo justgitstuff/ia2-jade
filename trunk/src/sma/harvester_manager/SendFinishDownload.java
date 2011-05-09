@@ -32,8 +32,10 @@ public class SendFinishDownload{
 		@Override
 		protected void handleInform(ACLMessage msg) {
 			//
-			if((msg.getProtocol().equals(sma.UtilsAgents.PROTOCOL_DOWNLOAD))&&(msg.getContent().equals(sma.UtilsAgents.BE_SCOUT)))
+			if((msg.getProtocol().equals(sma.UtilsAgents.PROTOCOL_DOWNLOAD))&&(msg.getContent().equals(sma.UtilsAgents.BE_SCOUT))){
 				System.out.println("Harvester Manager send to harvester be_scout.");
+			}else System.out.println("Error in protocol in download garbage, repeat it.");
+			//Cal tornar a cridar el protocol load.				
 		}
 	
 	

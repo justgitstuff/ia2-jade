@@ -1,12 +1,8 @@
 package sma.harvester_manager;
 import java.io.IOException;
-import java.util.List;
-
 import sma.ontology.Cell;
-
 import jade.core.*;
 import jade.domain.FIPAAgentManagement.*;
-import jade.domain.*;
 import jade.lang.acl.*;
 import jade.proto.AchieveREInitiator;
 
@@ -39,23 +35,21 @@ public class SendFinishLoad{
 		protected void handleAgree(ACLMessage msg) {
 			//Receive agree from the manager harvester, and the content is the position of the recycling center
 			//enviar-li la cell a on vull que vagi perquè ja té la posició.
+			sma.ontology.Cell cell = null;
 			try {
-				sma.ontology.Cell cel = (Cell) msg.getContentObject();
+				cell = (Cell) msg.getContentObject();
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
+			System.out.println("Recive from HarvesterManager, cell x: "+cell.getColumn()+", cell y: "+cell.getRow());
 		}
 
 		@Override
 		protected void handleRefuse(ACLMessage arg0) {
 			//Receive refuse from the manager harvester. The content is null.
 			System.out.println("From Harvester Manager: refuse in finish load.");
-		}
-		
-		
-	}
-	
-	
+		}		
+	}	
 }
 
 
