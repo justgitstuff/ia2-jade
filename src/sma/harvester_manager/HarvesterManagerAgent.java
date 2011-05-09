@@ -1,7 +1,5 @@
 package sma.harvester_manager;
 
-import java.io.IOException;
-
 import sma.UtilsAgents;
 import sma.ontology.Cell;
 import sma.ontology.InfoAgent;
@@ -27,6 +25,8 @@ public class HarvesterManagerAgent extends Agent{
 
 	private InfoGame game;
 	private ProtocolContractNetInitiator contractNetInitiator;
+	private ReceiveFinishLoad receiveFinishLoad;
+	private ReceiveFinishDownload receiveFinishDownload;
 	  /**
 	   * A message is shown in the log area of the GUI
 	   * @param str String to show
@@ -59,22 +59,28 @@ public class HarvesterManagerAgent extends Agent{
 	    this.addBehaviour(new QueriesReceiver(this,mt));
 	    
 	    // Add a Behaviour to receive finished dropped garbage from one harvester.
-	    new ReceiveFinishLoad().addBehaviour(this,game);
-		/*MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
-		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-	    this.addBehaviour(new ReciveFinishDownload(this, MessageTemplate.and(mt1,mt2)));    
-	    */
+	    //////Pel game s'hade fer després
+	    /////////new ReceiveFinishLoad().addBehaviour(this,game);
+	    receiveFinishLoad = new ReceiveFinishLoad();  
+	    
 	    //Add a Behaviour to receive finished download garbage into recycling center.
-	    new ReceiveFinishDownload().addBehaviour(this);
+	    //new ReceiveFinishDownload().addBehaviour(this);
+	    receiveFinishDownload = new ReceiveFinishDownload();
 	    contractNetInitiator = new ProtocolContractNetInitiator();
 	    
-	    DistanceList l = null;
+	    /*Code for harvester
+	    DistanceList l = new DistanceList(); 
+	    l.addDistance(2);
+	    l.addDistance(3);
 	    try {
 			new SendFinishLoad().addBehaviour(this, l);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		super.setup();
+		new SendFinishDownload().addBehaviour(this);
+		*/
+	    
+	    super.setup();
 	}
 	
 	class QueriesReceiver extends AchieveREResponder
@@ -132,6 +138,11 @@ public class HarvesterManagerAgent extends Agent{
 					message.setContentObject(game);
 					this.myAgent.send(message);
 					//fins aquí enviat un nou torn a tots els harvesters.
+					
+					/////quan es rep un missatge ja no esperen cap més? s'ha de repetir sempre?
+					receiveFinishLoad.addBehaviour(this.myAgent, game);
+					receiveFinishDownload.addBehaviour(this.myAgent);
+					
 					//TODO for each garbage
 						Cell cell = game.getCell(1, 2);
 						showMessage("contract net.");

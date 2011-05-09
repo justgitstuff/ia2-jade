@@ -41,7 +41,7 @@ public class SendFinishLoad{
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Recive from HarvesterManager, cell x: "+cell.getColumn()+", cell y: "+cell.getRow());
+			System.out.println("Receive from HarvesterManager, cell x: "+cell.getColumn()+", cell y: "+cell.getRow());
 		}
 
 		@Override
