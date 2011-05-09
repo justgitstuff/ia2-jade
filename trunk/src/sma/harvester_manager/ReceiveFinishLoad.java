@@ -12,8 +12,8 @@ import jade.proto.AchieveREResponder;
 public class ReceiveFinishLoad{
 	InfoGame game;
 	
-	public void addBehaviour(Agent agent, InfoGame game){
-		this.game=game;
+	public void addBehaviour(Agent agent, InfoGame games){
+		this.game=games;
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);
 		agent.addBehaviour(new RecieveFinishL(agent,MessageTemplate.and(mt1, mt2)));
@@ -42,13 +42,13 @@ public class ReceiveFinishLoad{
 			//In dist have all the distance to recycling center.
 			//Choose the cell that i decided and return that cell.
 			r.setPerformative(ACLMessage.AGREE);
-			Cell cel = game.getCell(1, 2);
+			Cell cel = game.getCell(3, 4);
 			try {
 				r.setContentObject(cel);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
-			System.out.println("Receive from harvester that distancelist, dist 1: "+dist.getDistances().get(0)+"dist 2: "+dist.getDistances().get(1)+"...");
+			System.out.println("Receive from harvester that distancelist, dist 1: "+dist.getDistances().get(0)+", dist 2: "+dist.getDistances().get(1)+"...");
 			return r;
 		}		
 	}	
