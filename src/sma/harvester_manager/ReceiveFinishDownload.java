@@ -5,7 +5,7 @@ import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.*;
 import jade.proto.AchieveREResponder;
 
-public class ReciveFinishDownload{
+public class ReceiveFinishDownload{
 
 	public void addBehaivour(Agent agent){		
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
@@ -20,21 +20,20 @@ public class ReciveFinishDownload{
 			super(arg0, arg1);	
 		}	
 		
-			@Override
-			protected ACLMessage prepareResponse(ACLMessage arg0)
-					throws NotUnderstoodException, RefuseException {
-				ACLMessage r= arg0.createReply();
-				
-				if(arg0.getContent().equals(sma.UtilsAgents.OK))
-				{
-					r.setContent(sma.UtilsAgents.BE_SCOUT);
-				}
-				if(arg0.getContent().equals(sma.UtilsAgents.FAILURE))
-				{
-					System.out.println("Harvester: "+arg0.getSender()+", send failure download garbage.");
-				}
-				return r;
-			}	
+		@Override
+		protected ACLMessage prepareResponse(ACLMessage arg0) throws NotUnderstoodException, RefuseException {
+			ACLMessage r= arg0.createReply();
+			
+			if(arg0.getContent().equals(sma.UtilsAgents.OK))
+			{
+				r.setContent(sma.UtilsAgents.BE_SCOUT);
+			}
+			if(arg0.getContent().equals(sma.UtilsAgents.FAILURE))
+			{
+				System.out.println("Harvester: "+arg0.getSender()+", send failure download garbage.");
+			}
+			return r;
+		}	
 		/*public ReciveFinishDownload (Agent myAgent)
 		{
 			//Now wait from the harvester when he finish the download garbage in the recycling center.		

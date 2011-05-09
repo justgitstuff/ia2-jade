@@ -1,14 +1,12 @@
 package sma.harvester_manager;
 import java.io.IOException;
-
-import sma.harvester_manager.ReciveFinishDownload.RecieveFinishWork;
 import jade.core.*;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.*;
 import jade.proto.AchieveREResponder;
 
-public class ReciveFinishLoad{
+public class ReceiveFinishLoad{
 	
 	public void addBehavior(Agent agent){
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
@@ -27,15 +25,13 @@ public class ReciveFinishLoad{
 		}
 		
 		@Override
-		protected ACLMessage prepareResponse(ACLMessage arg0)
-				throws NotUnderstoodException, RefuseException {
-			DistanceList dist;			
+		protected ACLMessage prepareResponse(ACLMessage arg0) throws NotUnderstoodException, RefuseException {
+			DistanceList dist=null;			
 			
 			ACLMessage r= arg0.createReply();
 			try {
 				dist = (DistanceList) arg0.getContentObject();
 			} catch (UnreadableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			//In dist have all the distance to recycling center.
@@ -45,14 +41,12 @@ public class ReciveFinishLoad{
 			try {
 				r.setContentObject(cel);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}			
+			}	
+			System.out.println("Receive from harvester that distancelist, dist 1: "+dist.getDistances().get(0)+"dist 2: "+dist.getDistances().get(1)+"...");
 			return r;
-		}	
-		
-	}
-	
+		}		
+	}	
 }
 
 /*public class ReciveFinishLoad extends Agent{
