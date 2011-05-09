@@ -9,7 +9,7 @@ import jade.proto.AchieveREInitiator;
 public class SendFinishLoad{
 	
 	//Send to manager harvester that all garbage is load, and content have all the distance of all recycling center (in one list).
-	public void addBehaivour(Agent agent, DistanceList content) throws IOException{
+	public void addBehaviour(Agent agent, DistanceList content) throws IOException{
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
 		msg.setProtocol(sma.UtilsAgents.PROTOCOL_QUERY);

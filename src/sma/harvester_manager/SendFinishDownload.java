@@ -7,7 +7,7 @@ import jade.proto.AchieveREInitiator;
 
 public class SendFinishDownload{
 	
-	public void addBehaivour(Agent agent){		
+	public void addBehaviour(Agent agent){		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
 		msg.setContent(sma.UtilsAgents.OK);

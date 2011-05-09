@@ -1,5 +1,7 @@
 package sma.harvester_manager;
 
+import java.io.IOException;
+
 import sma.UtilsAgents;
 import sma.ontology.Cell;
 import sma.ontology.InfoAgent;
@@ -18,20 +20,20 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
 
 public class HarvesterManagerAgent extends Agent{
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -981035261731176754L;
 
 	private InfoGame game;
+	private ProtocolContractNetInitiator contractNetInitiator;
 	  /**
 	   * A message is shown in the log area of the GUI
 	   * @param str String to show
 	   */
-	  private void showMessage(String str) {
-	    System.out.println(getLocalName() + ": " + str);
-	  }
+	private void showMessage(String str) {
+	  System.out.println(getLocalName() + ": " + str);
+	}
 	
 	@Override
 	protected void setup() {
@@ -56,12 +58,22 @@ public class HarvesterManagerAgent extends Agent{
 	    MessageTemplate mt=MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_TURN);
 	    this.addBehaviour(new QueriesReceiver(this,mt));
 	    
-	    // Add a Behavior to receive finished dropped garbage
-	    new ReciveFinishLoad().addBehavior(this);
+	    // Add a Behaviour to receive finished dropped garbage from one harvester.
+	    new ReceiveFinishLoad().addBehaviour(this,game);
 		/*MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 	    this.addBehaviour(new ReciveFinishDownload(this, MessageTemplate.and(mt1,mt2)));    
 	    */
+	    //Add a Behaviour to receive finished download garbage into recycling center.
+	    new ReceiveFinishDownload().addBehaviour(this);
+	    contractNetInitiator = new ProtocolContractNetInitiator();
+	    
+	    DistanceList l = null;
+	    try {
+			new SendFinishLoad().addBehaviour(this, l);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		super.setup();
 	}
 	
@@ -72,8 +84,7 @@ public class HarvesterManagerAgent extends Agent{
 		 * @see jade.proto.AchieveREResponder#prepareResponse(jade.lang.acl.ACLMessage)
 		 */
 		@Override
-		protected ACLMessage prepareResponse(ACLMessage arg0)
-				throws NotUnderstoodException, RefuseException {
+		protected ACLMessage prepareResponse(ACLMessage arg0) throws NotUnderstoodException, RefuseException {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -92,8 +103,7 @@ public class HarvesterManagerAgent extends Agent{
 		 * @see jade.proto.AchieveREResponder#handleRequest(jade.lang.acl.ACLMessage)
 		 */
 		@Override
-		protected ACLMessage handleRequest(ACLMessage arg0)
-				throws NotUnderstoodException, RefuseException {
+		protected ACLMessage handleRequest(ACLMessage arg0)	throws NotUnderstoodException, RefuseException {
 			try {
 				Object objectReceived= arg0.getContentObject();
 				if (objectReceived instanceof InfoGame)
@@ -121,7 +131,11 @@ public class HarvesterManagerAgent extends Agent{
 					message.setSender(this.myAgent.getAID());
 					message.setContentObject(game);
 					this.myAgent.send(message);
-					
+					//fins aquí enviat un nou torn a tots els harvesters.
+					//TODO for each garbage
+						Cell cell = game.getCell(1, 2);
+						showMessage("contract net.");
+						contractNetInitiator.addBehaviour(this.myAgent, cell);									
 				}
 				
 			} catch (UnreadableException e) {
@@ -140,7 +154,6 @@ public class HarvesterManagerAgent extends Agent{
 
 		public QueriesReceiver(Agent arg0, MessageTemplate arg1) {
 			super(arg0, arg1);
-			// TODO Auto-generated constructor stub
 		}
 		
 	}

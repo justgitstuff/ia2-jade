@@ -7,7 +7,7 @@ import jade.proto.AchieveREResponder;
 
 public class ReceiveFinishDownload{
 
-	public void addBehaivour(Agent agent){		
+	public void addBehaviour(Agent agent){		
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_DOWNLOAD);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 		agent.addBehaviour(new RecieveFinishWork(agent,MessageTemplate.and(mt1, mt2)));

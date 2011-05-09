@@ -18,26 +18,28 @@ public class ProtocolContractNetInitiator{
 		ACLMessage ms = new ACLMessage(ACLMessage.CFP);
 		ms.setProtocol(sma.UtilsAgents.CONTRACT_NET);
 		ms.setContentObject(content);
-		ms.setSender(agent.getAID());
+		ms.setSender(agent.getAID());		
 		ms = FindReceivers(agent,ms);
 		agent.addBehaviour(new ProtocolContractNetInit(agent, ms));
 	}
 
 	private ACLMessage FindReceivers(Agent agent, ACLMessage msg) {		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType(sma.UtilsAgents.HARVESTER_AGENT);
+		sd.setType(sma.UtilsAgents.HARVESTER_AGENT);		
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.addServices(sd);
 		try{
 			while(true) {
 				SearchConstraints c = new SearchConstraints();
 				c.setMaxResults(new Long(-1));
-				DFAgentDescription[] result = DFService.search(agent, dfd, c);				
+				DFAgentDescription[] result = DFService.search(agent, dfd, c);
+				System.out.println("ContractNetInitiator: in search responders.");
 				if(result.length > 0){
 					int i = 0;
 					int j = result.length;
 					while (i<j){
 						dfd = result[i];
+						System.out.println("ContractNetInitiator: add receiver "+dfd.getName());
 						msg.addReceiver(dfd.getName());
 						i=i+1;					
 					}
