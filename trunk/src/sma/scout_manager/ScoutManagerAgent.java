@@ -24,70 +24,103 @@ import sma.ontology.InfoGame;
 
 public class ScoutManagerAgent extends Agent{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3186674807204123899L;
-	
+
 	private InfoGame game;
 	
-	  /**
-	   * A message is shown in the log area of the GUI
-	   * @param str String to show
-	   */
-	  private void showMessage(String str) {
-	    System.out.println(getLocalName() + ": " + str);
-	  }
+	/**
+	 * A message is shown in the log area of the GUI
+	 * @param str String to show
+	 */
+	private void showMessage(String str) {
+		System.out.println(getLocalName() + ": " + str);
+	}
 	
 	@Override
 	protected void setup() {
-	    // Register the agent to the DF
-	    ServiceDescription sd1 = new ServiceDescription();
-	    sd1.setType(UtilsAgents.SCOUT_MANAGER_AGENT);
-	    sd1.setName(getLocalName());
-	    sd1.setOwnership(UtilsAgents.OWNER);
-	    DFAgentDescription dfd = new DFAgentDescription();
-	    dfd.addServices(sd1);
-	    dfd.setName(getAID());
-	    try {
-	      DFService.register(this, dfd);
-	      showMessage("Registered to the DF");
-	    }
-	    catch (FIPAException e) {
-	      System.err.println(getLocalName() + " registration with DF " + "unsucceeded. Reason: " + e.getMessage());
-	      doDelete();
-	    }
-	    MessageTemplate mt=MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_TURN);
-	    this.addBehaviour(new QueriesReceiver(this, mt));
+		// Register the agent to the DF
+		ServiceDescription sd1 = new ServiceDescription();
+		sd1.setType(UtilsAgents.SCOUT_MANAGER_AGENT);
+		sd1.setName(getLocalName());
+		sd1.setOwnership(UtilsAgents.OWNER);
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.addServices(sd1);
+		dfd.setName(getAID());
+		
+		try {
+			DFService.register(this, dfd);
+			showMessage("Registered to the DF");
+		} catch (FIPAException e) {
+			System.err.println(getLocalName() + " registration with DF " + "unsucceeded. Reason: " + e.getMessage());
+			doDelete();
+		}
+		
+		MessageTemplate mt = MessageTemplate.MatchProtocol(UtilsAgents.PROTOCOL_TURN);
+		this.addBehaviour(new QueriesReceiver(this, mt));
 	    
 		super.setup();
 	}
 	
+	private void manageScouts() {
+		ServiceDescription sd1 = new ServiceDescription();
+	    sd1.setType(UtilsAgents.SCOUT_AGENT);
+	    
+	    DFAgentDescription descripcion = new DFAgentDescription();
+        descripcion.addServices(sd1);
+        
+		try {
+			// Get the scouts
+			DFAgentDescription[] scouts = DFService.search(this, descripcion);
+			
+			// Create the CFP
+			ACLMessage messageCFP = new ACLMessage(ACLMessage.CFP);
+	        for (DFAgentDescription scout:scouts) {
+	        	messageCFP.addReceiver(scout.getName());
+	        }
+		} catch (FIPAException e) {
+			System.err.println("No scouts found by the ScoutManager");
+		}
+	}
+
 	/**
 	 * Manages all incoming FIPA REQUESTS
 	 * You can discrimine the type of message with the "instanceof"
 	 * @author Roger
-	 *
 	 */
-	class QueriesReceiver extends AchieveREResponder
-	{
+	class QueriesReceiver extends AchieveREResponder {
 
+		private static final long serialVersionUID = -6176920249600913698L;
+		
 		/* (non-Javadoc)
 		 * @see jade.proto.AchieveREResponder#prepareResponse(jade.lang.acl.ACLMessage)
 		 */
 		@Override
-		protected ACLMessage prepareResponse(ACLMessage arg0)
-				throws NotUnderstoodException, RefuseException {
-			// TODO Auto-generated method stub
-			return null;
+		protected ACLMessage prepareResponse(ACLMessage arg0) throws NotUnderstoodException, RefuseException {
+			ACLMessage response = arg0.createReply();
+
+			try {
+				if (arg0.getContentObject() instanceof InfoGame) {
+					response.setPerformative(ACLMessage.AGREE);
+					game = (InfoGame) arg0.getContentObject();
+					showMessage("New turn " + game.getInfo().getTurn());
+				} else if (arg0.getPerformative() == ACLMessage.AGREE) {
+					// TODO now what?!
+					response = null;
+				} else {
+					throw new NotUnderstoodException("Not the expected object type");
+				}
+			} catch (UnreadableException e) {
+				response.setPerformative(ACLMessage.FAILURE);
+			}
+			
+			return response;
 		}
 
 		/* (non-Javadoc)
 		 * @see jade.proto.AchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
 		 */
 		@Override
-		protected ACLMessage prepareResultNotification(ACLMessage arg0,
-				ACLMessage arg1) throws FailureException {
+		protected ACLMessage prepareResultNotification(ACLMessage arg0, ACLMessage arg1) throws FailureException {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -96,36 +129,31 @@ public class ScoutManagerAgent extends Agent{
 		 * @see jade.proto.AchieveREResponder#handleRequest(jade.lang.acl.ACLMessage)
 		 */
 		@Override
-		protected ACLMessage handleRequest(ACLMessage arg0)
-				throws NotUnderstoodException, RefuseException {
+		protected ACLMessage handleRequest(ACLMessage arg0) throws NotUnderstoodException, RefuseException {
 			try {
-				Object objectReceived= arg0.getContentObject();
-				if (objectReceived instanceof InfoGame)
-				{
-					//Is the coordinator informing of a new turn
-					game=(InfoGame)objectReceived;
-					showMessage("New turn received from coordinator: "+game.getInfo().getTurn());
-					
-					//Find all my agents and send them the new turn
-					ACLMessage message= new ACLMessage(ACLMessage.REQUEST);
-					for(int x=0;x<game.getMap().length-1;x++)
-						for(int y=0;y<game.getMap()[x].length-1;y++)
-						{
-							Cell c=game.getCell(x, y);
-							if(c.isThereAnAgent())
-							{
+				Object objectReceived = arg0.getContentObject();
+				if (objectReceived instanceof InfoGame) {
+					// Is the coordinator informing of a new turn
+					game = (InfoGame) objectReceived;
+					showMessage("New turn received from coordinator: " + game.getInfo().getTurn());
+
+					// Find all my agents and send them the new turn
+					ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
+					for (int x = 0; x < game.getMap().length - 1; x++) {
+						for (int y = 0; y < game.getMap()[x].length - 1; y++) {
+							Cell c = game.getCell(x, y);
+							if (c.isThereAnAgent()) {
 								InfoAgent a = c.getAgent();
-								if (a.getAgent().equals("S"))
-								{
+								if (a.getAgent().equals("S")) {
 									message.addReceiver(a.getAID());
 								}
 							}
 						}
-					message.setProtocol(sma.UtilsAgents.PROTOCOL_TURN);
+					}
+					message.setProtocol(UtilsAgents.PROTOCOL_TURN);
 					message.setSender(this.myAgent.getAID());
 					message.setContentObject(game);
 					this.myAgent.send(message);
-
 				}
 				
 			} catch (UnreadableException e) {
@@ -137,22 +165,19 @@ public class ScoutManagerAgent extends Agent{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			return super.handleRequest(arg0);
 		}
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -6176920249600913698L;
 
 		public QueriesReceiver(Agent arg0, MessageTemplate arg1) {
 			super(arg0, arg1);
 			// TODO Auto-generated constructor stub
 		}
-		
 	}
 	
 	class ScoutManagerHandler extends ContractNetInitiator {
+		private static final long serialVersionUID = -5530192765322368330L;
+
 		public ScoutManagerHandler(Agent agent, ACLMessage aclMessage) {
 			super(agent, aclMessage);
 		}
