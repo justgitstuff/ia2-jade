@@ -47,14 +47,14 @@ public class ProtocolContractNetResponder{
 			return reply;
 		}
 		
-		//s’executa quan es rep un missatge Accept-proposal. També rep per paràmetres el
+		/**s’executa quan es rep un missatge Accept-proposal. També rep per paràmetres el
 		//CFP inicial i la resposta (Propose). Cal que executi l’acció corresponent i
-		//retorni el resultat (Inform o Failure).
+		//retorni el resultat (Inform o Failure).*/
 		protected ACLMessage prepareResultNotification (ACLMessage cfp, ACLMessage propose, ACLMessage accept)
 		{
 			ACLMessage inform = accept.createReply();
 			System.out.println("Soc el harvester "+this.myAgent.getName()+", rebut de "+accept.getSender()+"acceptada la meva proposta: "+propose.getContent()+".");
-			inform.setPerformative(ACLMessage.INFORM);
+			inform.setPerformative(ACLMessage.CONFIRM);
 			//Or failure.
 			return inform;
 		}

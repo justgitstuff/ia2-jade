@@ -1,5 +1,8 @@
 package sma.harvester_manager;
 import java.io.IOException;
+
+import sma.ontology.Cell;
+import sma.ontology.InfoGame;
 import jade.core.*;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
@@ -7,8 +10,10 @@ import jade.lang.acl.*;
 import jade.proto.AchieveREResponder;
 
 public class ReceiveFinishLoad{
+	InfoGame game;
 	
-	public void addBehavior(Agent agent){
+	public void addBehaviour(Agent agent, InfoGame game){
+		this.game=game;
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);
 		agent.addBehaviour(new RecieveFinishL(agent,MessageTemplate.and(mt1, mt2)));
@@ -37,7 +42,7 @@ public class ReceiveFinishLoad{
 			//In dist have all the distance to recycling center.
 			//Choose the cell that i decided and return that cell.
 			r.setPerformative(ACLMessage.AGREE);
-			sma.ontology.Cell cel = new sma.ontology.Cell(1);
+			Cell cel = game.getCell(1, 2);
 			try {
 				r.setContentObject(cel);
 			} catch (IOException e) {

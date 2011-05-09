@@ -47,6 +47,7 @@ public class UtilsAgents {
   public static String BE_SCOUT = "Be_scout";
   public static String OK = "OK";
   public static String FAILURE = "failure";
+  public static String CONTRACT_NET = "Contract_Net";
 
 
   /**
