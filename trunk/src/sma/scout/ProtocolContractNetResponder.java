@@ -1,4 +1,4 @@
-package sma.harvester_manager;
+package sma.scout;
 import sma.ontology.Cell;
 import jade.proto.*;
 import jade.lang.acl.ACLMessage;

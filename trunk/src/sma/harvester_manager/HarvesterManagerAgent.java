@@ -16,6 +16,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
+import jade.proto.ContractNetResponder;
 
 public class HarvesterManagerAgent extends Agent{
 	/**
@@ -59,7 +60,7 @@ public class HarvesterManagerAgent extends Agent{
 	    this.addBehaviour(new QueriesReceiver(this,mt));
 	    
 	    // Add a Behaviour to receive finished dropped garbage from one harvester.
-	    //////Pel game s'hade fer després
+	    //////Pel game s'hade fer desprï¿½s
 	    /////////new ReceiveFinishLoad().addBehaviour(this,game);
 	    receiveFinishLoad = new ReceiveFinishLoad();  
 	    
@@ -67,6 +68,8 @@ public class HarvesterManagerAgent extends Agent{
 	    //new ReceiveFinishDownload().addBehaviour(this);
 	    receiveFinishDownload = new ReceiveFinishDownload();
 	    contractNetInitiator = new ProtocolContractNetInitiator();
+	    
+	    //new ProtocolContractNetResponder().addBehaviour(this);
 	    
 	    /*Code for harvester
 	    DistanceList l = new DistanceList(); 
@@ -137,9 +140,9 @@ public class HarvesterManagerAgent extends Agent{
 					message.setSender(this.myAgent.getAID());
 					message.setContentObject(game);
 					this.myAgent.send(message);
-					//fins aquí enviat un nou torn a tots els harvesters.
+					//fins aquï¿½ enviat un nou torn a tots els harvesters.
 					
-					/////quan es rep un missatge ja no esperen cap més? s'ha de repetir sempre?
+					/////quan es rep un missatge ja no esperen cap mï¿½s? s'ha de repetir sempre?
 					receiveFinishLoad.addBehaviour(this.myAgent, game);
 					receiveFinishDownload.addBehaviour(this.myAgent);
 					

@@ -1,4 +1,4 @@
-package sma.harvester_manager;
+package sma.scout_manager;
 import jade.proto.*;
 import jade.lang.acl.ACLMessage;
 import jade.core.Agent;
