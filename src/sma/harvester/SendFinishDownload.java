@@ -1,4 +1,4 @@
-package sma.harvester_manager;
+package sma.harvester;
 import jade.core.*;
 import jade.domain.FIPAAgentManagement.*;
 import jade.lang.acl.*;

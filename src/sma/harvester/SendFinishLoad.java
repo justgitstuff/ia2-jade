@@ -1,5 +1,7 @@
-package sma.harvester_manager;
+package sma.harvester;
 import java.io.IOException;
+
+import sma.harvester_manager.DistanceList;
 import sma.ontology.Cell;
 import jade.core.*;
 import jade.domain.FIPAAgentManagement.*;
