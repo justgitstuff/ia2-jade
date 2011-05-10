@@ -1,8 +1,7 @@
 package sma.pathFinding;
 
 
-import java.awt.Color;
-import java.awt.Graphics;
+
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
