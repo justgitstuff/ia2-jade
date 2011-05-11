@@ -34,6 +34,19 @@ public class Cell implements Serializable {
 
   private boolean discovered=false; 
   
+  public static int getGarbagePointsIndex(char type)
+  {
+	  switch(type)
+	  {
+	  case 'G':return 0;
+	  case 'P':return 1;
+	  case 'M':return 2;
+	  case 'A':return 3;
+	  }
+	  return -1;
+  }
+  
+  
 public Cell(int type) {
     this.type = type;
   }
