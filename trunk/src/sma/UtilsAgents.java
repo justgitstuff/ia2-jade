@@ -1,5 +1,7 @@
 package sma;
 
+import sma.ontology.Cell;
+import sma.ontology.InfoGame;
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.Profile;
@@ -162,5 +164,27 @@ public class UtilsAgents {
       return null;
     }
   } //endof createAgent
-
+/**
+ * Finds an agent on the game map
+ * @param agent - the AID of the agent to search
+ * @param game - the InfoGame
+ * @return
+ */
+	public Cell findAgent(AID agent, InfoGame game)
+	{
+        Cell agentPosition=null;
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x,y);
+	         	  if(c.isThereAnAgent())
+	         	  {
+	         		  if(c.getAgent().getAID().equals(agent)){
+	         			  agentPosition=c; 
+	         		  }
+	         	  }
+			}
+		return agentPosition;
+	}
+  
 } //endof UtilsAgents
