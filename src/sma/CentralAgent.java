@@ -288,7 +288,7 @@ private void updatePublicGame()
 		    requestInicial.addReceiver(coordinatorAgent);
 		    requestInicial.setProtocol(InteractionProtocol.FIPA_QUERY);
 		    try {
-		      requestInicial.setContentObject(game);
+		      requestInicial.setContentObject(publicGame);
 		    } catch (Exception e) {
 		      e.printStackTrace();
 		    }

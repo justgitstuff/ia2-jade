@@ -142,12 +142,13 @@ public class ScoutManagerAgent extends Agent{
 					for (int x = 0; x < game.getMap().length - 1; x++) {
 						for (int y = 0; y < game.getMap()[x].length - 1; y++) {
 							Cell c = game.getCell(x, y);
-							if (c.isThereAnAgent()) {
-								InfoAgent a = c.getAgent();
-								if (a.getAgent().equals("S")) {
-									message.addReceiver(a.getAID());
+							if (c!=null)
+								if (c.isThereAnAgent()) {
+									InfoAgent a = c.getAgent();
+									if (a.getAgent().equals("S")) {
+										message.addReceiver(a.getAID());
+									}
 								}
-							}
 						}
 					}
 					message.setProtocol(UtilsAgents.PROTOCOL_TURN);
