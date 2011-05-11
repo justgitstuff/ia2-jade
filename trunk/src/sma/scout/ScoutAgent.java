@@ -81,6 +81,7 @@ public class ScoutAgent extends Agent {
 	    
 	   
 	    pcnr = new ProtocolContractNetResponder();
+	    pcnr.addBehaviour(this);
 	    pcnr.setInfoGame(game);
 	    
 		super.setup();
