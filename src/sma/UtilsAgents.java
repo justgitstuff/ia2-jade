@@ -170,7 +170,7 @@ public class UtilsAgents {
  * @param game - the InfoGame
  * @return
  */
-	public Cell findAgent(AID agent, InfoGame game)
+	public static Cell findAgent(AID agent, InfoGame game)
 	{
         Cell agentPosition=null;
 		for(int x=0;x<game.getMap().length-1;x++)
