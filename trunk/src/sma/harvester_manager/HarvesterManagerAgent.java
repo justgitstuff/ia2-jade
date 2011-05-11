@@ -137,14 +137,15 @@ public class HarvesterManagerAgent extends Agent{
 						for(int y=0;y<game.getMap()[x].length-1;y++)
 						{
 							Cell c=game.getCell(x, y);
-							if(c.isThereAnAgent())
-							{
-								InfoAgent a = c.getAgent();
-								if (a.getAgent().equals("H"))
+							if (c!=null)
+								if(c.isThereAnAgent())
 								{
-									message.addReceiver(a.getAID());
+									InfoAgent a = c.getAgent();
+									if (a.getAgent().equals("H"))
+									{
+										message.addReceiver(a.getAID());
+									}
 								}
-							}
 						}
 					message.setProtocol(sma.UtilsAgents.PROTOCOL_TURN);
 					message.setSender(this.myAgent.getAID());
@@ -164,7 +165,11 @@ public class HarvesterManagerAgent extends Agent{
 							//if getGarbageunits is 0 -> no garbage.
 							if (c != null)
 								if (c.getCellType()==Cell.BUILDING)
-									if(c.getGarbageUnits()>0) contractNetInitiator.addBehaviour(this.myAgent, c);
+									if(c.getCellType()!=Cell.RECYCLING_CENTER)
+										if(c.getGarbageUnits()>0) {
+											showMessage("Tinc brossa pendent de recollir "+c.getGarbageString());
+											contractNetInitiator.addBehaviour(this.myAgent, c);
+										}
 						}
 					}															
 				}
