@@ -36,7 +36,7 @@ public class SendFinishLoad{
 		}
 		
 		/**
-		 * Receive agree from the manager harvester, and the content is the position of the recycling center
+		 * Receive agree from the manager harvester, and the content is the cell of the recycling center
 		 */
 		@Override
 		protected void handleAgree(ACLMessage msg) {

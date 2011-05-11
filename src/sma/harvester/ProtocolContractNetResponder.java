@@ -18,8 +18,11 @@ public class ProtocolContractNetResponder{
 	private Path short_path;
 	private int my_x, my_y;
 	private MovementSender ms;
-	private int myState;
+	private boolean myState=true;// true = lliure false= transportar
 	private InfoAgent infoAgent;
+	
+	
+	// VARIABLE ESTAT
 	// 1 lliure
 	//2 2 Anar descarregar
 	
@@ -76,15 +79,16 @@ public class ProtocolContractNetResponder{
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 			
-			if(infoAgent.getUnits()<infoAgent.getMaxUnits()){
-			
-				
+			if(myState){				
 				//Content have a int with a distance.
 				reply.setPerformative(ACLMessage.PROPOSE);
 				distance=evaluateAction(content);
 				reply.setContent(Integer.toString(distance));
 			}else{
 				reply.setPerformative(ACLMessage.REFUSE);
+				// S'acaba comunicacio controalr si moviment reciclatege o descarrega
+				// o notificar lliure si es el cas cambia estat
+				
 				
 			}
 		//	}
@@ -185,7 +189,9 @@ public class ProtocolContractNetResponder{
 			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 			
-
+			// aixo suicceeix kuan macepta la distancia i miro si simplement em desplazo, 
+			// o stik al voltant i llavors carrego si es el cas i no faig ms
+			// i si akao de rekollo enviao sendFInishLoad( dic posteriroment les dist amb tots els reciclatges)
 			
 			// controlat
 			

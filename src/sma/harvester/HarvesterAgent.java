@@ -73,7 +73,7 @@ public class HarvesterAgent extends Agent{
 
 	 
 	 protocolContractNetResponder = new ProtocolContractNetResponder();
-	 
+	 protocolContractNetResponder.addBehaviour(this);
 	    
 	    
 	    
