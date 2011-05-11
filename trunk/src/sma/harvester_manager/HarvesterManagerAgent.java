@@ -163,7 +163,8 @@ public class HarvesterManagerAgent extends Agent{
 							Cell c=game.getCell(x,y);
 							//if getGarbageunits is 0 -> no garbage.
 							if (c != null)
-								if(c.getGarbageUnits()>0) contractNetInitiator.addBehaviour(this.myAgent, c);
+								if (c.getCellType()==Cell.BUILDING)
+									if(c.getGarbageUnits()>0) contractNetInitiator.addBehaviour(this.myAgent, c);
 						}
 					}															
 				}
