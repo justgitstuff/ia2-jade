@@ -92,7 +92,7 @@ public class ProtocolContractNetResponder{
 		protected void handleRejectProposal (ACLMessage cfp, ACLMessage propose, ACLMessage reject)
 		{
 			System.out.println("I am the scout "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
-		}
+		}  
 		
 		
 		

@@ -124,7 +124,7 @@ public class ScoutAgent extends Agent {
 					response.setPerformative(ACLMessage.AGREE);
 					game=(InfoGame) arg0.getContentObject();
 					showMessage("New turn "+ game.getInfo().getTurn());
-					
+					 
 					pcnr.setInfoGame(game);
 					//my_zone = 1;
 					//hauria d'agafar la zona que em pertoca com??? qui me l'assigna
