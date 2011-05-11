@@ -4,6 +4,7 @@ package sma.harvester;
 import sma.moves.Movement.Direction;
 import sma.moves.MovementSender;
 import sma.ontology.Cell;
+import sma.ontology.InfoAgent;
 import sma.ontology.InfoGame;
 import sma.pathFinding.Path;
 import sma.pathFinding.PathTest;
@@ -18,6 +19,10 @@ public class ProtocolContractNetResponder{
 	private int my_x, my_y;
 	private MovementSender ms;
 	private int myState;
+	private InfoAgent infoAgent;
+	// 1 lliure
+	//2 2 Anar descarregar
+	
 	
 	/**
 	 * @param infoGame the infoGame to set
@@ -50,6 +55,7 @@ public class ProtocolContractNetResponder{
 	
 			super(myAgent, mt);
 			ms = new MovementSender(myAgent, myAgent.getAID(),sma.UtilsAgents.HARVESTER_MANAGER_AGENT);
+			
 		}
 		
 		/**Execute when receive a CFP message and need return integer with distance and
@@ -68,10 +74,19 @@ public class ProtocolContractNetResponder{
 			ACLMessage reply = msg.createReply();
 			//Or refuse or not-understood.
 			
-			//Content have a int with a distance.
-			reply.setPerformative(ACLMessage.PROPOSE);
-			distance=evaluateAction(content);
-			reply.setContent(Integer.toString(distance));
+			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
+			
+			if(infoAgent.getUnits()<infoAgent.getMaxUnits()){
+			
+				
+				//Content have a int with a distance.
+				reply.setPerformative(ACLMessage.PROPOSE);
+				distance=evaluateAction(content);
+				reply.setContent(Integer.toString(distance));
+			}else{
+				reply.setPerformative(ACLMessage.REFUSE);
+				
+			}
 		//	}
 			
 			

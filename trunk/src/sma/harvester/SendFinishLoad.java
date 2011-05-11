@@ -43,6 +43,9 @@ public class SendFinishLoad{
 			sma.ontology.Cell cell = null;
 			try {
 				cell = (Cell) msg.getContentObject();
+				// CODI PER DESCARREGAR
+				// Guardar CELL DESTI
+				// FICAR ESTAT DESCARGAR
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
