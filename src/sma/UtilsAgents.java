@@ -1,5 +1,8 @@
 package sma;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sma.ontology.Cell;
 import sma.ontology.InfoGame;
 import jade.core.Agent;
@@ -202,6 +205,25 @@ public class UtilsAgents {
 		diagonal=Math.sqrt(c1+c2);
 		int distance=(int)diagonal;
 		return distance;
+	}
+	/**
+	 * 
+	 * @param game
+	 * @return a list of all recycling centers
+	 */
+	public static List<Cell> getRecyclingCenterList(InfoGame game)
+	{
+		List<Cell> centers = new ArrayList<Cell>();
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x, y);
+				if(c.getCellType()==Cell.BUILDING)
+				{
+					centers.add(c);
+				}
+			}
+		return centers;
 	}
   
 } //endof UtilsAgents
