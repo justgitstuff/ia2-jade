@@ -55,8 +55,10 @@ public class ProtocolContractNetResponder{
 	
 		public ProtocolContractNetRes (Agent myAgent, MessageTemplate mt)
 		{
+
 	
 			super(myAgent, mt);
+			System.out.println("Harvester: into cnet constructor");
 			ms = new MovementSender(myAgent, myAgent.getAID(),sma.UtilsAgents.HARVESTER_MANAGER_AGENT);
 			
 		}
@@ -79,18 +81,19 @@ public class ProtocolContractNetResponder{
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 			
-			if(myState){				
+			//if(myState){				
 				//Content have a int with a distance.
 				reply.setPerformative(ACLMessage.PROPOSE);
 				distance=evaluateAction(content);
+				System.out.println("He calculat distancia "+ distance);
 				reply.setContent(Integer.toString(distance));
-			}else{
+			/*}else{
 				reply.setPerformative(ACLMessage.REFUSE);
 				// S'acaba comunicacio controalr si moviment reciclatege o descarrega
 				// o notificar lliure si es el cas cambia estat
 				
 				
-			}
+			}*/
 		//	}
 			
 			

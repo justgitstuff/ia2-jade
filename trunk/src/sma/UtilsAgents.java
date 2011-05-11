@@ -180,6 +180,7 @@ public class UtilsAgents {
 			for(int y=0;y<game.getMap()[x].length-1;y++)
 			{
 				Cell c=game.getCell(x,y);
+				if(c!=null)
 	         	  if(c.isThereAnAgent())
 	         	  {
 	         		  if(c.getAgent().getAID().equals(agent)){
@@ -218,6 +219,7 @@ public class UtilsAgents {
 			for(int y=0;y<game.getMap()[x].length-1;y++)
 			{
 				Cell c=game.getCell(x, y);
+				if(c!=null)
 				if(c.getCellType()==Cell.BUILDING)
 				{
 					centers.add(c);
