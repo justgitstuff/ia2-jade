@@ -10,7 +10,7 @@ public class Movement implements Serializable {
 	private static final long serialVersionUID = -2002385773495345696L;
 
 	public enum Direction{
-		UP,DOWN,LEFT,RIGHT;
+		UP,DOWN,LEFT,RIGHT,UPLEFT,UPRIGHT,DOWNLEFT,DOWNRIGHT;
 	}
 	 
 	public enum Action{

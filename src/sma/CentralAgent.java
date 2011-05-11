@@ -362,12 +362,17 @@ private void updatePublicGame()
 			x=origin.getColumn();
 			y=origin.getRow();
 			//showMessage("I have its position "+origin);
+			boolean diagonal=false;
 			switch (moveOrder.getDirection())
 			{
 				case UP:dy=-1;/*showMessage("UP");*/break;
 				case DOWN:dy=1;/*showMessage("DOWN");*/break;
 				case LEFT:dx=-1;/*showMessage("LEFT");*/break;
 				case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
+				case UPLEFT:dx=-1;dy=-1;diagonal=true;break;
+				case UPRIGHT:dx=1;dy=-1;diagonal=true;break;
+				case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;
+				case DOWNRIGHT:dx=1;dy=1;diagonal=true;break;
 			}
 			//showMessage("Will move "+dx+" "+dy);
 			destination=game.getMap()[y+dy][x+dx];
@@ -377,6 +382,7 @@ private void updatePublicGame()
 			{
 			case GO:
 				try{
+					if (diagonal) throw new Exception();
 					//showMessage("Its a go order");
 					ia=origin.getAgent();
 					//showMessage("Have the agent to remove");
