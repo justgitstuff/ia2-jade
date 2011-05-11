@@ -164,17 +164,23 @@ public class HarvesterManagerAgent extends Agent{
 							Cell c=game.getCell(x,y);
 							//if getGarbageunits is 0 -> no garbage.
 							if (c != null)
+							{
+								showMessage("Comprobo cel.la "+c.getRow()+" "+c.getCellType());
 								if (c.getCellType()==Cell.BUILDING)
+								{	showMessage("Es un edifici");
 									if(c.getCellType()!=Cell.RECYCLING_CENTER)
 										if(c.getGarbageUnits()>0) {
 											showMessage("Tinc brossa pendent de recollir "+c.getGarbageString());
 											contractNetInitiator.addBehaviour(this.myAgent, c);
 										}
+								}
+							}
 						}
 					}															
 				}
 				
 			} catch (UnreadableException e) {
+				e.printStackTrace();
 				showMessage("Received an Object that cannot be understood");
 			} catch (Exception e) {
 				e.printStackTrace();

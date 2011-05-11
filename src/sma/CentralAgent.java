@@ -293,6 +293,7 @@ private void updatePublicGame()
 		      e.printStackTrace();
 		    }
 		    //we add a behavior that sends the message and waits for an answer
+		    updatePublicGame();
 		    this.myAgent.addBehaviour(new Informer(this.myAgent, requestInicial));
 		}
 	} 

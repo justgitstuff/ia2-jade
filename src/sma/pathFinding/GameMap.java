@@ -71,8 +71,8 @@ public class GameMap {
 		
 	//	System.out.println("long mappppp" + this.game.getMap().length);
 		
-		for(int x=0;x<WIDTH;x++){
-			for(int y=0;y<HEIGHT;y++){
+		for(int x=0;x<WIDTH-1;x++){
+			for(int y=0;y<HEIGHT-1;y++){
 				
 				if (game.getCell(x, y)!=null){
 					//System.out.println(this.game.getCell(x, y).getCellType());

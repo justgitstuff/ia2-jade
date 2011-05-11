@@ -91,6 +91,7 @@ public class ProtocolContractNetInitiator{
 					reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 					acceptances.addElement(reply);
 					int proposal = Integer.parseInt(msg.getContent());
+					System.out.println("Proposta a distancia "+proposal);
 					/////Ficar el codi de quin proposal et quedes.
 					if (proposal<bestProposal){
 						bestProposal = proposal;
