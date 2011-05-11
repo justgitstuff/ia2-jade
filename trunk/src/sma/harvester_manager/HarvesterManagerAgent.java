@@ -16,7 +16,6 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
-import jade.proto.ContractNetResponder;
 
 public class HarvesterManagerAgent extends Agent{
 	/**
@@ -27,7 +26,7 @@ public class HarvesterManagerAgent extends Agent{
 	private InfoGame game;
 	private ProtocolContractNetInitiator contractNetInitiator;
 	private ReceiveFinishLoad receiveFinishLoad;
-	private ReceiveFinishDownload receiveFinishDownload;
+	
 	  /**
 	   * A message is shown in the log area of the GUI
 	   * @param str String to show
@@ -66,7 +65,7 @@ public class HarvesterManagerAgent extends Agent{
 	    
 	    //Add a Behaviour to receive finished download garbage into recycling center.
 	    //new ReceiveFinishDownload().addBehaviour(this);
-	    receiveFinishDownload = new ReceiveFinishDownload();
+	    //receiveFinishDownload = new ReceiveFinishDownload();
 	    contractNetInitiator = new ProtocolContractNetInitiator();
 	    
 	    //new ProtocolContractNetResponder().addBehaviour(this);
@@ -82,7 +81,20 @@ public class HarvesterManagerAgent extends Agent{
 		}
 		new SendFinishDownload().addBehaviour(this);
 		*/
+	    /**
+	     * Add a behavior to receive that harvester load successful garbage. 
+	     */
+	    receiveFinishLoad.addBehaviour(this);
 	    
+	    /**
+	     * Add a behavior to receive that harvester download all garbage into recycling center. 
+	     */
+		new ReceiveFinishDownload().addBehaviour(this);
+	    
+	    /**
+	     * Add a behavior to relay movement orders from harvesters to the coordinator agent.
+	     */
+	    new MovementRely().addBehavior(this, sma.UtilsAgents.COORDINATOR_AGENT);
 	    super.setup();
 	}
 	
@@ -94,7 +106,6 @@ public class HarvesterManagerAgent extends Agent{
 		 */
 		@Override
 		protected ACLMessage prepareResponse(ACLMessage arg0) throws NotUnderstoodException, RefuseException {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -104,7 +115,6 @@ public class HarvesterManagerAgent extends Agent{
 		@Override
 		protected ACLMessage prepareResultNotification(ACLMessage arg0,
 				ACLMessage arg1) throws FailureException {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -139,23 +149,27 @@ public class HarvesterManagerAgent extends Agent{
 					message.setProtocol(sma.UtilsAgents.PROTOCOL_TURN);
 					message.setSender(this.myAgent.getAID());
 					message.setContentObject(game);
+					
+					receiveFinishLoad.setGame(game);
+					
 					this.myAgent.send(message);
 					//fins aqu� enviat un nou torn a tots els harvesters.
 					
-					/////quan es rep un missatge ja no esperen cap m�s? s'ha de repetir sempre?
-					receiveFinishLoad.addBehaviour(this.myAgent, game);
-					receiveFinishDownload.addBehaviour(this.myAgent);
-					
-					//TODO for each garbage
-						Cell cell = game.getCell(1, 2);
-						showMessage("contract net.");
-						contractNetInitiator.addBehaviour(this.myAgent, cell);									
+					//For each garbage do ContractNetInitiator
+					for (int x=0;x<game.getMap().length-1;x++)
+					{	
+						for (int y=0; y<game.getMap()[x].length-1;y++)
+						{
+							Cell c=game.getCell(x,y);
+							//if getGarbageunits is 0 -> no garbage.
+							if(c.getGarbageUnits()>0) contractNetInitiator.addBehaviour(this.myAgent, c);
+						}
+					}															
 				}
 				
 			} catch (UnreadableException e) {
 				showMessage("Received an Object that cannot be understood");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return super.handleRequest(arg0);
@@ -168,8 +182,6 @@ public class HarvesterManagerAgent extends Agent{
 
 		public QueriesReceiver(Agent arg0, MessageTemplate arg1) {
 			super(arg0, arg1);
-		}
-		
+		}		
 	}
-
 }

@@ -76,20 +76,25 @@ public class ProtocolContractNetInitiator{
 		protected void handleAllResponses(Vector responses, Vector acceptances)
 		{		
 			// Evaluate proposals.
-			int bestProposal = -1;			
+			int bestProposal = -1;
+			int firstTime=0;
 			ACLMessage accept = null;
 			Enumeration e = responses.elements();
 			while (e.hasMoreElements()) {
 				ACLMessage msg = (ACLMessage) e.nextElement();
 				if (msg.getPerformative() == ACLMessage.PROPOSE) {
 					ACLMessage reply = msg.createReply();
+					if (firstTime == 0){
+						bestProposal = Integer.parseInt(msg.getContent());
+						firstTime++;
+					}
 					reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 					acceptances.addElement(reply);
 					int proposal = Integer.parseInt(msg.getContent());
 					/////Ficar el codi de quin proposal et quedes.
-					if (proposal > bestProposal) {
-						bestProposal = proposal;						
-						accept = reply;
+					if (proposal<bestProposal){
+						bestProposal = proposal;
+						accept=reply;
 					}
 				}
 			}
