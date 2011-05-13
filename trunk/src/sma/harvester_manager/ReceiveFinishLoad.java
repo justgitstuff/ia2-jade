@@ -58,9 +58,9 @@ public class ReceiveFinishLoad{
 			//In dist have all the distance to recycling center.
 			//Choose the cell that i decided and return that cell.
 			//For each recycling center see the distance.
-			for (int x=0;x<game.getMap().length-1;x++)
+			for (int x=0;x<game.getMap().length;x++)
 			{					
-				for (int y=0; y<game.getMap()[x].length-1;y++)
+				for (int y=0; y<game.getMap()[x].length;y++)
 				{
 					Cell c=game.getCell(x,y);
 					//if getGarbageunits is 0 -> no garbage.
