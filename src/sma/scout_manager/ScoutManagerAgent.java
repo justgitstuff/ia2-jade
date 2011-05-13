@@ -1,5 +1,6 @@
 package sma.scout_manager;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -15,9 +16,13 @@ import jade.proto.AchieveREResponder;
 import jade.proto.ContractNetInitiator;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import sma.UtilsAgents;
+import sma.gui.Quadrant;
 import sma.ontology.Cell;
 import sma.ontology.InfoAgent;
 import sma.ontology.InfoGame;
@@ -27,6 +32,11 @@ public class ScoutManagerAgent extends Agent{
 	private static final long serialVersionUID = -3186674807204123899L;
 
 	private InfoGame game;
+	private ProtocolContractNetInitiator contract;
+	
+	private boolean justOneTime = true;
+	
+	private Map<AID, Quadrant> scoutsQuadrants = new HashMap<AID, Quadrant>();
 	
 	/**
 	 * A message is shown in the log area of the GUI
@@ -58,10 +68,13 @@ public class ScoutManagerAgent extends Agent{
 		MessageTemplate mt = MessageTemplate.MatchProtocol(UtilsAgents.PROTOCOL_TURN);
 		this.addBehaviour(new QueriesReceiver(this, mt));
 	    
+		contract = new ProtocolContractNetInitiator();
+		
+		
 		super.setup();
 	}
 	
-	private void manageScouts() {
+	private void manageScouts(Agent myAgent) {
 		ServiceDescription sd1 = new ServiceDescription();
 	    sd1.setType(UtilsAgents.SCOUT_AGENT);
 	    
@@ -69,16 +82,38 @@ public class ScoutManagerAgent extends Agent{
         descripcion.addServices(sd1);
         
 		try {
-			// Get the scouts
-			DFAgentDescription[] scouts = DFService.search(this, descripcion);
+			if (justOneTime) {
+				// Get the scouts
+				DFAgentDescription[] scouts = DFService.search(this, descripcion);
+				
+				// Divide the map into quadrants and assign the scouts to them
+				Cell[][] map = this.game.getMap();
+				List<Quadrant> quadrants = ScoutManagerUtils.divideCity(map.length, map[0].length, scouts.length);
+				
+				// Assign each quadrant to each scout
+				for (int i = 0; i < scouts.length; i++) {
+					scoutsQuadrants.put(scouts[i].getName(), quadrants.get(i));
+				}
+				
+				justOneTime = false;
+			}
 			
-			// Create the CFP
-			ACLMessage messageCFP = new ACLMessage(ACLMessage.CFP);
-	        for (DFAgentDescription scout:scouts) {
-	        	messageCFP.addReceiver(scout.getName());
-	        }
+			// Get the target cell for each scout
+			// Each Scout has its quadrant
+			for (AID scout:scoutsQuadrants.keySet()) {
+				Point targetPoint = ScoutManagerUtils
+						.chooseUnchartedPointInAQuadrant(scoutsQuadrants.get(scout), this.game.getMap());
+				Cell targetCell = new Cell(Cell.STREET);
+				targetCell.setRow(targetPoint.x);
+				targetCell.setColumn(targetPoint.y);
+				contract.addBehaviour(myAgent, targetCell);
+			}
+			
 		} catch (FIPAException e) {
 			System.err.println("No scouts found by the ScoutManager");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -103,6 +138,9 @@ public class ScoutManagerAgent extends Agent{
 					response.setPerformative(ACLMessage.AGREE);
 					game = (InfoGame) arg0.getContentObject();
 					showMessage("New turn " + game.getInfo().getTurn());
+					
+					// 
+					manageScouts(this.myAgent);
 				} else if (arg0.getPerformative() == ACLMessage.AGREE) {
 					// TODO now what?!
 					response = null;
@@ -219,6 +257,10 @@ public class ScoutManagerAgent extends Agent{
         protected void handleInform(ACLMessage inform) {
             System.out.printf("\n");
         }
+	}
+
+	public Map<AID, Quadrant> getScoutsQuadrants() {
+		return scoutsQuadrants;
 	}
 
 }
