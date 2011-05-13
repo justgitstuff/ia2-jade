@@ -27,12 +27,14 @@ public class ProtocolContractNetResponder{
 	Cell content=null;
 	SendFinishLoad protocolSendFinishLoad;
 	SendFinishDownload protocolSendFinishDownload;
+	private boolean accepted;
 	
 	/**
 	 * @param infoGame the infoGame to set
 	 */
 	public void setInfoGame(InfoGame infoGame) {
 		this.infoGame = infoGame;
+		accepted=false;
 	}
 
 	private InfoGame infoGame;
@@ -81,7 +83,7 @@ public class ProtocolContractNetResponder{
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 			
-			if(myState){				
+			if((myState)&&(!accepted)){				
 				//Content have a int with a distance.
 				reply.setPerformative(ACLMessage.PROPOSE);
 				distance=evaluateAction(content);
@@ -229,6 +231,7 @@ public class ProtocolContractNetResponder{
 		*/
 		protected ACLMessage prepareResultNotification (ACLMessage cfp, ACLMessage propose, ACLMessage accept)
 		{
+			accepted=true;
 			ACLMessage inform = accept.createReply();
 			//Your code.
 			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
