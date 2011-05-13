@@ -22,9 +22,7 @@ public class ProtocolContractNetResponder{
 	private InfoAgent infoAgent;
 	
 	
-	// VARIABLE ESTAT
-	// 1 lliure
-	//2 2 Anar descarregar
+	
 	
 	
 	/**
@@ -81,19 +79,25 @@ public class ProtocolContractNetResponder{
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 			
-			//if(myState){				
+		//	if(myState){				
 				//Content have a int with a distance.
 				reply.setPerformative(ACLMessage.PROPOSE);
 				distance=evaluateAction(content);
 				System.out.println("He calculat distancia "+ distance);
 				reply.setContent(Integer.toString(distance));
-			/*}else{
-				reply.setPerformative(ACLMessage.REFUSE);
-				// S'acaba comunicacio controalr si moviment reciclatege o descarrega
+				
+				
+			//}else{
+			//	reply.setPerformative(ACLMessage.REFUSE);
+				// S'acaba comunicacio
+				//controalr si moviment reciclatege o descarrega
+				//distance= evaluateAction(content);// Content cambiar per una cell pos basura
+				//sma.UtilsAgents.cellDistance(begin, end)
+				
 				// o notificar lliure si es el cas cambia estat
 				
 				
-			}*/
+		//	}
 		//	}
 			
 			
@@ -113,8 +117,8 @@ public class ProtocolContractNetResponder{
 			PathTest test = new PathTest(infoGame);
 			
 			//Em busco a mi mateix
-			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
-			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();;
+			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			
 			
 			test.PosicioInicial(my_x,my_y,1); // op1
