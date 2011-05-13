@@ -47,6 +47,8 @@ public class Cell implements Serializable {
   }
   
   
+  
+  
 public Cell(int type) {
     this.type = type;
   }

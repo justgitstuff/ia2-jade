@@ -76,7 +76,7 @@ public class GameMap {
 				
 				if (game.getCell(r, c)!=null){
 					//System.out.println(this.game.getCell(x, y).getCellType());
-					System.out.println(game.getCell(r, c).isThereAnAgent());
+					//System.out.println(game.getCell(r, c).isThereAnAgent());
 					//private char garbageType = '-'; //G=Glass, P=Plastic, M=Metal, P=Paper
 					
 					terrain[c][r]=game.getCell(r, c).getCellType();
@@ -84,13 +84,13 @@ public class GameMap {
 					
 					// NO SURTEN ELS AGENTS RECONEGUTS
 					if(this.game.getCell(r,c).isThereAnAgent()==true){
-						System.out.println("AGENT TROBATTTT");
+						//System.out.println("AGENT TROBATTTT");
 						if(this.game.getCell(r,c).getAgent().getAgentType()==0){
 							units[c][r] = SCOUT;
-							System.out.println("SCOUTTTT");
+							//System.out.println("SCOUTTTT");
 						}else{// SERA 1 corresponent HARVESTER
 							units[c][r] = HARVESTER;
-							System.out.println("HARVESTER");
+							//System.out.println("HARVESTER");
 						}	
 					}
 					
@@ -242,13 +242,14 @@ public class GameMap {
 	
 	public void printMap()
 	{
-		for(int c=0;c<WIDTH;c++){
-			for(int r=0;r<HEIGHT;r++){
+		for(int r=0;r<HEIGHT;r++){
+			for(int c=0;c<WIDTH;c++){
 				switch(terrain[c][r])
 				{
 				case 2:System.out.print("-");break;
 				case 1:System.out.print("*");break;
 				case 3:System.out.print("o");break;
+				case 10:System.out.print("?");break;
 				}
 			}
 			System.out.println(".");
