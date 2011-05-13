@@ -106,17 +106,21 @@ public class ProtocolContractNetResponder{
 			PathTest test = new PathTest(infoGame);
 			
 			//Em busco a mi mateix
-			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			
-			System.out.println("Scout a "+ my_x+" "+my_y);
-
+			System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
+			
+			
+			
 			// op1
 			
 			test.PosicioInicial(my_x,my_y,1); 
+			//Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
+
 			
-			
+						
 			// OPCIOOOOO 2
 			test.PosicioInicial(my_x,my_y,2);
 			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
