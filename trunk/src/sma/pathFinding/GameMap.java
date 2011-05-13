@@ -104,7 +104,7 @@ public class GameMap {
 			}
 		}
 		
-		printMap();
+		//printMap();
 	
 	}
 

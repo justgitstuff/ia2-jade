@@ -38,13 +38,13 @@ public class ProtocolContractNetInitiator{
 				SearchConstraints c = new SearchConstraints();
 				c.setMaxResults(new Long(-1));
 				DFAgentDescription[] result = DFService.search(agent, dfd, c);
-				System.out.println("ContractNetInitiator: in search responders.");
+				//System.out.println("ContractNetInitiator: in search responders.");
 				if(result.length > 0){
 					int i = 0;
 					int j = result.length;
 					while (i<j){
 						dfd = result[i];
-						System.out.println("ContractNetInitiator: add receiver "+dfd.getName());
+						//System.out.println("ContractNetInitiator: add receiver "+dfd.getName());
 						msg.addReceiver(dfd.getName());
 						i=i+1;					
 					}
@@ -92,7 +92,7 @@ public class ProtocolContractNetInitiator{
 					reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 					acceptances.addElement(reply);
 					int proposal = Integer.parseInt(msg.getContent());
-					System.out.println("Proposta a distancia "+proposal);
+					//System.out.println("Proposta a distancia "+proposal);
 					/////Ficar el codi de quin proposal et quedes.
 					if (proposal<bestProposal){
 						bestProposal = proposal;
@@ -102,7 +102,7 @@ public class ProtocolContractNetInitiator{
 			}
 			// Accept the proposal of the best proposer
 			if (accept != null) {
-				System.out.println("Accepting proposal "+bestProposal);
+				//System.out.println("Accepting proposal "+bestProposal);
 				accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			}				
 		}
