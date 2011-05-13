@@ -10,9 +10,22 @@ public class Statistics {
 		try {
 			setMaxPoints(calcMaxPoints(game));
 		} catch (Exception e) {System.err.println("Statistics Error: could not init statistics");}
-		
+		unitsGarbaged=0;
+		turnsToFinish=-1;
+		//TODO pensar com fer això discoveredBuildings=findDiscoveredBuildings(game);
 		
 	}
+	
+	/*public int findDiscoveredBuildings(InfoGame game)
+	{
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x, y);
+				if (c.isDiscovered())
+					if(c.getGarbageUnits())
+			}
+	}*/
 	
 	private int calcMaxPoints(InfoGame game) throws Exception
 	{

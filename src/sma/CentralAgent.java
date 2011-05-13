@@ -35,6 +35,7 @@ public class CentralAgent extends Agent {
   private sma.gui.GraphicInterface gui;
   private sma.ontology.InfoGame game;
   private sma.ontology.InfoGame publicGame;
+  private Statistics stats;
 
   private AID coordinatorAgent;
   
@@ -133,6 +134,9 @@ public class CentralAgent extends Agent {
    createAgents();
  
 
+   //init Statistics
+   stats=new Statistics(game);
+   
    //add behaviours
 
    // Search for coordinator Agent
@@ -366,16 +370,16 @@ private void updatePublicGame()
 			boolean diagonal=false;
 			switch (moveOrder.getDirection())
 			{
-				case UP:dy=-1;showMessage("UP");break;
-				case DOWN:dy=1;showMessage("DOWN");break;
-				case LEFT:dx=-1;showMessage("LEFT");break;
-				case RIGHT:dx=1;showMessage("RIGHT");break;
+				case UP:dy=-1;/*showMessage("UP");*/break;
+				case DOWN:dy=1;/*showMessage("DOWN");*/break;
+				case LEFT:dx=-1/*;showMessage("LEFT")*/;break;
+				case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
 				case UPLEFT:dx=-1;dy=-1;diagonal=true;break;
 				case UPRIGHT:dx=1;dy=-1;diagonal=true;break;
 				case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;
 				case DOWNRIGHT:dx=1;dy=1;diagonal=true;break;
 			}
-			showMessage("Will move "+dx+" "+dy);
+			//showMessage("Will move "+dx+" "+dy);
 			destination=game.getMap()[y+dy][x+dx];
 			//showMessage("I have its destination "+destination);
 			
@@ -383,6 +387,7 @@ private void updatePublicGame()
 			{
 			case GO:
 				try{
+					showMessage(origin.getAgent().getAgent()+" Moving");
 					if (diagonal) throw new Exception();
 					//showMessage("Its a go order");
 					ia=origin.getAgent();
@@ -405,6 +410,7 @@ private void updatePublicGame()
 			case GET:
 				try
 				{
+					showMessage(origin.getAgent().getAgent()+" Getting Garbage");
 					getGarbage(moveOrder, origin, destination);
 					response.setPerformative(ACLMessage.AGREE);
 				}catch(Exception e){
@@ -412,6 +418,14 @@ private void updatePublicGame()
 				}
 				break;
 			case PUT:
+				try {
+					showMessage(origin.getAgent().getAgent()+" Putting Garbage");
+					putGarbage(moveOrder, origin, destination);
+					response.setPerformative(ACLMessage.AGREE);
+				} catch (Exception e) {
+					response.setPerformative(ACLMessage.FAILURE);
+				}
+					
 				break;
 			}
 		}
@@ -470,6 +484,8 @@ private void updatePublicGame()
 		
 		// All OK, go ahead putting garbage
 		agent.setUnits(au-1);
+		int currentPoints=stats.getPoints();
+		stats.setPoints(currentPoints+points);
 		// TODO complete this
 		
 	}

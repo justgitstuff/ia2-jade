@@ -165,12 +165,12 @@ public class HarvesterManagerAgent extends Agent{
 							//if getGarbageunits is 0 -> no garbage.
 							if (cell != null)
 							{
-								showMessage("Comprobo cel.la "+cell.getRow()+" "+cell.getCellType());
+								//showMessage("Comprobo cel.la "+cell.getRow()+" "+cell.getCellType());
 								if (cell.getCellType()==Cell.BUILDING)
-								{	showMessage("Es un edifici");
+								{	//showMessage("Es un edifici");
 									if(cell.getCellType()!=Cell.RECYCLING_CENTER)
 										if(cell.getGarbageUnits()>0) {
-											showMessage("Tinc brossa pendent de recollir "+cell.getGarbageString());
+											//showMessage("Tinc brossa pendent de recollir "+cell.getGarbageString());
 											contractNetInitiator.addBehaviour(this.myAgent, cell);
 										}
 								}
