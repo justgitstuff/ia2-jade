@@ -21,7 +21,7 @@ public class ProtocolContractNetResponder{
 	private boolean myState=true;// true = lliure false= transportar
 	private InfoAgent infoAgent;
 	private Cell endDescarga;
-	
+	Cell content=null;
 	
 	
 	
@@ -67,7 +67,7 @@ public class ProtocolContractNetResponder{
 		protected ACLMessage prepareResponse (ACLMessage msg)
 		{	
 			int distance;
-			Cell content=null;
+			//Cell content=null;
 			try {
 				content = (Cell) msg.getContentObject();
 			} catch (UnreadableException e) {
@@ -95,25 +95,25 @@ public class ProtocolContractNetResponder{
 				
 				Cell begin = new Cell(Cell.BUILDING);
 				//Em busco a mi mateix
-				my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-				my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+				//my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+				//my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 				
 				begin.setColumn(my_y);
 				begin.setRow(my_x);
 				
 				// retorna 1 si sta al perimetre, llavors descarga
-				if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
-					
-					ms.put(getNextStep(), TypeFromInt(infoAgent.getCurrentType()));
+				//if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
+				//	if(endDescarga.)
+				//	ms.put(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 
 					
-				}else{// decisio mourem
+			//	}else{// decisio mourem
 					
-					evaluateAction(endDescarga);
-					ms.go(getNextStep());
+			//		evaluateAction(endDescarga);
+				//	ms.go(getNextStep());
 					
 					
-				}
+			//	} 
 				
 				// o notificar lliure si es el cas cambia estat
 				
@@ -151,14 +151,14 @@ public class ProtocolContractNetResponder{
 			// op1
 			
 			test.PosicioInicial(my_x,my_y,1); 
-			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
-			
+			//Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
+			Path stepsPathFinal1= test.PosicioFinal(10,9,1);
 
 			
 						
 			// OPCIOOOOO 2
 			test.PosicioInicial(my_x,my_y,2);
-			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
+			Path stepsPathFinal2= test.PosicioFinal(10,9,2);
 			
 			int distFinal = test.distanciaPesos(stepsPathFinal2);
 			short_path = stepsPathFinal2;
@@ -236,15 +236,38 @@ public class ProtocolContractNetResponder{
 			// o stik al voltant i llavors carrego si es el cas i no faig ms
 			// i si akao de rekollo enviao sendFInishLoad( dic posteriroment les dist amb tots els reciclatges)
 			
-			// controlat
+		
+			//distance= evaluateAction(content);// Content cambiar per una cell pos basura
 			
-			//this.myAgent.
-			//if(stikcargant || stikbuidant){
-			//	reply.setPerformative(ACLMessage.REFUSE);
-			//}else{
+			Cell begin = new Cell(Cell.BUILDING);
+			
+			//Em busco a mi mateix
+			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			
+			begin.setColumn(my_y);
+			begin.setRow(my_x);
+			
+			// retorna 1 si sta al perimetre, llavors descarga
+			if(sma.UtilsAgents.cellDistance(begin, content)==1){
+				
+				ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+
+				
+			}else{// decisio mourem
+				
+				//evaluateAction(endDescarga);
+				ms.go(getNextStep());
+				
+				
+			} 
+			
+			
+			
+			
 			
 			// 
-			ms.go(getNextStep());
+		//	ms.go(getNextStep());
 			
 			//Stik carregant
 			//ms.get(d, t);
