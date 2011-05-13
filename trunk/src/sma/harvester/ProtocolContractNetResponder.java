@@ -242,50 +242,61 @@ public class ProtocolContractNetResponder{
 			Cell begin = new Cell(Cell.BUILDING);
 			
 			//Em busco a mi mateix
-			//my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-			//my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			int my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+			int my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			
 			begin.setColumn(my_x);
 			begin.setRow(my_y);
 			
+			System.out.println("Harvester computing movement order, from  "+my_x+" "+my_y+" to "+content.getColumn()+" "+content.getRow() );
+			System.out.println("Distance is "+ sma.UtilsAgents.cellDistance(begin, content));
 			// retorna 1 si sta al perimetre, llavors descarga
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
-				if(infoAgent.getUnits()!=0){
-					ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-				}else{
-					//estic lliure
-					// NOTIFICAR SEND FINISH LOAD
-					DistanceList list = new DistanceList();
-					 
-					for (int x=0;x<infoGame.getMap().length;x++)
-					{					
-						for (int y=0; y<infoGame.getMap()[x].length;y++)
-						{
-							Cell c=infoGame.getCell(x,y);
-							//if getGarbageunits is 0 -> no garbage.
-							if(c.getCellType() == Cell.RECYCLING_CENTER)
+				try {
+					System.out.println("Destination has garbage: "+content.getGarbageUnits());
+					if(content.getGarbageUnits()!=0){
+						ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+					}else{
+						//estic lliure
+						// NOTIFICAR SEND FINISH LOAD
+						DistanceList list = new DistanceList();
+						 
+						for (int x=0;x<infoGame.getMap().length;x++)
+						{					
+							for (int y=0; y<infoGame.getMap()[x].length;y++)
 							{
-								list.addDistance(evaluateAction(c));
+								Cell c=infoGame.getCell(x,y);
+								//if getGarbageunits is 0 -> no garbage.
+								if (c!=null)
+								{
+									if(c.getCellType() == Cell.RECYCLING_CENTER)
+									{
+										list.addDistance(evaluateAction(c));
+									}
+								}
 							}
 						}
-					}
-					
-					
-						try {
+						
+						
 							try {
-								goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
-							} catch (IOException e) {
+								try {
+									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							} catch (UnreadableException e) {
 								e.printStackTrace();
 							}
-						} catch (UnreadableException e) {
-							e.printStackTrace();
-						}
-					
-					
-					
-					myState=false;
-					
+						
+						
+						
+						myState=false;
+						
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 			}else{// decisio mourem
