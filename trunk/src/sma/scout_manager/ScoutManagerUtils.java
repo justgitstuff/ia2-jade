@@ -91,7 +91,7 @@ public class ScoutManagerUtils {
 		int iIni = 0;
 		int jIni = 0;
 		boolean notUnchartedZone = false;
-		for (int i = 0; i <= quadrant.x2; i++) {
+		for (int i = 0; i < quadrant.x2; i++) {
 			if (notUnchartedZone) {
 				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); // For when there is an end of line.
 				notUnchartedZone = false;
@@ -99,11 +99,11 @@ public class ScoutManagerUtils {
 			if (i == 0) {
 				notUnchartedZone = true;
 			}
-			for (int j = 0; j <= quadrant.y2; j++) {
-				if (map[i][j] != null && notUnchartedZone) {
+			for (int j = 0; j < quadrant.y2; j++) {
+				if (map[j][i] != null && notUnchartedZone) {
 					unchartedRectangles.add(new Rectangle(iIni, i, jIni, j));
 					notUnchartedZone = false;
-				} else if (map[i][j] == null && !notUnchartedZone) {
+				} else if (map[j][i] == null && !notUnchartedZone) {
 					notUnchartedZone = true;
 					iIni = i;
 					jIni = j;

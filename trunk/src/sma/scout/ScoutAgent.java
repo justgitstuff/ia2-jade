@@ -1,16 +1,8 @@
 package sma.scout;
 
-import sma.UtilsAgents;
-import sma.harvester.ProtocolContractNetResponder;
-import sma.moves.Movement;
-import sma.moves.Movement.Action;
-import sma.ontology.InfoGame;
-import sma.pathFinding.*;
-import sma.scout.TurnScoutReceiver.MessageReceiver;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -20,7 +12,9 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
-import jade.proto.ContractNetResponder;
+import sma.UtilsAgents;
+import sma.ontology.InfoGame;
+import sma.pathFinding.Path;
 
 public class ScoutAgent extends Agent {
 

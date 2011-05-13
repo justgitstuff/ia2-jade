@@ -1,18 +1,24 @@
 package sma.scout_manager;
-import jade.proto.*;
-import jade.lang.acl.ACLMessage;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.proto.ContractNetInitiator;
 
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import sma.gui.Quadrant;
 import sma.ontology.Cell;
 
-public class ProtocolContractNetInitiator{	
+public class ProtocolContractNetInitiator {
+	
+	private Cell targetCell = null;
+	
 	/**
 	 * Enter a cell where content the material and the position where I want to go the harvester.
 	 * @param Agent
@@ -30,7 +36,7 @@ public class ProtocolContractNetInitiator{
 
 	private ACLMessage FindReceivers(Agent agent, ACLMessage msg) {		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType(sma.UtilsAgents.HARVESTER_AGENT);		
+		sd.setType(sma.UtilsAgents.SCOUT_AGENT);		
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.addServices(sd);
 		try{
@@ -73,8 +79,8 @@ public class ProtocolContractNetInitiator{
 		 * Executed when all responses have been collected or when the timeout is expired.
 		 */
 		@SuppressWarnings("unchecked")
-		protected void handleAllResponses(Vector responses, Vector acceptances)
-		{		
+		protected void handleAllResponses(Vector responses, Vector acceptances) {
+			
 			// Evaluate proposals.
 			int bestProposal = -1;			
 			ACLMessage accept = null;
@@ -86,11 +92,18 @@ public class ProtocolContractNetInitiator{
 					reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 					acceptances.addElement(reply);
 					int proposal = Integer.parseInt(msg.getContent());
-					/////Ficar el codi de quin proposal et quedes.
-					if (proposal > bestProposal) {
-						bestProposal = proposal;						
-						accept = reply;
+					
+					// Check if the scout is in the cell of the target point
+					AID sender = msg.getSender();
+					Quadrant quadrant = ((ScoutManagerAgent) this.myAgent).getScoutsQuadrants().get(sender);
+					if (targetCell.getRow() > quadrant.x1 && targetCell.getRow() < quadrant.x2
+							&& targetCell.getColumn() > quadrant.y1 && targetCell.getColumn() < quadrant.y2) {
+						if (proposal > bestProposal) {
+							bestProposal = proposal;						
+							accept = reply;
+						}
 					}
+					
 				}
 			}
 			// Accept the proposal of the best proposer
