@@ -133,14 +133,14 @@ public class HarvesterManagerAgent extends Agent{
 					
 					//Find all my agents and send them the new turn
 					ACLMessage message= new ACLMessage(ACLMessage.REQUEST);
-					for(int x=0;x<game.getMap().length-1;x++)
-						for(int y=0;y<game.getMap()[x].length-1;y++)
+					for(int r=0;r<game.getMap().length-1;r++)
+						for(int c=0;c<game.getMap()[c].length-1;c++)
 						{
-							Cell c=game.getCell(x, y);
-							if (c!=null)
-								if(c.isThereAnAgent())
+							Cell cell=game.getCell(r,c);
+							if (cell!=null)
+								if(cell.isThereAnAgent())
 								{
-									InfoAgent a = c.getAgent();
+									InfoAgent a = cell.getAgent();
 									if (a.getAgent().equals("H"))
 									{
 										message.addReceiver(a.getAID());
@@ -157,21 +157,21 @@ public class HarvesterManagerAgent extends Agent{
 					//fins aqu� enviat un nou torn a tots els harvesters.
 					
 					//For each garbage do ContractNetInitiator
-					for (int x=0;x<game.getMap().length-1;x++)
+					for (int r=0;r<game.getMap().length-1;r++)
 					{	
-						for (int y=0; y<game.getMap()[x].length-1;y++)
+						for (int c=0; c<game.getMap()[r].length-1;c++)
 						{
-							Cell c=game.getCell(x,y);
+							Cell cell=game.getCell(r,c);
 							//if getGarbageunits is 0 -> no garbage.
-							if (c != null)
+							if (cell != null)
 							{
-								showMessage("Comprobo cel.la "+c.getRow()+" "+c.getCellType());
-								if (c.getCellType()==Cell.BUILDING)
+								showMessage("Comprobo cel.la "+cell.getRow()+" "+cell.getCellType());
+								if (cell.getCellType()==Cell.BUILDING)
 								{	showMessage("Es un edifici");
-									if(c.getCellType()!=Cell.RECYCLING_CENTER)
-										if(c.getGarbageUnits()>0) {
-											showMessage("Tinc brossa pendent de recollir "+c.getGarbageString());
-											contractNetInitiator.addBehaviour(this.myAgent, c);
+									if(cell.getCellType()!=Cell.RECYCLING_CENTER)
+										if(cell.getGarbageUnits()>0) {
+											showMessage("Tinc brossa pendent de recollir "+cell.getGarbageString());
+											contractNetInitiator.addBehaviour(this.myAgent, cell);
 										}
 								}
 							}

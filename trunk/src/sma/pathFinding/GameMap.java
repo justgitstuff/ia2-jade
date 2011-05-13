@@ -60,7 +60,7 @@ public class GameMap {
 		this.game=infoGame;
 		
 			
-		WIDTH=this.game.getMap().length;
+		WIDTH=this.game.getMap()[0].length;
 		HEIGHT=this.game.getMap().length;
 		
 		terrain = new int[WIDTH][HEIGHT];
@@ -71,37 +71,38 @@ public class GameMap {
 		
 	//	System.out.println("long mappppp" + this.game.getMap().length);
 		
-		for(int x=0;x<WIDTH-1;x++){
-			for(int y=0;y<HEIGHT-1;y++){
+		for(int c=0;c<WIDTH;c++){
+			for(int r=0;r<HEIGHT;r++){
 				
-				if (game.getCell(x, y)!=null){
+				if (game.getCell(r, c)!=null){
 					//System.out.println(this.game.getCell(x, y).getCellType());
-					System.out.println(game.getCell(x, y).isThereAnAgent());
+					System.out.println(game.getCell(r, c).isThereAnAgent());
 					//private char garbageType = '-'; //G=Glass, P=Plastic, M=Metal, P=Paper
 					
-					terrain[x][y]=game.getCell(x, y).getCellType();
+					terrain[c][r]=game.getCell(r, c).getCellType();
 				
 					
 					// NO SURTEN ELS AGENTS RECONEGUTS
-					if(this.game.getCell(x,y).isThereAnAgent()==true){
+					if(this.game.getCell(r,c).isThereAnAgent()==true){
 						System.out.println("AGENT TROBATTTT");
-						if(this.game.getCell(x,y).getAgent().getAgentType()==0){
-							units[x][y] = SCOUT;
+						if(this.game.getCell(r,c).getAgent().getAgentType()==0){
+							units[c][r] = SCOUT;
 							System.out.println("SCOUTTTT");
 						}else{// SERA 1 corresponent HARVESTER
-							units[x][y] = HARVESTER;
+							units[c][r] = HARVESTER;
 							System.out.println("HARVESTER");
 						}	
 					}
 					
 				}else{
-					terrain[x][y]=UNDISCOVERED;
+					terrain[c][r]=UNDISCOVERED;
 				}
 				
 								
 			}
 		}
 		
+		printMap();
 	
 	}
 
@@ -149,8 +150,14 @@ public class GameMap {
 	 * @param y The y coordinate of the tile to check for a unit
 	 * @return The ID of the unit at the given location or 0 if there is no unit 
 	 */
-	public int getUnit(int x, int y) {
-		return units[x][y];
+	public int getUnit(int x, int y) throws java.lang.ArrayIndexOutOfBoundsException {
+		try{
+			return units[x][y];
+		}catch(java.lang.ArrayIndexOutOfBoundsException e)
+		{
+			System.err.printf("Index out of bounds "+x+" "+y);
+			return 0;
+		}
 	}
 	
 	/**
@@ -229,5 +236,18 @@ public class GameMap {
 		visited[x][y] = true;
 	}
 	
-	
+	public void printMap()
+	{
+		for(int c=0;c<WIDTH;c++){
+			for(int r=0;r<HEIGHT;r++){
+				switch(terrain[c][r])
+				{
+				case 2:System.out.print("-");break;
+				case 1:System.out.print("*");break;
+				case 3:System.out.print("o");break;
+				}
+			}
+			System.out.println(".");
+		}
+	}
 }
