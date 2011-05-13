@@ -17,8 +17,6 @@ import sma.ontology.Cell;
 
 public class ProtocolContractNetInitiator {
 	
-	private Cell targetCell = null;
-	
 	/**
 	 * Enter a cell where content the material and the position where I want to go the harvester.
 	 * @param Agent
@@ -31,8 +29,9 @@ public class ProtocolContractNetInitiator {
 		ms.setContentObject(content);
 		ms.setSender(agent.getAID());		
 		ms = FindReceivers(agent,ms);
-		agent.addBehaviour(new ProtocolContractNetInit(agent, ms));
-		targetCell = content;
+		ProtocolContractNetInit protocol = new ProtocolContractNetInit(agent, ms);
+		protocol.setTargetCell(content);
+		agent.addBehaviour(protocol);
 	}
 
 	private ACLMessage FindReceivers(Agent agent, ACLMessage msg) {		
@@ -70,12 +69,17 @@ public class ProtocolContractNetInitiator {
 	public class ProtocolContractNetInit extends ContractNetInitiator{
 
 		private static final long serialVersionUID = 1L;
-
+		private Cell targetCell = null;
+		
 		public ProtocolContractNetInit (Agent myAgent, ACLMessage msg)
 		{
 			super(myAgent, msg); 
 		}
 		
+		public void setTargetCell(Cell targetCell) {
+			this.targetCell = targetCell;
+		}
+
 		/**
 		 * Executed when all responses have been collected or when the timeout is expired.
 		 */
