@@ -95,7 +95,9 @@ public class GameMap {
 					}
 					
 				}else{
+					
 					terrain[c][r]=UNDISCOVERED;
+					
 				}
 				
 								
@@ -139,7 +141,9 @@ public class GameMap {
 	}
 	
 	public void setTerrain(int x, int y) {
+		//System.out.print("Posicioooooo Origen Destiiiiiiiiiii "+terrain[x][y]+ " " + x+ " " + y);
 		 terrain[x][y]=STREET;
+		// System.out.print("Posicioooooo Destiiiiiiiiiii "+terrain[x][y] +" " + x+ " " + y);
 	}
 	
 	
