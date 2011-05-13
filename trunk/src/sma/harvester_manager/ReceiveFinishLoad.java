@@ -1,8 +1,5 @@
 package sma.harvester_manager;
 import java.io.IOException;
-
-import javax.swing.CellRendererPane;
-
 import sma.ontology.Cell;
 import sma.ontology.InfoAgent;
 import sma.ontology.InfoGame;
@@ -42,11 +39,22 @@ public class ReceiveFinishLoad{
 			DistanceList dist=null;			
 			ACLMessage r= arg0.createReply();
 			Cell cellRecyclingCenter=null;
+			Cell temp = null;
+			int pos = 0;
+			int distancia;
+			int pointsChoose=0;
+			int distanciaMinima=0;
 			try {
 				dist = (DistanceList) arg0.getContentObject();
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
+			
+			//In harvester have the harvester who send that FinishLoad.
+			InfoAgent harvester = sma.UtilsAgents.findAgent(arg0.getSender(), game).getAgent();
+			//index have the type of garbage from harvester.
+			int index = harvester.getCurrentType();
+			
 			//In dist have all the distance to recycling center.
 			//Choose the cell that i decided and return that cell.
 			//For each recycling center see the distance.
@@ -57,27 +65,55 @@ public class ReceiveFinishLoad{
 					Cell c=game.getCell(x,y);
 					//if getGarbageunits is 0 -> no garbage.
 					if(c.getCellType() == Cell.RECYCLING_CENTER)
-					{	
-						//In harvester have the harvester who send that FinishLoad.
-						InfoAgent harvester = sma.UtilsAgents.findAgent(arg0.getSender(), game).getAgent();
-						//index have the type of garbage from harvester.
-						int index = harvester.getCurrentType();
-												
+					{							
+						if (dist.getDistances().isEmpty()) System.out.println("Harvester Manager: Caution, list of distance recycling center is empty.");
+						//In distancia have integer with distance of harvester-recyclingCenter.
+						distancia = dist.getDistances().get(pos);
+						pos++;						
 						try {
 							//In c.getGarbagePoints()[index] have points to drop material "index" in that recycling center.
 							//If is zero means that recycling center no accept that type of garbage.
-							if (c.getGarbagePoints()[index]>0){
+							int points=c.getGarbagePoints()[index];
+							if (points>0){
+								temp = c;
+								//El primer cop actualitzem el valor de cellRecyclingCenter final.
+								if (cellRecyclingCenter==null){
+									cellRecyclingCenter = temp;
+									distanciaMinima = distancia;
+									pointsChoose=points;
+								}
 								
-								//TODO Choose the best recycling center.
-								cellRecyclingCenter = c;
+								//Si la distancia que hi ha del harvester al centre de reciclatge actual es mes petita que l'anterior, o l'actual tingui més del doble de punts que l'escollit...
+								//En temp tenim el centre de reciclatge de la cel.la actual que mirem. En cellRecyclingCenter es el guardat com a millor opcio.
+								//Si la distancia actual es mes petita que la distancia escollida anteriorment...
+								if(distancia < distanciaMinima){									
+									//I el d'ara té el doble de punts que els punts escollits anteriorment, o
+									//la distancia es menys de la meitat de la distancia escollida anteriorment.
+									if ((pointsChoose<2*points)||(distancia<distanciaMinima/2)){
+										cellRecyclingCenter = temp;
+										distanciaMinima=distancia;
+										pointsChoose=points;
+									}
+								}else{
+									//Si la distancia d'ara es mes gran que l'escollida anteriorment 
+									//i té més del doble de punts que l'anterior però no té més del doble de la distancia anterior...
+									if((points>2*pointsChoose)&&(distanciaMinima*2>distancia))
+									{
+										cellRecyclingCenter = temp;
+										distanciaMinima=distancia;
+										pointsChoose=points;
+									}
+								}									
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
-						}
-						
-					}					
+						}						
+					}				
 				}
 			}
+			
+			if (cellRecyclingCenter == null) System.out.println("Harvester Manager: Not found any recycling center for "+index+".");
+			else System.out.println("Harvester Manager: cell chosse for download garbage: posx->"+cellRecyclingCenter.getColumn()+", posy->"+cellRecyclingCenter.getRow());
 			
 			r.setPerformative(ACLMessage.AGREE);
 			//Cell cel = getGame().getCell(3, 4);
@@ -85,8 +121,7 @@ public class ReceiveFinishLoad{
 				r.setContentObject(cellRecyclingCenter);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}	
-			System.out.println("Receive from harvester that distancelist, dist 1: "+dist.getDistances().get(0)+", dist 2: "+dist.getDistances().get(1)+"...");
+			}			
 			return r;
 		}		
 	}	
