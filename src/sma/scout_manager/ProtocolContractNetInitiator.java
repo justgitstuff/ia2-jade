@@ -32,6 +32,7 @@ public class ProtocolContractNetInitiator {
 		ms.setSender(agent.getAID());		
 		ms = FindReceivers(agent,ms);
 		agent.addBehaviour(new ProtocolContractNetInit(agent, ms));
+		targetCell = content;
 	}
 
 	private ACLMessage FindReceivers(Agent agent, ACLMessage msg) {		
@@ -78,7 +79,7 @@ public class ProtocolContractNetInitiator {
 		/**
 		 * Executed when all responses have been collected or when the timeout is expired.
 		 */
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		protected void handleAllResponses(Vector responses, Vector acceptances) {
 			
 			// Evaluate proposals.
@@ -96,7 +97,7 @@ public class ProtocolContractNetInitiator {
 					// Check if the scout is in the cell of the target point
 					AID sender = msg.getSender();
 					Quadrant quadrant = ((ScoutManagerAgent) this.myAgent).getScoutsQuadrants().get(sender);
-					if (targetCell.getRow() > quadrant.x1 && targetCell.getRow() < quadrant.x2
+					if (targetCell.getRow() >= quadrant.x1 && targetCell.getRow() <= quadrant.x2
 							&& targetCell.getColumn() > quadrant.y1 && targetCell.getColumn() < quadrant.y2) {
 						if (proposal > bestProposal) {
 							bestProposal = proposal;						
