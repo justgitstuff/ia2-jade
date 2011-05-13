@@ -98,8 +98,8 @@ public class ProtocolContractNetResponder{
 				//my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 				//my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 				
-				begin.setColumn(my_y);
-				begin.setRow(my_x);
+				begin.setColumn(my_x);
+				begin.setRow(my_y);
 				
 				// retorna 1 si sta al perimetre, llavors descarga
 				//if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
@@ -187,6 +187,8 @@ public class ProtocolContractNetResponder{
 			int destination_x = short_path.getX(1);
 			int destination_y = short_path.getY(1);
 			
+			System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
+			
 			if(my_x<destination_x && my_y==destination_y){ 
 				return Direction.RIGHT;	
 			
@@ -242,11 +244,11 @@ public class ProtocolContractNetResponder{
 			Cell begin = new Cell(Cell.BUILDING);
 			
 			//Em busco a mi mateix
-			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			//my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+			//my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			
-			begin.setColumn(my_y);
-			begin.setRow(my_x);
+			begin.setColumn(my_x);
+			begin.setRow(my_y);
 			
 			// retorna 1 si sta al perimetre, llavors descarga
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){

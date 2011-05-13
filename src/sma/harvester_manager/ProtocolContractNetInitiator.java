@@ -87,6 +87,7 @@ public class ProtocolContractNetInitiator{
 					if (firstTime == 0){
 						bestProposal = Integer.parseInt(msg.getContent());
 						firstTime++;
+						accept=reply;
 					}
 					reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 					acceptances.addElement(reply);

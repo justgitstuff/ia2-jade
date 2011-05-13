@@ -366,16 +366,16 @@ private void updatePublicGame()
 			boolean diagonal=false;
 			switch (moveOrder.getDirection())
 			{
-				case UP:dy=-1;/*showMessage("UP");*/break;
-				case DOWN:dy=1;/*showMessage("DOWN");*/break;
-				case LEFT:dx=-1;/*showMessage("LEFT");*/break;
-				case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
+				case UP:dy=-1;showMessage("UP");break;
+				case DOWN:dy=1;showMessage("DOWN");break;
+				case LEFT:dx=-1;showMessage("LEFT");break;
+				case RIGHT:dx=1;showMessage("RIGHT");break;
 				case UPLEFT:dx=-1;dy=-1;diagonal=true;break;
 				case UPRIGHT:dx=1;dy=-1;diagonal=true;break;
 				case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;
 				case DOWNRIGHT:dx=1;dy=1;diagonal=true;break;
 			}
-			//showMessage("Will move "+dx+" "+dy);
+			showMessage("Will move "+dx+" "+dy);
 			destination=game.getMap()[y+dy][x+dx];
 			//showMessage("I have its destination "+destination);
 			
