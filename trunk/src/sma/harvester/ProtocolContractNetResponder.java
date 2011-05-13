@@ -22,7 +22,7 @@ public class ProtocolContractNetResponder{
 	private InfoAgent infoAgent;
 	private Cell endDescarga;
 	Cell content=null;
-	
+	SendFinishLoad protocolSendFinishLoad;
 	
 	
 	/**
@@ -52,13 +52,11 @@ public class ProtocolContractNetResponder{
 		private static final long serialVersionUID = 1L;
 	
 		public ProtocolContractNetRes (Agent myAgent, MessageTemplate mt)
-		{
-
-	
+		{	
 			super(myAgent, mt);
 			System.out.println("Harvester: into cnet constructor");
 			ms = new MovementSender(myAgent, myAgent.getAID(),sma.UtilsAgents.HARVESTER_MANAGER_AGENT);
-			
+			protocolSendFinishLoad = new SendFinishLoad();
 		}
 		
 		/**Execute when receive a CFP message and need return integer with distance and
@@ -85,7 +83,7 @@ public class ProtocolContractNetResponder{
 				distance=evaluateAction(content);
 				System.out.println("He calculat distancia "+ distance);
 				reply.setContent(Integer.toString(distance));
-				//TODO mirar si puk karregar akest tipus de brosa
+				//TODO mirar si puk karregar akest tipus de brosa(harvest pot rekullir akest tipus)
 				
 			}else{
 				reply.setPerformative(ACLMessage.REFUSE);
@@ -94,36 +92,38 @@ public class ProtocolContractNetResponder{
 				//distance= evaluateAction(content);// Content cambiar per una cell pos basura
 				
 				Cell begin = new Cell(Cell.BUILDING);
-				//Em busco a mi mateix
-				//my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-				//my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
-				
 				begin.setColumn(my_x);
 				begin.setRow(my_y);
 				
-				// retorna 1 si sta al perimetre, llavors descarga
-				//if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
-				//	if(endDescarga.)
-				//	ms.put(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 
+				begin.setColumn(my_x);
+				begin.setRow(my_y);
+
+				// retorna 1 si sta al perimetre, llavors descarga
+				if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
 					
-			//	}else{// decisio mourem
+						try {
+							if(endDescarga.getGarbageUnits()!=0){
+								ms.put(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+							}else{
+								// ENVIAR K STIK DESCARREGAT
+								myState= true;
+								// sendFInishDOwnlLOAD
+							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					
-			//		evaluateAction(endDescarga);
-				//	ms.go(getNextStep());
+					
+				}else{// decisio mourem
+					
+					evaluateAction(endDescarga);
+					ms.go(getNextStep());
 					
 					
-			//	} 
-				
-				// o notificar lliure si es el cas cambia estat
-				
-				
-			}
-		//	}
-			
-			
-			
-			
+				} 					
+			}			
 			return reply;
 		}
 		
@@ -151,7 +151,6 @@ public class ProtocolContractNetResponder{
 			// op1
 			
 			test.PosicioInicial(my_x,my_y,1); 
-			//Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 
 			
@@ -167,23 +166,18 @@ public class ProtocolContractNetResponder{
 			if(stepsPathFinal1!=null){
 				
 				int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
-						
-				
 				if(distFinal>distPesosOp1){
 					distFinal=distPesosOp1;
 					short_path = stepsPathFinal1;
 				}
-			}
-			
-			
+			}		
 			return distFinal;
 		}
 		
 		
 		
 		
-		private Direction getNextStep(){// com estan distribuits els index de la matriu del mapa??
-			//Movement m = new Movement();
+		private Direction getNextStep(){
 			int destination_x = short_path.getX(1);
 			int destination_y = short_path.getY(1);
 			
@@ -234,13 +228,11 @@ public class ProtocolContractNetResponder{
 			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 			
-			// aixo suicceeix kuan macepta la distancia i miro si simplement em desplazo, 
-			// o stik al voltant i llavors carrego si es el cas i no faig ms
-			// i si akao de rekollo enviao sendFInishLoad( dic posteriroment les dist amb tots els reciclatges)
+			// aceptada la distancia miro si simplement em desplazo, 
+			// o stik al voltant i  carrego 
+			// si akabo de rekollo enviao sendFInishLoad( dic posteriroment les dist amb tots els reciclatges)
 			
 		
-			//distance= evaluateAction(content);// Content cambiar per una cell pos basura
-			
 			Cell begin = new Cell(Cell.BUILDING);
 			
 			//Em busco a mi mateix
@@ -253,8 +245,18 @@ public class ProtocolContractNetResponder{
 			// retorna 1 si sta al perimetre, llavors descarga
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
-				ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-
+				if(infoAgent.getUnits()!=0){
+					ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+				}else{
+					//estic lliure
+					// NOTIFICAR SEND FINISH LOAD
+					 
+					//protocolSendFinishLoad.addBehaviour(myAgent, );
+					
+					
+					myState=false;
+					
+				}
 				
 			}else{// decisio mourem
 				
