@@ -85,21 +85,27 @@ public class ScoutManagerUtils {
 	}
 
 	
+	/**
+	 * For each row of the quadrant in the map, return the uncharted rectangles
+	 * @param quadrant
+	 * @param map
+	 * @return
+	 */
 	private static List<Rectangle> divideQuadrantIntoSmallerRectangles(Quadrant quadrant, Cell[][] map) {
 		List<Rectangle> unchartedRectangles = new ArrayList<Rectangle>();
 		
-		int iIni = 0;
-		int jIni = 0;
+		int iIni = quadrant.x1;
+		int jIni = quadrant.y1;
 		boolean notUnchartedZone = false;
-		for (int i = 0; i < quadrant.x2; i++) {
+		for (int i = quadrant.x1; i < quadrant.x2; i++) {
 			if (notUnchartedZone) {
 				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); // For when there is an end of line.
 				notUnchartedZone = false;
 			}
-			if (i == 0) {
+			if (i == quadrant.x1) {
 				notUnchartedZone = true;
 			}
-			for (int j = 0; j < quadrant.y2; j++) {
+			for (int j = quadrant.y1; j < quadrant.y2; j++) {
 				if (map[j][i] != null && notUnchartedZone) {
 					unchartedRectangles.add(new Rectangle(iIni, i, jIni, j));
 					notUnchartedZone = false;
@@ -117,6 +123,12 @@ public class ScoutManagerUtils {
 		return unchartedRectangles;
 	}
 
+	/**
+	 * It will choose a point in the biggest uncharted zone of the quadrant.
+	 * @param quadrant
+	 * @param map
+	 * @return The point where the scouts are expected to discover.
+	 */
 	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map) {
 		// TODO fer la suma de les files sense descobrir
 		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
@@ -164,8 +176,9 @@ public class ScoutManagerUtils {
 		}
 		
 		// Determine a good point in the biggest uncharted zone
-		int x = (groups.get(biggestGroup).size() - 1) / 2;
-		int y = ((groups.get(biggestGroup).get(x).y2 - groups.get(biggestGroup).get(x).y1) / 2);
+		int half = (groups.get(biggestGroup).size() - 1) / 2;
+		int x = half + groups.get(biggestGroup).get(0).x1;
+		int y = ((groups.get(biggestGroup).get(half).y2 - groups.get(biggestGroup).get(half).y1) / 2);
 		
 		return new Point(x, y);
 	}

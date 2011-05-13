@@ -13,13 +13,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
-import jade.proto.ContractNetInitiator;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import sma.UtilsAgents;
 import sma.gui.Quadrant;
@@ -70,10 +68,16 @@ public class ScoutManagerAgent extends Agent{
 	    
 		contract = new ProtocolContractNetInitiator();
 		
+		MovementRely movement = new MovementRely();
+		movement.addBehavior(this, UtilsAgents.COORDINATOR_AGENT);
 		
 		super.setup();
 	}
 	
+	/**
+	 * It will send contract nets to the scouts expecting these to go to a specified uncharted cell of the map.
+	 * @param myAgent
+	 */
 	private void manageScouts(Agent myAgent) {
 		ServiceDescription sd1 = new ServiceDescription();
 	    sd1.setType(UtilsAgents.SCOUT_AGENT);
@@ -112,7 +116,6 @@ public class ScoutManagerAgent extends Agent{
 		} catch (FIPAException e) {
 			System.err.println("No scouts found by the ScoutManager");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -139,10 +142,8 @@ public class ScoutManagerAgent extends Agent{
 					game = (InfoGame) arg0.getContentObject();
 					showMessage("New turn " + game.getInfo().getTurn());
 					
-					// 
 					manageScouts(this.myAgent);
 				} else if (arg0.getPerformative() == ACLMessage.AGREE) {
-					// TODO now what?!
 					response = null;
 				} else {
 					throw new NotUnderstoodException("Not the expected object type");
@@ -159,7 +160,6 @@ public class ScoutManagerAgent extends Agent{
 		 */
 		@Override
 		protected ACLMessage prepareResultNotification(ACLMessage arg0, ACLMessage arg1) throws FailureException {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -198,10 +198,8 @@ public class ScoutManagerAgent extends Agent{
 			} catch (UnreadableException e) {
 				showMessage("Received an Object that cannot be understood");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -210,55 +208,9 @@ public class ScoutManagerAgent extends Agent{
 
 		public QueriesReceiver(Agent arg0, MessageTemplate arg1) {
 			super(arg0, arg1);
-			// TODO Auto-generated constructor stub
 		}
 	}
 	
-	class ScoutManagerHandler extends ContractNetInitiator {
-		private static final long serialVersionUID = -5530192765322368330L;
-
-		public ScoutManagerHandler(Agent agent, ACLMessage aclMessage) {
-			super(agent, aclMessage);
-		}
-
-        protected void handlePropose(ACLMessage propose, Vector acceptances) {
-            System.out.printf("\n");
-        }
- 
-        protected void handleRefuse(ACLMessage refuse) {
-            System.out.printf("\n");
-        }
- 
-        protected void handleFailure(ACLMessage failure) {
-            if (failure.getSender().equals(myAgent.getAMS())) {
-                System.out.println("Error\n");
-            } else {
-                System.out.printf("Error\n");
-            }
-        }
- 
-        protected void handleAllResponses(Vector responses, Vector acceptances) {
- 
-            ACLMessage accepted = null;
-            for (Object resp:responses) {
-                ACLMessage message = (ACLMessage) resp;
-                if (message.getPerformative() == ACLMessage.PROPOSE) {
-//                    ACLMessage response = message.createReply();
-//                    response.setPerformative(ACLMessage.REJECT_PROPOSAL);
-//                    acceptances.add(response);
-                    
-                    // TODO determine the best
-                }
-            }
- 
-            // TODO Actions to realiza for the best
-        }
- 
-        protected void handleInform(ACLMessage inform) {
-            System.out.printf("\n");
-        }
-	}
-
 	public Map<AID, Quadrant> getScoutsQuadrants() {
 		return scoutsQuadrants;
 	}
