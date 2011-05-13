@@ -115,8 +115,9 @@ public class PathTest{
 		//if (true) {
 			// D'acord l'algoritme la posicio final interve en el calcul! per a k sigui possible la convertime temporalment en una 
 			// posicio accesible(STREET)
-			map.setTerrain(x, y);
-			
+		
+				map.setTerrain(x, y);
+		
 			if ((lastFindX != x) || (lastFindY != y)) {
 				lastFindX = x;
 				lastFindY = y;
