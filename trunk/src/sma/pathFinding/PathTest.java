@@ -139,21 +139,25 @@ public class PathTest{
 		int x,y,dist=0;
 		
 		if(path==null)
+		{
 			System.out.println("Path es null");
-		
-		for(int i=1;i<path.getLength()-1;i++){
-			
-			//System.out.println(" Pas"+ (i+1) + ":  " + path.getStep(i).getX()+" "+ path.getStep(i).getY());
-			 x=path.getStep(i).getX();
-			 y=path.getStep(i).getY();
-			
-			 //WATER
-			 if( map.getTerrain(x, y) == GameMap.UNDISCOVERED)dist=dist+2; else dist++;
-			 
-			// System.out.println(map.getTerrain(x, y));
-		}			
-		System.out.println(dist);
+			return 10000;
+		}
+		else{
+			for(int i=1;i<path.getLength()-1;i++){
+				
+				//System.out.println(" Pas"+ (i+1) + ":  " + path.getStep(i).getX()+" "+ path.getStep(i).getY());
+				 x=path.getStep(i).getX();
+				 y=path.getStep(i).getY();
+				
+				 //WATER
+				 if( map.getTerrain(x, y) == GameMap.UNDISCOVERED)dist=dist+2; else dist++;
+				 
+				// System.out.println(map.getTerrain(x, y));
+			}			
+			System.out.println(dist);
 			return dist;
+		}
 	}
 	
 	public void stepsFinals(Path path){
