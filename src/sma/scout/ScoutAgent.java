@@ -82,7 +82,8 @@ public class ScoutAgent extends Agent {
 	    protocolContractNetResponder = new ProtocolContractNetResponder();
 		 
 	    protocolContractNetResponder.addBehaviour(this);
-	   
+	    
+	    protocolContractNetResponder.setInfoGame(game);
 	   
 	  
 	    
