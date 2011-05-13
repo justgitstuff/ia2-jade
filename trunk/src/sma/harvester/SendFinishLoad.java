@@ -25,6 +25,26 @@ public class SendFinishLoad{
 		agent.addBehaviour(new SendFinishL(agent, msg));
 	}
 	
+	public Cell blockingMessage(Agent agent, DistanceList content) throws IOException, UnreadableException
+	{
+		ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
+		msg.setProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
+		msg.setContentObject(content);
+		msg.setSender(agent.getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(sma.UtilsAgents.HARVESTER_MANAGER_AGENT);
+		msg.addReceiver(sma.UtilsAgents.searchAgent(agent, sd));
+		agent.send(msg);
+		
+		MessageTemplate mt1 = MessageTemplate.MatchPerformative(ACLMessage.AGREE);
+		MessageTemplate mt2 = MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_QUERY);
+		ACLMessage msg2 = agent.blockingReceive(MessageTemplate.and(mt1, mt2));
+		Cell cell = (Cell) msg2.getContentObject();
+		return cell;
+		
+		
+	}
+	
 	public class SendFinishL extends AchieveREInitiator{
 		/**
 		 * 

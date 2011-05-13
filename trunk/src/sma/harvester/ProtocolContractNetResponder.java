@@ -1,6 +1,9 @@
 package sma.harvester;
 
 
+import java.io.IOException;
+
+import sma.harvester_manager.DistanceList;
 import sma.moves.Movement.Direction;
 import sma.moves.MovementSender;
 import sma.ontology.Cell;
@@ -20,10 +23,10 @@ public class ProtocolContractNetResponder{
 	private MovementSender ms;
 	private boolean myState=true;// true = lliure false= transportar
 	private InfoAgent infoAgent;
-	private Cell endDescarga;
+	private Cell goDescarga;
 	Cell content=null;
 	SendFinishLoad protocolSendFinishLoad;
-	
+	SendFinishDownload protocolSendFinishDownload;
 	
 	/**
 	 * @param infoGame the infoGame to set
@@ -57,6 +60,7 @@ public class ProtocolContractNetResponder{
 			System.out.println("Harvester: into cnet constructor");
 			ms = new MovementSender(myAgent, myAgent.getAID(),sma.UtilsAgents.HARVESTER_MANAGER_AGENT);
 			protocolSendFinishLoad = new SendFinishLoad();
+			protocolSendFinishDownload = new SendFinishDownload();
 		}
 		
 		/**Execute when receive a CFP message and need return integer with distance and
@@ -92,23 +96,25 @@ public class ProtocolContractNetResponder{
 				//distance= evaluateAction(content);// Content cambiar per una cell pos basura
 				
 				Cell begin = new Cell(Cell.BUILDING);
+				evaluateAction(content);
 				begin.setColumn(my_x);
 				begin.setRow(my_y);
 				
 
-				begin.setColumn(my_x);
-				begin.setRow(my_y);
 
 				// retorna 1 si sta al perimetre, llavors descarga
-				if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
+				if(sma.UtilsAgents.cellDistance(begin, goDescarga)==1){
 					
 						try {
-							if(endDescarga.getGarbageUnits()!=0){
+							if(goDescarga.getGarbageUnits()!=0){
 								ms.put(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 							}else{
 								// ENVIAR K STIK DESCARREGAT
-								myState= true;
 								// sendFInishDOwnlLOAD
+								protocolSendFinishDownload.addBehaviour(myAgent);
+								
+								myState= true;
+								
 							}
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -118,7 +124,7 @@ public class ProtocolContractNetResponder{
 					
 				}else{// decisio mourem
 					
-					evaluateAction(endDescarga);
+					evaluateAction(goDescarga);
 					ms.go(getNextStep());
 					
 					
@@ -250,8 +256,32 @@ public class ProtocolContractNetResponder{
 				}else{
 					//estic lliure
 					// NOTIFICAR SEND FINISH LOAD
+					DistanceList list = new DistanceList();
 					 
-					//protocolSendFinishLoad.addBehaviour(myAgent, );
+					for (int x=0;x<infoGame.getMap().length;x++)
+					{					
+						for (int y=0; y<infoGame.getMap()[x].length;y++)
+						{
+							Cell c=infoGame.getCell(x,y);
+							//if getGarbageunits is 0 -> no garbage.
+							if(c.getCellType() == Cell.RECYCLING_CENTER)
+							{
+								list.addDistance(evaluateAction(c));
+							}
+						}
+					}
+					
+					
+						try {
+							try {
+								goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} catch (UnreadableException e) {
+							e.printStackTrace();
+						}
+					
 					
 					
 					myState=false;
