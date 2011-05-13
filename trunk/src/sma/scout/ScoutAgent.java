@@ -74,13 +74,9 @@ public class ScoutAgent extends Agent {
 	    addTurnControl();
 	    
 	    protocolContractNetResponder = new ProtocolContractNetResponder();
-		 
 	    protocolContractNetResponder.addBehaviour(this);
-	    
 	    protocolContractNetResponder.setInfoGame(game);
 	   
-	  
-	    
 		super.setup();
 	}
 	
