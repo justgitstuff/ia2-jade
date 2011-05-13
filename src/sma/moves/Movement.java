@@ -33,6 +33,18 @@ public class Movement implements Serializable {
 		
 	}
 	
+	public static Type typeFromInt(int i)
+	{
+		switch (i)
+		{
+		case 0:return Type.METAL;
+		case 1:return Type.PLASTIC;
+		case 2:return Type.GLASS;
+		case 3:return Type.PAPER;
+		}
+		return null;
+	}
+	
 	private AID agent;
 	private Direction direction;
 	private Action action;
