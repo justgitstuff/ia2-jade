@@ -1,6 +1,5 @@
 package sma.scout;
 
-import sma.moves.Movement;
 import sma.moves.MovementSender;
 import sma.moves.Movement.Direction;
 import sma.ontology.Cell;
@@ -97,64 +96,80 @@ public class ProtocolContractNetResponder{
 		
 		
 		private int evaluateAction(Cell cell){
-			int xfinal = cell.getRow();
-			int yfinal = cell.getColumn();
-			my_x = sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-			my_y = sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			
-					
+			int xfinal = cell.getColumn();
+			int yfinal = cell.getRow();
+			
+			System.out.println("Destination Cell "+cell);
+			
+			//retornem el cami mes curt
 			PathTest test = new PathTest(infoGame);
 			
-			test.PosicioInicial(my_x,my_y,1); // op1
-			Path stepsPathFinal= test.PosicioFinal(xfinal,yfinal,1);
-		
-			int distPesosOp1= test.distanciaPesos(stepsPathFinal);
+			//Em busco a mi mateix
+			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			
+			System.out.println("Harvester a "+ my_x+" "+my_y);
+			
+			
+			
+			// op1
+			
+			test.PosicioInicial(my_x,my_y,1); 
+			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
+			
+
+			
 						
 			// OPCIOOOOO 2
 			test.PosicioInicial(my_x,my_y,2);
 			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
 			
-			int distPesosOp2 = test.distanciaPesos(stepsPathFinal2);
+			int distFinal = test.distanciaPesos(stepsPathFinal2);
+			short_path = stepsPathFinal2;
 			
-			
-			// Distancia pitjor dels casos 
-			int distFinal= distPesosOp1;
-			short_path = stepsPathFinal;
-			
-			
-			if(distFinal>distPesosOp2){
-				distFinal=distPesosOp2;
-				short_path = stepsPathFinal2;
+			//Mirem que hi ha un cami descobert possible de comunicació
+			if(stepsPathFinal1!=null){
+				
+				int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
+						
+				
+				if(distFinal>distPesosOp1){
+					distFinal=distPesosOp1;
+					short_path = stepsPathFinal1;
+				}
 			}
 			
-			//System.out.println("Distancia FINAL" + distFinal);
 			
 			return distFinal;
+		}
+		
+		
+		
+		
+		private Direction getNextStep(){// com estan distribuits els index de la matriu del mapa??
+			//Movement m = new Movement();
+			int destination_x = short_path.getX(1);
+			int destination_y = short_path.getY(1);
 			
+			if(my_x<destination_x){ 
+				return Direction.RIGHT;	//m.setDirection(sma.moves.Movement.Direction.DOWN);}
+			
+			}else if(my_x>destination_x){ 
+				return Direction.LEFT;//m.setDirection(sma.moves.Movement.Direction.UP);
 			}
-		}
-	
-	private Direction getNextStep(){
-		int destination_x = short_path.getX(1);
-		int destination_y = short_path.getY(1);
-		
-		if(my_x<destination_x){ 
-			return Direction.DOWN;
-		
-		}else if(my_x>destination_x){ 
+			
+			else if(my_y<destination_y){ 
+				 return Direction.DOWN;//m.setDirection(sma.moves.Movement.Direction.LEFT);
+			}
+			
+			else if(my_y>destination_y){ 
+				return Direction.UP;//m.setDirection(sma.moves.Movement.Direction.RIGHT);
+			}
+			
 			return Direction.UP;
+			
 		}
-		
-		else if(my_y<destination_y){ 
-			return Direction.LEFT;
-		}
-		
-		else if(my_y>destination_y){ 
-			return Direction.RIGHT;
-		}
-		
-		return Direction.UP;
-		
-	}
 	
 	}
+}
