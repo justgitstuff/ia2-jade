@@ -59,29 +59,6 @@ public class PathTest{
 		
 		finder = new AStarPathFinder(map, 500);
 		
-		/*	
-		PosicioInicial(15,15,1);
-		Path stepsPathFinal= PosicioFinal(25,8,1);
-		
-		//distancia(stepsPathFinal);
-		//stepsFinals(stepsPathFinal);
-		int distPesosOp1= distanciaPesos(stepsPathFinal);
-		
-				
-		// OPCIOOOOO 2
-		PosicioInicial(15,15,2);
-		Path stepsPathFinal2= PosicioFinal(25,8,2);
-		
-		int distPesosOp2 = distanciaPesos(stepsPathFinal2);
-		
-		// Distancia pitjor dels casos 
-		int distFinal= distPesosOp1;
-		
-		if(distFinal>distPesosOp2)distFinal=distPesosOp2;
-		
-		System.out.println("Distancia FINAL" + distFinal);
-		*/
-		
 	}
 	
 	
