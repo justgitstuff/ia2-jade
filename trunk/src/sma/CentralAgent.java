@@ -414,6 +414,7 @@ private void updatePublicGame()
 					getGarbage(moveOrder, origin, destination);
 					response.setPerformative(ACLMessage.AGREE);
 				}catch(Exception e){
+					showMessage("Failure GETTING");
 					response.setPerformative(ACLMessage.FAILURE);
 				}
 				break;
@@ -447,19 +448,24 @@ private void updatePublicGame()
 	
 	private void getGarbage(Movement moveOrder, Cell origin, Cell destination) throws Exception {
 		// Check if destination is a Building
+		showMessage("Check if destination is a Building");
 		if (destination.getCellType()!=Cell.BUILDING) throw new Exception();
 		// Check if destination has the type of garbage we want to get
-		if (!moveOrder.getType().equals(destination.getGarbageType())) throw new Exception();
+		showMessage("Check if destination has the type of garbage we want to get");
+		//if (!moveOrder.getType().equals(destination.getGarbageType())) throw new Exception();
 		// Check if destination has enough garbage units 
+		showMessage("Check if destination has enough garbage units ");
 		int gu=destination.getGarbageUnits();
 		if (gu<1) throw new Exception();
 		// Check if agent has enough room to carry more garbage
+		showMessage("Check if agent has enough room to carry more garbage");
 		InfoAgent agent=origin.getAgent();
 		int au=agent.getUnits();
 		if (au==agent.getMaxUnits()) throw new Exception();
 		// Check if agent has the ability to carry that type of garbage
-		if(!agentIsAbleToCarry(agent, destination.getGarbageType())) throw new Exception();
-	
+		showMessage("Check if agent has the ability to carry that type of garbage");
+		//if(!agentIsAbleToCarry(agent, destination.getGarbageType())) throw new Exception();
+		showMessage("GET ALL OK");
 		// All OK, go ahead with getting garbage
 		destination.setGarbageUnits(gu-1);
 		agent.setUnits(au+1);
