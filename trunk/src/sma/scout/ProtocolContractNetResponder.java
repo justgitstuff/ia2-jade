@@ -110,17 +110,13 @@ public class ProtocolContractNetResponder{
 			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			
 			System.out.println("Scout a "+ my_x+" "+my_y);
-			
-			
-			
+
 			// op1
 			
 			test.PosicioInicial(my_x,my_y,1); 
 			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 			
-
 			
-						
 			// OPCIOOOOO 2
 			test.PosicioInicial(my_x,my_y,2);
 			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
