@@ -20,7 +20,7 @@ public class ProtocolContractNetResponder{
 	private MovementSender ms;
 	private boolean myState=true;// true = lliure false= transportar
 	private InfoAgent infoAgent;
-	
+	private Cell endDescarga;
 	
 	
 	
@@ -79,25 +79,46 @@ public class ProtocolContractNetResponder{
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 			
-		//	if(myState){				
+			if(myState){				
 				//Content have a int with a distance.
 				reply.setPerformative(ACLMessage.PROPOSE);
 				distance=evaluateAction(content);
 				System.out.println("He calculat distancia "+ distance);
 				reply.setContent(Integer.toString(distance));
+				//TODO mirar si puk karregar akest tipus de brosa
 				
-				
-			//}else{
-			//	reply.setPerformative(ACLMessage.REFUSE);
+			}else{
+				reply.setPerformative(ACLMessage.REFUSE);
 				// S'acaba comunicacio
 				//controalr si moviment reciclatege o descarrega
 				//distance= evaluateAction(content);// Content cambiar per una cell pos basura
-				//sma.UtilsAgents.cellDistance(begin, end)
+				
+				Cell begin = new Cell(Cell.BUILDING);
+				//Em busco a mi mateix
+				my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+				my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+				
+				begin.setColumn(my_y);
+				begin.setRow(my_x);
+				
+				// retorna 1 si sta al perimetre, llavors descarga
+				if(sma.UtilsAgents.cellDistance(begin, endDescarga)==1){
+					
+					ms.put(getNextStep(), TypeFromInt(infoAgent.getCurrentType()));
+
+					
+				}else{// decisio mourem
+					
+					evaluateAction(endDescarga);
+					ms.go(getNextStep());
+					
+					
+				}
 				
 				// o notificar lliure si es el cas cambia estat
 				
 				
-		//	}
+			}
 		//	}
 			
 			
@@ -166,19 +187,30 @@ public class ProtocolContractNetResponder{
 			int destination_x = short_path.getX(1);
 			int destination_y = short_path.getY(1);
 			
-			if(my_x<destination_x){ 
-				return Direction.RIGHT;	//m.setDirection(sma.moves.Movement.Direction.DOWN);}
+			if(my_x<destination_x && my_y==destination_y){ 
+				return Direction.RIGHT;	
 			
-			}else if(my_x>destination_x){ 
-				return Direction.LEFT;//m.setDirection(sma.moves.Movement.Direction.UP);
+			}else if(my_x>destination_x && my_y==destination_y){ 
+				return Direction.LEFT;
+			}			
+			else if(my_y<destination_y && my_x==destination_x){ 
+				 return Direction.DOWN;
+			}			
+			else if(my_y>destination_y && my_x==destination_x){ 
+				return Direction.UP;
 			}
-			
-			else if(my_y<destination_y){ 
-				 return Direction.DOWN;//m.setDirection(sma.moves.Movement.Direction.LEFT);
+			else if(my_y>destination_y && my_x>destination_x){ 
+				return Direction.UPLEFT;
 			}
-			
-			else if(my_y>destination_y){ 
-				return Direction.UP;//m.setDirection(sma.moves.Movement.Direction.RIGHT);
+			else if(my_y<destination_y && my_x<destination_x){ 
+				return Direction.DOWNRIGHT;
+			}
+						
+			else if(my_x<destination_x && my_y>destination_y){ 
+				return Direction.UPRIGHT;
+			}
+			else if(my_x>destination_x && my_y<destination_y){ 
+				return Direction.DOWNLEFT;
 			}
 			
 			return Direction.UP;
