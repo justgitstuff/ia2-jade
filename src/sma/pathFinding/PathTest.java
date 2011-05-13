@@ -73,7 +73,7 @@ public class PathTest{
 		 */
 		public void PosicioInicial(int x, int y, int option) {
 		
-			
+			System.out.println("Posicio Inicial "+x+" "+y);
 			if ((x < 0) || (y < 0) || (x >= map.getWidthInTiles()) || (y >= map.getHeightInTiles())) {
 				return;
 			}
@@ -99,6 +99,7 @@ public class PathTest{
 					}
 			//	}
 			}
+			System.out.printf("Selected: "+selectedx+" "+selectedy);
 		}
 
 	/**
@@ -135,6 +136,9 @@ public class PathTest{
 
 	public int distanciaPesos(Path path){
 		int x,y,dist=0;
+		
+		if(path==null)
+			System.out.println("Path es null");
 		
 		for(int i=1;i<path.getLength()-1;i++){
 			

@@ -201,14 +201,14 @@ private AID createAgent(String name, String type, Object args[])
 private void updatePublicGame()
 {
 	publicGame.setInfo(game.getInfo());
-	for(int x=0;x<game.getMap().length-1;x++)
-		for(int y=0;y<game.getMap()[x].length-1;y++)
+	for(int r=0;r<game.getMap().length-1;r++)
+		for(int c=0;c<game.getMap()[r].length-1;c++)
 		{
-			if (game.getCell(x, y).isDiscovered())
+			if (game.getCell(r, c).isDiscovered())
 			{
-				publicGame.setCell(x, y, game.getCell(x, y));
+				publicGame.setCell(r, c, game.getCell(r, c));
 			}else
-				publicGame.setCell(x, y, null);
+				publicGame.setCell(r, c, null);
 		}
 }
 
@@ -482,14 +482,14 @@ private void updatePublicGame()
 	private Cell findAgent(AID a)
 	{
         Cell agentPosition=null;
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int r=0;r<game.getMap().length-1;r++)
+			for(int c=0;c<game.getMap()[c].length-1;c++)
 			{
-				Cell c=game.getCell(x,y);
-	         	  if(c.isThereAnAgent())
+				Cell cell=game.getCell(r,c);
+	         	  if(cell.isThereAnAgent())
 	         	  {
-	         		  if(c.getAgent().getAID().equals(a)){
-	         			  agentPosition=c; 
+	         		  if(cell.getAgent().getAID().equals(a)){
+	         			  agentPosition=cell; 
 	         		  }
 	         	  }
 			}
