@@ -1,6 +1,7 @@
 package sma.scout;
 
 import sma.UtilsAgents;
+import sma.harvester.ProtocolContractNetResponder;
 import sma.moves.Movement;
 import sma.moves.Movement.Action;
 import sma.ontology.InfoGame;
@@ -28,7 +29,7 @@ public class ScoutAgent extends Agent {
 	private Path short_path;
 	private int my_x, my_y;
 	private DFAgentDescription dfd;
-	private ProtocolContractNetResponder pcnr;
+	private ProtocolContractNetResponder protocolContractNetResponder;
 	  /**
 	   * A message is shown in the log area of the GUI
 	   * @param str String to show
@@ -78,11 +79,12 @@ public class ScoutAgent extends Agent {
 	    //Adds a behavior to update game info each turn
 	    addTurnControl();
 	    
-	    
+	    protocolContractNetResponder = new ProtocolContractNetResponder();
+		 
+	    protocolContractNetResponder.addBehaviour(this);
 	   
-	    pcnr = new ProtocolContractNetResponder();
-	    pcnr.addBehaviour(this);
-	    pcnr.setInfoGame(game);
+	   
+	  
 	    
 		super.setup();
 	}
@@ -126,7 +128,7 @@ public class ScoutAgent extends Agent {
 					game=(InfoGame) arg0.getContentObject();
 					showMessage("New turn "+ game.getInfo().getTurn());
 					 
-					pcnr.setInfoGame(game);
+					protocolContractNetResponder.setInfoGame(game);
 					//my_zone = 1;
 					//hauria d'agafar la zona que em pertoca com??? qui me l'assigna
 					

@@ -109,7 +109,7 @@ public class ProtocolContractNetResponder{
 			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			
-			System.out.println("Harvester a "+ my_x+" "+my_y);
+			System.out.println("Scout a "+ my_x+" "+my_y);
 			
 			
 			
