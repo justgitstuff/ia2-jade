@@ -63,52 +63,55 @@ public class ReceiveFinishLoad{
 				for (int y=0; y<game.getMap()[x].length;y++)
 				{
 					Cell c=game.getCell(x,y);
-					//if getGarbageunits is 0 -> no garbage.
-					if(c.getCellType() == Cell.RECYCLING_CENTER)
-					{							
-						if (dist.getDistances().isEmpty()) System.out.println("Harvester Manager: Caution, list of distance recycling center is empty.");
-						//In distancia have integer with distance of harvester-recyclingCenter.
-						distancia = dist.getDistances().get(pos);
-						pos++;						
-						try {
-							//In c.getGarbagePoints()[index] have points to drop material "index" in that recycling center.
-							//If is zero means that recycling center no accept that type of garbage.
-							int points=c.getGarbagePoints()[index];
-							if (points>0){
-								temp = c;
-								//El primer cop actualitzem el valor de cellRecyclingCenter final.
-								if (cellRecyclingCenter==null){
-									cellRecyclingCenter = temp;
-									distanciaMinima = distancia;
-									pointsChoose=points;
+					if (c!=null)
+					{
+						//if getGarbageunits is 0 -> no garbage.
+						if(c.getCellType() == Cell.RECYCLING_CENTER)
+						{							
+							if (dist.getDistances().isEmpty()) System.out.println("Harvester Manager: Caution, list of distance recycling center is empty.");
+							//In distancia have integer with distance of harvester-recyclingCenter.
+							distancia = dist.getDistances().get(pos);
+							pos++;						
+							try {
+								//In c.getGarbagePoints()[index] have points to drop material "index" in that recycling center.
+								//If is zero means that recycling center no accept that type of garbage.
+								int points=c.getGarbagePoints()[index];
+								if (points>0){
+									temp = c;
+									//El primer cop actualitzem el valor de cellRecyclingCenter final.
+									if (cellRecyclingCenter==null){
+										cellRecyclingCenter = temp;
+										distanciaMinima = distancia;
+										pointsChoose=points;
+									}
+									
+									//Si la distancia que hi ha del harvester al centre de reciclatge actual es mes petita que l'anterior, o l'actual tingui més del doble de punts que l'escollit...
+									//En temp tenim el centre de reciclatge de la cel.la actual que mirem. En cellRecyclingCenter es el guardat com a millor opcio.
+									//Si la distancia actual es mes petita que la distancia escollida anteriorment...
+									if(distancia < distanciaMinima){									
+										//I el d'ara té el doble de punts que els punts escollits anteriorment, o
+										//la distancia es menys de la meitat de la distancia escollida anteriorment.
+										if ((pointsChoose<2*points)||(distancia<distanciaMinima/2)){
+											cellRecyclingCenter = temp;
+											distanciaMinima=distancia;
+											pointsChoose=points;
+										}
+									}else{
+										//Si la distancia d'ara es mes gran que l'escollida anteriorment 
+										//i té més del doble de punts que l'anterior però no té més del doble de la distancia anterior...
+										if((points>2*pointsChoose)&&(distanciaMinima*2>distancia))
+										{
+											cellRecyclingCenter = temp;
+											distanciaMinima=distancia;
+											pointsChoose=points;
+										}
+									}									
 								}
-								
-								//Si la distancia que hi ha del harvester al centre de reciclatge actual es mes petita que l'anterior, o l'actual tingui més del doble de punts que l'escollit...
-								//En temp tenim el centre de reciclatge de la cel.la actual que mirem. En cellRecyclingCenter es el guardat com a millor opcio.
-								//Si la distancia actual es mes petita que la distancia escollida anteriorment...
-								if(distancia < distanciaMinima){									
-									//I el d'ara té el doble de punts que els punts escollits anteriorment, o
-									//la distancia es menys de la meitat de la distancia escollida anteriorment.
-									if ((pointsChoose<2*points)||(distancia<distanciaMinima/2)){
-										cellRecyclingCenter = temp;
-										distanciaMinima=distancia;
-										pointsChoose=points;
-									}
-								}else{
-									//Si la distancia d'ara es mes gran que l'escollida anteriorment 
-									//i té més del doble de punts que l'anterior però no té més del doble de la distancia anterior...
-									if((points>2*pointsChoose)&&(distanciaMinima*2>distancia))
-									{
-										cellRecyclingCenter = temp;
-										distanciaMinima=distancia;
-										pointsChoose=points;
-									}
-								}									
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}						
-					}				
+							} catch (Exception e) {
+								e.printStackTrace();
+							}						
+						}
+					}
 				}
 			}
 			
