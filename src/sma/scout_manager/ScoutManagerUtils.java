@@ -106,10 +106,10 @@ public class ScoutManagerUtils {
 				notUnchartedZone = true;
 			}
 			for (int j = quadrant.y1; j < quadrant.y2; j++) {
-				if (map[j][i] != null && notUnchartedZone) {
+				if (map[i][j] != null && notUnchartedZone) {
 					unchartedRectangles.add(new Rectangle(iIni, i, jIni, j));
 					notUnchartedZone = false;
-				} else if (map[j][i] == null && !notUnchartedZone) {
+				} else if (map[i][j] == null && !notUnchartedZone) {
 					notUnchartedZone = true;
 					iIni = i;
 					jIni = j;
@@ -178,7 +178,7 @@ public class ScoutManagerUtils {
 		// Determine a good point in the biggest uncharted zone
 		int half = (groups.get(biggestGroup).size() - 1) / 2;
 		int x = half + groups.get(biggestGroup).get(0).x1;
-		int y = ((groups.get(biggestGroup).get(half).y2 - groups.get(biggestGroup).get(half).y1) / 2);
+		int y = ((groups.get(biggestGroup).get(half).y2 - groups.get(biggestGroup).get(half).y1) / 2) + groups.get(biggestGroup).get(half).y1;
 		
 		return new Point(x, y);
 	}

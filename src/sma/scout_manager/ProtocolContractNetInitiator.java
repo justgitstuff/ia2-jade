@@ -103,7 +103,7 @@ public class ProtocolContractNetInitiator {
 					Quadrant quadrant = ((ScoutManagerAgent) this.myAgent).getScoutsQuadrants().get(sender);
 					if (targetCell.getRow() >= quadrant.x1 && targetCell.getRow() <= quadrant.x2
 							&& targetCell.getColumn() > quadrant.y1 && targetCell.getColumn() < quadrant.y2) {
-						if (proposal > bestProposal) {
+						if (proposal > bestProposal && proposal < 1000) {
 							bestProposal = proposal;						
 							accept = reply;
 						}
@@ -115,6 +115,8 @@ public class ProtocolContractNetInitiator {
 			if (accept != null) {
 				System.out.println("Accepting proposal "+bestProposal);
 				accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+				// FIXME debug
+				System.out.println(accept.getAllReceiver().next() + " to (" + targetCell.getColumn() + "," + targetCell.getRow() + ")");
 			}				
 		}
 	
