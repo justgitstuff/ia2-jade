@@ -85,7 +85,23 @@ public class ProtocolContractNetResponder{
 			//	if((myState)&&(!accepted)){	
 			System.out.println("MySTATE  "+ myState + "Accepted" + accepted+ "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 			
-			if((myState)&&(!accepted)){				
+			//for(int x=0;x<infoAgent.getGarbageType().length;x++){
+			boolean tipusCarga=false;
+				if(content.getGarbageType()=='G'){
+					tipusCarga= infoAgent.getGarbageType()[0];					
+				}
+				else if(content.getGarbageType()=='P'){
+					tipusCarga= infoAgent.getGarbageType()[1];					
+				}
+				else if(content.getGarbageType()=='M'){
+					tipusCarga= infoAgent.getGarbageType()[2];					
+				}else if(content.getGarbageType()=='A'){
+					tipusCarga= infoAgent.getGarbageType()[3];					
+				}
+				
+			//}
+			
+			if((myState)&&(!accepted)&&(tipusCarga)){				
 				//Content have a int with a distance.
 				
 				distance=evaluateAction(content);
