@@ -498,7 +498,8 @@ private void updatePublicGame()
 		// All OK, go ahead with getting garbage
 		destination.setGarbageUnits(gu-1);
 		agent.setUnits(au+1);
-		agent.setCurrentType(destination.getGarbageType());
+		agent.setCurrentType(Cell.getGarbagePointsIndex(destination.getGarbageType()));
+		showMessage(origin.getAgent().getAID().getLocalName() + " is carrying "+ destination.getGarbageType());
 		
 		// TODO discrimine when agent already has garbage and tries to get a different type of garbage
 	}
@@ -532,8 +533,8 @@ private void updatePublicGame()
 	private Cell findAgent(AID a)
 	{
         Cell agentPosition=null;
-		for(int r=0;r<game.getMap().length-1;r++)
-			for(int c=0;c<game.getMap()[c].length-1;c++)
+		for(int r=0;r<game.getMap().length;r++)
+			for(int c=0;c<game.getMap()[0].length;c++)
 			{
 				Cell cell=game.getCell(r,c);
 	         	  if(cell.isThereAnAgent())
