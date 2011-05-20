@@ -32,7 +32,7 @@ public class Statistics {
 		try {
 			setMaxPoints(calcMaxPoints(game));
 			totalGarbage=calcMaxGarbage();
-		} catch (Exception e) {System.err.println("Statistics Error: could not init statistics");}
+		} catch (Exception e) {e.printStackTrace();System.err.println("Statistics Error: could not init statistics");}
 		garbageBuildings=findGarbageBuildings();
 		totalGarbageBuildings=garbageBuildings.size();
 		unitsGarbaged=0;
@@ -48,12 +48,17 @@ public class Statistics {
 			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
-				try {
-					if(c.getGarbageUnits()>0)
-						buildings.add(c);
-				} catch (Exception e) {
-					
-				}
+				if(c.getCellType()==Cell.BUILDING)
+					try {
+						if(c.getGarbageUnits()>0)
+						{
+							buildings.add(c);
+							showMessage("Building ADDED " +c );
+						}
+					} catch (Exception e) {
+						showMessage("FAILED ADDING STATISTICS");
+						e.printStackTrace();
+					}
 			}
 		return buildings;
 	}
@@ -64,7 +69,8 @@ public class Statistics {
 			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
-				total+=c.getGarbageUnits();
+				if(c.getCellType()==Cell.BUILDING)
+					total+=c.getGarbageUnits();
 			}
 		return total;
 	}
@@ -113,14 +119,15 @@ public class Statistics {
 			}
 	}
 	
- 	private boolean isFinished()
+ 	public boolean isFinished()
 	{
 		for(int x=0;x<game.getMap().length;x++)
 			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				try {
-					if (c.getGarbageUnits()!=0) return false;
+					if(c.getCellType()==Cell.BUILDING)
+						if (c.getGarbageUnits()!=0) return false;
 					if (c.isThereAnAgent())
 						if(c.getAgent().getUnits()!=0)
 							return false;
@@ -130,17 +137,6 @@ public class Statistics {
 			}
 		return true;
 	}
-	
-	/*public int findDiscoveredBuildings(InfoGame game)
-	{
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
-			{
-				Cell c=game.getCell(x, y);
-				if (c.isDiscovered())
-					if(c.getGarbageUnits())
-			}
-	}*/
 	
 	private int calcMaxPoints(InfoGame game) throws Exception
 	{
@@ -154,10 +150,11 @@ public class Statistics {
 			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
-				if (c.getGarbageUnits()>0)
-				{
-					totalGarbage[c.getGarbageType()]+=c.getGarbageUnits();
-				}
+				if(c.getCellType()==Cell.BUILDING)
+					if (c.getGarbageUnits()>0)
+					{
+						totalGarbage[Cell.getGarbagePointsIndex(c.getGarbageType())]+=c.getGarbageUnits();
+					}
 			}
 		int maxPoints[]=new int[4];
 		for (int i=0;i<4;i++) maxPoints[i]=0;
