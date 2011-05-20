@@ -86,6 +86,7 @@ public class ProtocolContractNetResponder{
 			System.out.println("MySTATE  "+ myState + "Accepted" + accepted+ "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 			
 			//for(int x=0;x<infoAgent.getGarbageType().length;x++){
+		
 			boolean tipusCarga=false;
 				if(content.getGarbageType()=='G'){
 					tipusCarga= infoAgent.getGarbageType()[0];					
@@ -101,7 +102,7 @@ public class ProtocolContractNetResponder{
 				
 			//}
 			
-			if((myState)&&(!accepted)&&(tipusCarga)){				
+			if((myState)&&(!accepted)){				
 				//Content have a int with a distance.
 				
 				distance=evaluateAction(content);
@@ -139,7 +140,7 @@ public class ProtocolContractNetResponder{
 				if(sma.UtilsAgents.cellDistance(begin, goDescarga)==1){
 					
 						try {
-							if(goDescarga.getGarbageUnits()!=0){
+							if(infoAgent.getUnits()!=0){
 								ms.put(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 							}else{
 								// ENVIAR K STIK DESCARREGAT
@@ -330,7 +331,11 @@ public class ProtocolContractNetResponder{
 							try {
 								try {
 									System.out.println("ESTIK CARREATTTT I VAIG A DESCARREEGARRRRRRRRRRRRRRRRRR");
+									System.out.println("mierddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa   " + infoAgent.getCurrentType());
+									System.out.println("TAMANY LISTA"+ list.getDistances().size());
 									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
+									System.out.println("DESTINACIO BASURA"+ goDescarga.getColumn() +"  "+ goDescarga.getRow());
+									
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
