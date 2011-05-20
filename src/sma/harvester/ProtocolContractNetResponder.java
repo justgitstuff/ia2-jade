@@ -141,7 +141,9 @@ public class ProtocolContractNetResponder{
 					
 						try {
 							if(infoAgent.getUnits()!=0){
-								ms.put(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+								System.out.println("MIERDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   " + infoAgent.getCurrentType());
+								System.out.println("MIERDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASHHISTASAS   " + getNextStep());
+								ms.put(getNextStepDescarga(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 							}else{
 								// ENVIAR K STIK DESCARREGAT
 								// sendFInishDOwnlLOAD
@@ -175,7 +177,7 @@ public class ProtocolContractNetResponder{
 			int xfinal = cell.getColumn();
 			int yfinal = cell.getRow();
 			
-			System.out.println("Destination Cell "+cell);
+			//System.out.println("Destination Cell "+cell);
 			
 			//retornem el cami mes curt
 			PathTest test = new PathTest(infoGame);
@@ -184,7 +186,7 @@ public class ProtocolContractNetResponder{
 			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			
-			System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
+			//System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
 			
 			
 			
@@ -228,26 +230,26 @@ public class ProtocolContractNetResponder{
 			if(my_x<destination_x && my_y==destination_y){ 
 				return Direction.RIGHT;	
 			
-			}else if(my_x>destination_x && my_y==destination_y){ 
+			}if(my_x>destination_x && my_y==destination_y){ 
 				return Direction.LEFT;
 			}			
-			else if(my_y<destination_y && my_x==destination_x){ 
+			if(my_y<destination_y && my_x==destination_x){ 
 				 return Direction.DOWN;
 			}			
-			else if(my_y>destination_y && my_x==destination_x){ 
+			if(my_y>destination_y && my_x==destination_x){ 
 				return Direction.UP;
 			}
-			else if(my_y>destination_y && my_x>destination_x){ 
+			if(my_y>destination_y && my_x>destination_x){ 
 				return Direction.UPLEFT;
 			}
-			else if(my_y<destination_y && my_x<destination_x){ 
+			if(my_y<destination_y && my_x<destination_x){ 
 				return Direction.DOWNRIGHT;
 			}
 						
-			else if(my_x<destination_x && my_y>destination_y){ 
+			if(my_x<destination_x && my_y>destination_y){ 
 				return Direction.UPRIGHT;
 			}
-			else if(my_x>destination_x && my_y<destination_y){ 
+			if(my_x>destination_x && my_y<destination_y){ 
 				return Direction.DOWNLEFT;
 			}
 			
@@ -256,6 +258,80 @@ public class ProtocolContractNetResponder{
 		}
 		
 		
+		
+		
+		
+		private Direction getNextStepDescarga(){
+			int destination_x = goDescarga.getColumn();
+			int destination_y = goDescarga.getRow();
+			
+			System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
+			
+			if(my_x<destination_x && my_y==destination_y){ 
+				return Direction.RIGHT;	
+			
+			}if(my_x>destination_x && my_y==destination_y){ 
+				return Direction.LEFT;
+			}			
+			if(my_y<destination_y && my_x==destination_x){ 
+				 return Direction.DOWN;
+			}			
+			if(my_y>destination_y && my_x==destination_x){ 
+				return Direction.UP;
+			}
+			if(my_y>destination_y && my_x>destination_x){ 
+				return Direction.UPLEFT;
+			}
+			if(my_y<destination_y && my_x<destination_x){ 
+				return Direction.DOWNRIGHT;
+			}
+						
+			if(my_x<destination_x && my_y>destination_y){ 
+				return Direction.UPRIGHT;
+			}
+			if(my_x>destination_x && my_y<destination_y){ 
+				return Direction.DOWNLEFT;
+			}
+			
+			return Direction.UP;
+			
+		}
+		
+		private Direction getNextStepCarga(){
+			int destination_x = content.getColumn();
+			int destination_y = content.getRow();
+			
+			System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
+			
+			if(my_x<destination_x && my_y==destination_y){ 
+				return Direction.RIGHT;	
+			
+			}if(my_x>destination_x && my_y==destination_y){ 
+				return Direction.LEFT;
+			}			
+			if(my_y<destination_y && my_x==destination_x){ 
+				 return Direction.DOWN;
+			}			
+			if(my_y>destination_y && my_x==destination_x){ 
+				return Direction.UP;
+			}
+			if(my_y>destination_y && my_x>destination_x){ 
+				return Direction.UPLEFT;
+			}
+			if(my_y<destination_y && my_x<destination_x){ 
+				return Direction.DOWNRIGHT;
+			}
+						
+			if(my_x<destination_x && my_y>destination_y){ 
+				return Direction.UPRIGHT;
+			}
+			if(my_x>destination_x && my_y<destination_y){ 
+				return Direction.DOWNLEFT;
+			}
+			
+			return Direction.UP;
+			
+		}
 		
 		
 		
@@ -285,25 +361,21 @@ public class ProtocolContractNetResponder{
 			begin.setColumn(my_x);
 			begin.setRow(my_y);
 			
-			System.out.println("Harvester computing movement order, from  "+my_x+" "+my_y+" to "+content.getColumn()+" "+content.getRow() );
-			System.out.println("Distance is XXXXXXXXXXXXXXXXXXXX "+ sma.UtilsAgents.cellDistance(begin, content));
-			
-			
-							
+						
 			
 			
 			// retorna 1 si sta al perimetre, llavors descarga
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
 				try {
-					System.out.println("Destination has garbage: "+content.getGarbageUnits());
+					//System.out.println("Destination has garbage: "+content.getGarbageUnits());
 					if(content.getGarbageUnits()>1){
-						System.out.println("Destination has more garbage than 0" );
-						ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						//System.out.println("Destination has more garbage than 0" );
+						ms.get(getNextStepCarga(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
 					}else{ // ultim garbatge
-						System.out.println("Destination has more ****last**** garbage " );
-						ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						//System.out.println("Destination has more ****last**** garbage " );
+						ms.get(getNextStepCarga(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
 					
 						System.out.println("-------------------ULTIMA BASURA FETA------------------------------------------------------------------------------");
@@ -330,11 +402,9 @@ public class ProtocolContractNetResponder{
 						
 							try {
 								try {
-									System.out.println("ESTIK CARREATTTT I VAIG A DESCARREEGARRRRRRRRRRRRRRRRRR");
-									System.out.println("mierddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa   " + infoAgent.getCurrentType());
-									System.out.println("TAMANY LISTA"+ list.getDistances().size());
+									
 									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
-									System.out.println("DESTINACIO BASURA"+ goDescarga.getColumn() +"  "+ goDescarga.getRow());
+									
 									
 								} catch (IOException e) {
 									e.printStackTrace();
