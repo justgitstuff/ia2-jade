@@ -179,8 +179,8 @@ public class ScoutManagerAgent extends Agent{
 
 					// Find all my agents and send them the new turn
 					ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-					for (int x = 0; x < game.getMap().length - 1; x++) {
-						for (int y = 0; y < game.getMap()[x].length - 1; y++) {
+					for (int x = 0; x < game.getMap().length; x++) {
+						for (int y = 0; y < game.getMap()[x].length; y++) {
 							Cell c = game.getCell(x, y);
 							if (c!=null)
 								if (c.isThereAnAgent()) {

@@ -99,7 +99,7 @@ public class ScoutManagerUtils {
 		boolean unchartedZone = false;
 		for (int i = quadrant.x1; i < quadrant.x2; i++) { // For each row
 			if (unchartedZone) { // For when there is an end of line.
-				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); 
+				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.y2)); 
 				unchartedZone = false;
 			}
 //			if (i == quadrant.x1) {
@@ -212,6 +212,10 @@ public class ScoutManagerUtils {
 			
 			// Point of the biggest zone
 			targetPoint = points[biggestGroup];
+		}
+		
+		if (targetPoint == null) {
+			targetPoint = lastPoint;
 		}
 		
 		return targetPoint;
