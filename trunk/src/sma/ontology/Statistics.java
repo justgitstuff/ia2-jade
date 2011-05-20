@@ -44,8 +44,8 @@ public class Statistics {
 	
 	private List<Cell> findGarbageBuildings() {
 		List<Cell> buildings=new ArrayList<Cell>();
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				try {
@@ -60,8 +60,8 @@ public class Statistics {
 
 	private int calcMaxGarbage() throws Exception {
 		int total=0;
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				total+=c.getGarbageUnits();
@@ -81,8 +81,8 @@ public class Statistics {
 	private void updateBuildingsDiscovered() {
 		
 	
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				if(c.getCellType()==Cell.BUILDING)
@@ -115,8 +115,8 @@ public class Statistics {
 	
  	private boolean isFinished()
 	{
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				try {
@@ -150,8 +150,8 @@ public class Statistics {
 		for (int i=0;i<4;i++) totalGarbage[i]=0;
 		
 		
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				if (c.getGarbageUnits()>0)
@@ -162,8 +162,8 @@ public class Statistics {
 		int maxPoints[]=new int[4];
 		for (int i=0;i<4;i++) maxPoints[i]=0;
 		
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				if(c.getCellType()==Cell.RECYCLING_CENTER)
@@ -248,8 +248,8 @@ public class Statistics {
 		showMessage("Total Garbage Buildings: "+ totalGarbageBuildings);
 		showMessage("Percentage of Garbage Buildings discovered :"+ (100- 100.0*garbageBuildings.size()/totalGarbageBuildings)+"%");
 		showMessage("Turns to find all garbage buildings: "+turnsToFindGarbageBuildings);
-		for(int x=0;x<game.getMap().length-1;x++)
-			for(int y=0;y<game.getMap()[x].length-1;y++)
+		for(int x=0;x<game.getMap().length;x++)
+			for(int y=0;y<game.getMap()[x].length;y++)
 			{
 				Cell c=game.getCell(x, y);
 				if(c.isThereAnAgent())
