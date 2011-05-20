@@ -124,7 +124,7 @@ public class ReceiveFinishLoad{
 				r.setContentObject(cellRecyclingCenter);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 			return r;
 		}		
 	}	
