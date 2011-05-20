@@ -28,7 +28,7 @@ public class ProtocolContractNetResponder{
 	SendFinishLoad protocolSendFinishLoad;
 	SendFinishDownload protocolSendFinishDownload;
 	private boolean accepted;
-	
+		
 	/**
 	 * @param infoGame the infoGame to set
 	 */
@@ -82,23 +82,38 @@ public class ProtocolContractNetResponder{
 			//Or refuse or not-understood.
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
+			//	if((myState)&&(!accepted)){	
+			System.out.println("MySTATE  "+ myState + "Accepted" + accepted+ "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 			
 			if((myState)&&(!accepted)){				
 				//Content have a int with a distance.
-				reply.setPerformative(ACLMessage.PROPOSE);
+				
 				distance=evaluateAction(content);
-				System.out.println("He calculat distancia "+ distance);
-				reply.setContent(Integer.toString(distance));
+				
+				if(distance==10000){
+					reply.setPerformative(ACLMessage.REFUSE);
+				}else{
+					reply.setPerformative(ACLMessage.PROPOSE);
+					reply.setContent(Integer.toString(distance));					
+				}
 				//TODO mirar si puk karregar akest tipus de brosa(harvest pot rekullir akest tipus)
+			
+			}else if((myState)&&(accepted)){
+				
+				reply.setPerformative(ACLMessage.REFUSE);
+					
+				
 				
 			}else{
+				
+				System.out.println("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				reply.setPerformative(ACLMessage.REFUSE);
 				// S'acaba comunicacio
 				//controalr si moviment reciclatege o descarrega
 				//distance= evaluateAction(content);// Content cambiar per una cell pos basura
 				
 				Cell begin = new Cell(Cell.BUILDING);
-				evaluateAction(content);
+				distance=evaluateAction(content);
 				begin.setColumn(my_x);
 				begin.setRow(my_y);
 				
@@ -116,7 +131,7 @@ public class ProtocolContractNetResponder{
 								protocolSendFinishDownload.addBehaviour(myAgent);
 								
 								myState= true;
-								
+								accepted=false;
 							}
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
@@ -166,22 +181,24 @@ public class ProtocolContractNetResponder{
 			// OPCIOOOOO 2
 			test.PosicioInicial(my_x,my_y,2);
 			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
+			int distFinal=10000;
+			if(stepsPathFinal2!=null){
+				distFinal = test.distanciaPesos(stepsPathFinal2);
+				short_path = stepsPathFinal2;
 			
-			int distFinal = test.distanciaPesos(stepsPathFinal2);
-			short_path = stepsPathFinal2;
+				//Mirem que hi ha un cami descobert possible de comunicació
+				if(stepsPathFinal1!=null){
+					
+					int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
+					if(distFinal>distPesosOp1){
+						distFinal=distPesosOp1;
+						short_path = stepsPathFinal1;
+					}
+				}		
+			}
 			
-			//Mirem que hi ha un cami descobert possible de comunicació
-			if(stepsPathFinal1!=null){
-				
-				int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
-				if(distFinal>distPesosOp1){
-					distFinal=distPesosOp1;
-					short_path = stepsPathFinal1;
-				}
-			}		
 			return distFinal;
 		}
-		
 		
 		
 		
@@ -242,31 +259,43 @@ public class ProtocolContractNetResponder{
 			// si akabo de rekollo enviao sendFInishLoad( dic posteriroment les dist amb tots els reciclatges)
 			
 		
-			Cell begin = new Cell(Cell.BUILDING);
+			Cell begin = new Cell(Cell.STREET);
 			
 			//Em busco a mi mateix
-			int my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-			int my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			int my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+			int my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			
 			begin.setColumn(my_x);
 			begin.setRow(my_y);
 			
 			System.out.println("Harvester computing movement order, from  "+my_x+" "+my_y+" to "+content.getColumn()+" "+content.getRow() );
-			System.out.println("Distance is "+ sma.UtilsAgents.cellDistance(begin, content));
+			System.out.println("Distance is XXXXXXXXXXXXXXXXXXXX "+ sma.UtilsAgents.cellDistance(begin, content));
+			
+			
+							
+			
+			
 			// retorna 1 si sta al perimetre, llavors descarga
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
 				try {
 					System.out.println("Destination has garbage: "+content.getGarbageUnits());
-					if(content.getGarbageUnits()!=0){
+					if(content.getGarbageUnits()>1){
+						System.out.println("Destination has more garbage than 0" );
 						ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-					}else{
+						
+					}else{ // ultim garbatge
+						System.out.println("Destination has more ****last**** garbage " );
+						ms.get(getNextStep(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						
+					
+						System.out.println("-------------------ULTIMA BASURA FETA------------------------------------------------------------------------------");
+					
 						//estic lliure
 						// NOTIFICAR SEND FINISH LOAD
 						DistanceList list = new DistanceList();
 						 
-						for (int x=0;x<infoGame.getMap().length;x++)
-						{					
+						for (int x=0;x<infoGame.getMap().length;x++){					
 							for (int y=0; y<infoGame.getMap()[x].length;y++)
 							{
 								Cell c=infoGame.getCell(x,y);
@@ -284,15 +313,14 @@ public class ProtocolContractNetResponder{
 						
 							try {
 								try {
+									System.out.println("ESTIK CARREATTTT I VAIG A DESCARREEGARRRRRRRRRRRRRRRRRR");
 									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
 							} catch (UnreadableException e) {
 								e.printStackTrace();
-							}
-						
-						
+							}					
 						
 						myState=false;
 						
@@ -304,6 +332,8 @@ public class ProtocolContractNetResponder{
 				
 			}else{// decisio mourem
 				
+				
+											
 				//evaluateAction(endDescarga);
 				ms.go(getNextStep());
 				
@@ -311,17 +341,7 @@ public class ProtocolContractNetResponder{
 			} 
 			
 			
-			
-			
-			
-			// 
-		//	ms.go(getNextStep());
-			
-			//Stik carregant
-			//ms.get(d, t);
-			
-			//Or failure.
-			return inform;
+		return inform;
 		}
 		
 		/**
