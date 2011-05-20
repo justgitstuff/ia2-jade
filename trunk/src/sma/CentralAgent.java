@@ -271,7 +271,7 @@ private void updatePublicGame()
 	protected void onTick() {
 		game.getInfo().incrTurn();
 		showMessage("Turn "+game.getInfo().getTurn());
-		if (game.getInfo().getTurn()==game.getInfo().getGameDuration())
+		if ((game.getInfo().getTurn()==game.getInfo().getGameDuration())||(stats.isFinished()))
 		{
 			showMessage("Game Finished");
 			this.stop();
