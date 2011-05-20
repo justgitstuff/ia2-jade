@@ -1,11 +1,18 @@
 package sma.ontology;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Statistics {
 
-	private int points, maxPoints, unitsGarbaged, totalGarbage, turnsToFinish, discoveredBuildings, discoveredGarbageBuildings;
+	private int points, maxPoints, unitsGarbaged, totalGarbage, turnsToFinish, discoveredBuildings, totalGarbageBuildings;
 	private boolean gameFinished;
 	private InfoGame game;
+	private List<Cell> garbageBuildings;
+	
 	sma.gui.GraphicInterface gui;
+	private int turnsToFindGarbageBuildings;
 	/**
 	 * Percent of points over the maximum
 	 * Percent of total garbage collected
@@ -26,13 +33,31 @@ public class Statistics {
 			setMaxPoints(calcMaxPoints(game));
 			totalGarbage=calcMaxGarbage();
 		} catch (Exception e) {System.err.println("Statistics Error: could not init statistics");}
-
+		garbageBuildings=findGarbageBuildings();
+		totalGarbageBuildings=garbageBuildings.size();
 		unitsGarbaged=0;
 		turnsToFinish=-1;
+		turnsToFindGarbageBuildings=-1;
 		//TODO pensar com fer això discoveredBuildings=findDiscoveredBuildings(game);
 		
 	}
 	
+	private List<Cell> findGarbageBuildings() {
+		List<Cell> buildings=new ArrayList<Cell>();
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x, y);
+				try {
+					if(c.getGarbageUnits()>0)
+						buildings.add(c);
+				} catch (Exception e) {
+					
+				}
+			}
+		return buildings;
+	}
+
 	private int calcMaxGarbage() throws Exception {
 		int total=0;
 		for(int x=0;x<game.getMap().length-1;x++)
@@ -49,8 +74,33 @@ public class Statistics {
 		int aux;
 		aux=a.getMovements();
 		a.setMovements(aux+1);
+		updateBuildingsDiscovered();
+		a.setLastTurn(game.getInfo().getTurn());
 	}
 	
+	private void updateBuildingsDiscovered() {
+		
+	
+		for(int x=0;x<game.getMap().length-1;x++)
+			for(int y=0;y<game.getMap()[x].length-1;y++)
+			{
+				Cell c=game.getCell(x, y);
+				if(c.getCellType()==Cell.BUILDING)
+					if(c.isDiscovered())
+					{	
+						if(garbageBuildings.contains(c))
+						{
+							garbageBuildings.remove(c);
+							if(garbageBuildings.isEmpty())
+							{
+								turnsToFindGarbageBuildings=game.getInfo().getTurn();
+							}
+						}
+					}
+			}	
+		
+	}
+
 	public void scoreGarbage(int points)
 	{
 		this.points+=points;
@@ -166,14 +216,6 @@ public class Statistics {
 		return discoveredBuildings;
 	}
 
-	public void setDiscoveredGarbageBuildings(int discoveredGarbageBuildings) {
-		this.discoveredGarbageBuildings = discoveredGarbageBuildings;
-	}
-
-	public int getDiscoveredGarbageBuildings() {
-		return discoveredGarbageBuildings;
-	}
-
 	public void setMaxPoints(int maxPoints) {
 		this.maxPoints = maxPoints;
 	}
@@ -192,7 +234,7 @@ public class Statistics {
 	  }
 	
 	public void show(){
-		
+		showMessage("");
 		showMessage("Simulation Finished");
 		showMessage("*******************");
 		showMessage("");
@@ -202,17 +244,10 @@ public class Statistics {
 		showMessage("Garbage collected: "+unitsGarbaged);
 		showMessage("Total garbage: "+totalGarbage);
 		showMessage("Turns to finish: "+turnsToFinish);
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		showMessage("");
-		
-		
+		showMessage("Buildings discovered: "+ (totalGarbageBuildings-garbageBuildings.size()));
+		showMessage("Total Garbage Buildings: "+ totalGarbageBuildings);
+		showMessage("Percentage of Garbage Buildings discovered :"+ (100- 100.0*garbageBuildings.size()/totalGarbageBuildings)+"%");
+		showMessage("Turns to find all garbage buildings: "+turnsToFindGarbageBuildings);
 		for(int x=0;x<game.getMap().length-1;x++)
 			for(int y=0;y<game.getMap()[x].length-1;y++)
 			{
@@ -227,7 +262,8 @@ public class Statistics {
 					}
 				}
 			}
-
+		showMessage("");
+		showMessage("*******************");
 
 	}
 	

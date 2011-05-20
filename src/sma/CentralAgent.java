@@ -40,7 +40,7 @@ public class CentralAgent extends Agent {
   private AID coordinatorAgent;
   
   private jade.wrapper.AgentContainer ac;
-
+  
   public CentralAgent() {
     super();
   }
@@ -132,8 +132,7 @@ public class CentralAgent extends Agent {
    
    //Create real Agents and fill AID
    createAgents();
- 
-
+   
    //init Statistics
    stats=new Statistics(game,gui);
    
@@ -364,6 +363,7 @@ private void updatePublicGame()
 		if(moveOrder!=null)
 			if(moveOrder.getAgent()!=null)
 				if(findAgent(moveOrder.getAgent())!=null)
+					
 		{
 			//showMessage("Received movement order from "+moveOrder.getAgent().getLocalName());
 			origin=findAgent(moveOrder.getAgent());	
@@ -389,6 +389,7 @@ private void updatePublicGame()
 				if(y+dy<game.getMap()[0].length)
 					if(x+dx>=0)
 						if(x+dx<game.getMap().length)
+							if(origin.getAgent().getLastTurn()<game.getInfo().getTimeout())
 						{
 							//showMessage("Will move "+dx+" "+dy);
 							destination=game.getMap()[y+dy][x+dx];
@@ -423,6 +424,7 @@ private void updatePublicGame()
 									showMessage(origin.getAgent().getAgent()+" Getting Garbage");
 									getGarbage(moveOrder, origin, destination);
 									response.setPerformative(ACLMessage.AGREE);
+									stats.incMovement(origin.getAgent());
 								}catch(Exception e){
 									showMessage("Failure GETTING");
 									response.setPerformative(ACLMessage.FAILURE);
@@ -433,12 +435,16 @@ private void updatePublicGame()
 									showMessage(origin.getAgent().getAgent()+" Putting Garbage");
 									putGarbage(moveOrder, origin, destination);
 									response.setPerformative(ACLMessage.AGREE);
+									stats.incMovement(origin.getAgent());
 								} catch (Exception e) {
 									response.setPerformative(ACLMessage.FAILURE);
 								}
 									
 								break;
 							}
+						}else
+						{
+							response.setPerformative(ACLMessage.FAILURE);
 						}
 		}
 

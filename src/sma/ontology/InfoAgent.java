@@ -25,6 +25,8 @@ public class InfoAgent extends Object implements java.io.Serializable {
 	private int maxUnits = 10;
 	private int units = 0;
 
+	private int lastTurn=0;
+	
 	static public int GLASS = 0;
 	static public int PLASTIC = 1;
 	static public int METAL = 2;
@@ -137,6 +139,14 @@ public class InfoAgent extends Object implements java.io.Serializable {
 
 	public int getMovements() {
 		return movements;
+	}
+
+	public void setLastTurn(int lastTurn) {
+		this.lastTurn = lastTurn;
+	}
+
+	public int getLastTurn() {
+		return lastTurn;
 	}
 
 } //endof class InfoAgent
