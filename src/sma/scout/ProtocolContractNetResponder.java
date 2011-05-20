@@ -17,6 +17,8 @@ public class ProtocolContractNetResponder{
 	private Path short_path;
 	private int my_x, my_y;
 	private MovementSender ms;
+	//private int state = 1;
+	private int lastTurn=0;
 	/**
 	 * Receive a cell where content the material and the position where manager harvester want to go the harvester.
 	 * @param Agent
@@ -26,6 +28,9 @@ public class ProtocolContractNetResponder{
 	public void setInfoGame(InfoGame infoGame){
 		this.infoGame = infoGame;
 	}
+	
+	//public void setState(int state){
+	//}
 	
 	public void addBehaviour (Agent agent)
 	{
@@ -64,13 +69,27 @@ public class ProtocolContractNetResponder{
 			ACLMessage reply = msg.createReply();
 			//Or refuse or not-understood.
 			//Content have a int with a distance.			
-			distance = evaluateAction(content);
 			
-			if(distance==10000){
+			if(lastTurn == infoGame.getInfo().getTurn()){
+				lastTurn = infoGame.getInfo().getTurn();
 				reply.setPerformative(ACLMessage.REFUSE);
-			}else{
-				reply.setPerformative(ACLMessage.PROPOSE);
-				reply.setContent(Integer.toString(distance));					
+			}
+			else{
+				lastTurn = infoGame.getInfo().getTurn();
+					
+				distance = evaluateAction(content);
+				
+				
+				//if(state == )
+				if(distance==10000){
+					reply.setPerformative(ACLMessage.REFUSE);
+				}else{
+					reply.setPerformative(ACLMessage.PROPOSE);
+					reply.setContent(Integer.toString(distance));
+					
+					
+					
+				}
 			}
 			
 			return reply;
@@ -117,8 +136,12 @@ public class ProtocolContractNetResponder{
 			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			
+			 
+			
 			System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
 			
+			if(my_x==xfinal && my_y==yfinal) 
+				return 0;
 			
 			
 			// op1
