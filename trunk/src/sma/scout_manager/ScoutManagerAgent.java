@@ -35,6 +35,7 @@ public class ScoutManagerAgent extends Agent{
 	private boolean justOneTime = true;
 	
 	private Map<AID, Quadrant> scoutsQuadrants = new HashMap<AID, Quadrant>();
+	private Point lastPoint = null;
 	
 	/**
 	 * A message is shown in the log area of the GUI
@@ -106,11 +107,12 @@ public class ScoutManagerAgent extends Agent{
 			// Each Scout has its quadrant
 			for (AID scout:scoutsQuadrants.keySet()) {
 				Point targetPoint = ScoutManagerUtils
-						.chooseUnchartedPointInAQuadrant(scoutsQuadrants.get(scout), this.game.getMap());
+						.chooseUnchartedPointInAQuadrant(scoutsQuadrants.get(scout), this.game.getMap(), lastPoint);
 				Cell targetCell = new Cell(Cell.STREET);
 				targetCell.setRow(targetPoint.x);
 				targetCell.setColumn(targetPoint.y);
 				contract.addBehaviour(myAgent, targetCell);
+				lastPoint = targetPoint;
 			}
 			
 		} catch (FIPAException e) {

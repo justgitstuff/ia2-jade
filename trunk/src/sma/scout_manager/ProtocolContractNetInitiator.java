@@ -98,11 +98,11 @@ public class ProtocolContractNetInitiator {
 					acceptances.addElement(reply);
 					int proposal = Integer.parseInt(msg.getContent());
 					
-					// Check if the scout is in the cell of the target point
+					// Check if the scout is in the quadrant of the target point
 					AID sender = msg.getSender();
 					Quadrant quadrant = ((ScoutManagerAgent) this.myAgent).getScoutsQuadrants().get(sender);
 					if (targetCell.getRow() >= quadrant.x1 && targetCell.getRow() <= quadrant.x2
-							&& targetCell.getColumn() > quadrant.y1 && targetCell.getColumn() < quadrant.y2) {
+							&& targetCell.getColumn() >= quadrant.y1 && targetCell.getColumn() <= quadrant.y2) {
 						if (proposal > bestProposal && proposal < 1000) {
 							bestProposal = proposal;						
 							accept = reply;
