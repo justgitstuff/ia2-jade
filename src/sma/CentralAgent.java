@@ -397,7 +397,7 @@ private void updatePublicGame()
 							{
 							case GO:
 								try{
-									showMessage(origin.getAgent().getAgent()+" Moving");
+									//showMessage(origin.getAgent().getAgent()+" Moving");
 									if (diagonal) throw new Exception();
 									//showMessage("Its a go order");
 									ia=origin.getAgent();
@@ -408,14 +408,19 @@ private void updatePublicGame()
 									//showMessage("Agent added to new position");
 									response.setPerformative(ACLMessage.AGREE);
 									stats.incMovement(ia);
+									showMessage(ia.getAID().getLocalName()+ " moved from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
 								}catch (Exception e) {
 									response.setPerformative(ACLMessage.FAILURE);
 									//showMessage("Could not move to that position");
 									if(!origin.isThereAnAgent())
-										try {
-											origin.addAgent(ia);
-										} catch (Exception e1) {
-											showMessage("FATAL ERROR: Cannot Undo this action");
+										{
+											try {
+												origin.addAgent(ia);
+											} catch (Exception e1) {
+												showMessage("FATAL ERROR: Cannot Undo this action");
+											}
+											try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO MOVE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+											}catch(Exception e2){};
 										}
 								}break;
 							case GET:
@@ -425,9 +430,13 @@ private void updatePublicGame()
 									getGarbage(moveOrder, origin, destination);
 									response.setPerformative(ACLMessage.AGREE);
 									stats.incMovement(origin.getAgent());
+									showMessage(origin.getAgent().getAID().getLocalName()+ " gets GARBAGE from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
 								}catch(Exception e){
 									showMessage("Failure GETTING");
 									response.setPerformative(ACLMessage.FAILURE);
+									try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO GET GARBAGE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+									}catch(Exception e2){};
+									
 								}
 								break;
 							case PUT:
@@ -436,8 +445,11 @@ private void updatePublicGame()
 									putGarbage(moveOrder, origin, destination);
 									response.setPerformative(ACLMessage.AGREE);
 									stats.incMovement(origin.getAgent());
+									showMessage(origin.getAgent().getAID().getLocalName()+ " puts GARBAGE from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
 								} catch (Exception e) {
 									response.setPerformative(ACLMessage.FAILURE);
+									try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO PUT GARBAGE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+									}catch(Exception e2){};
 								}
 									
 								break;
