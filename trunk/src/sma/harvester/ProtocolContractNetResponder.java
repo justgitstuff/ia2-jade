@@ -28,6 +28,9 @@ public class ProtocolContractNetResponder{
 	SendFinishLoad protocolSendFinishLoad;
 	SendFinishDownload protocolSendFinishDownload;
 	private boolean accepted;
+	private boolean existGarbatge=false;
+	private boolean existAgentGarbatge=false;
+	private Agent myAgent;
 		
 	/**
 	 * @param infoGame the infoGame to set
@@ -35,7 +38,83 @@ public class ProtocolContractNetResponder{
 	public void setInfoGame(InfoGame infoGame) {
 		this.infoGame = infoGame;
 		accepted=false;
+		
+
+		this.infoGame = infoGame;
+		accepted=false;
+		existGarbatge=false;
+		existAgentGarbatge=false;
+		
+		for(int x=0;x<infoGame.getMap().length ;x++){
+			for(int y=0;y<infoGame.getMap()[x].length ;y++)
+			{
+				Cell c=infoGame.getCell(x, y);
+				try {
+					if(c.getCellType()==Cell.BUILDING)
+						if (c.getGarbageUnits()!=0) existGarbatge=true;
+					
+					if (c.isThereAnAgent())
+						if(c.getAgent().getUnits()!=0)
+							existAgentGarbatge=true;
+					
+					
+					
+				} catch (Exception e) {
+					// Rarely will go here
+				}
+			}
+		}
+		System.out.println("DAVIIIIIIIIDDDDDDDDD Basura   " + existGarbatge);
+		System.out.println("DAVIIIIIIIIDDDDDDDDDDDDD   " + existAgentGarbatge);
+		
+		if(existAgentGarbatge && !existGarbatge){
+			
+			Cell begin = new Cell(Cell.BUILDING);
+			int distance = evaluateAction(content);
+			begin.setColumn(my_x);
+			begin.setRow(my_y);
+			
+
+
+			// retorna 1 si sta al perimetre, llavors descarga
+			if(sma.UtilsAgents.cellDistance(begin, goDescarga)==1){
+				
+					try {
+						if(infoAgent.getUnits()!=0){
+							ms.put(getNextStepDesti(goDescarga),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						}else{
+							// ENVIAR K STIK DESCARREGAT
+							// sendFInishDOwnlLOAD
+							protocolSendFinishDownload.addBehaviour(myAgent);
+							
+							myState= true;
+							accepted=false;
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+				
+			}else{// decisio mourem
+				
+				evaluateAction(goDescarga);
+				ms.go(getNextStep());
+				
+				
+			} 	
+			
+			
+			
+			
+			
+		}
+		
+		
 	}
+	
+	
+	
 
 	private InfoGame infoGame;
 	/**
@@ -44,7 +123,7 @@ public class ProtocolContractNetResponder{
 	 * @param Cell
 	 */	
 	public void addBehaviour (Agent agent)
-	{
+	{	myAgent=agent;
 		MessageTemplate mt1 = MessageTemplate.MatchProtocol(sma.UtilsAgents.CONTRACT_NET);
 		MessageTemplate mt2 = MessageTemplate.MatchPerformative(ACLMessage.CFP);
 		agent.addBehaviour(new ProtocolContractNetRes(agent,MessageTemplate.and(mt1, mt2)));
@@ -123,7 +202,6 @@ public class ProtocolContractNetResponder{
 				
 			}else{
 				
-				System.out.println("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				reply.setPerformative(ACLMessage.REFUSE);
 				// S'acaba comunicacio
 				//controalr si moviment reciclatege o descarrega
@@ -141,9 +219,7 @@ public class ProtocolContractNetResponder{
 					
 						try {
 							if(infoAgent.getUnits()!=0){
-								System.out.println("MIERDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   " + infoAgent.getCurrentType());
-								System.out.println("MIERDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASHHISTASAS   " + getNextStep());
-								ms.put(getNextStepDescarga(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+								ms.put(getNextStepDesti(goDescarga),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 							}else{
 								// ENVIAR K STIK DESCARREGAT
 								// sendFInishDOwnlLOAD
@@ -172,166 +248,6 @@ public class ProtocolContractNetResponder{
 		
 		
 		
-		private int evaluateAction(Cell cell){
-		
-			int xfinal = cell.getColumn();
-			int yfinal = cell.getRow();
-			
-			//System.out.println("Destination Cell "+cell);
-			
-			//retornem el cami mes curt
-			PathTest test = new PathTest(infoGame);
-			
-			//Em busco a mi mateix
-			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
-			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-			
-			//System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
-			
-			
-			
-			// op1
-			
-			test.PosicioInicial(my_x,my_y,1); 
-			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
-
-			
-						
-			// OPCIOOOOO 2
-			test.PosicioInicial(my_x,my_y,2);
-			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
-			int distFinal=10000;
-			if(stepsPathFinal2!=null){
-				distFinal = test.distanciaPesos(stepsPathFinal2);
-				short_path = stepsPathFinal2;
-			
-				//Mirem que hi ha un cami descobert possible de comunicació
-				if(stepsPathFinal1!=null){
-					
-					int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
-					if(distFinal>distPesosOp1){
-						distFinal=distPesosOp1;
-						short_path = stepsPathFinal1;
-					}
-				}		
-			}
-			
-			return distFinal;
-		}
-		
-		
-		
-		private Direction getNextStep(){
-			int destination_x = short_path.getX(1);
-			int destination_y = short_path.getY(1);
-			
-			System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
-			
-			if(my_x<destination_x && my_y==destination_y){ 
-				return Direction.RIGHT;	
-			
-			}if(my_x>destination_x && my_y==destination_y){ 
-				return Direction.LEFT;
-			}			
-			if(my_y<destination_y && my_x==destination_x){ 
-				 return Direction.DOWN;
-			}			
-			if(my_y>destination_y && my_x==destination_x){ 
-				return Direction.UP;
-			}
-			if(my_y>destination_y && my_x>destination_x){ 
-				return Direction.UPLEFT;
-			}
-			if(my_y<destination_y && my_x<destination_x){ 
-				return Direction.DOWNRIGHT;
-			}
-						
-			if(my_x<destination_x && my_y>destination_y){ 
-				return Direction.UPRIGHT;
-			}
-			if(my_x>destination_x && my_y<destination_y){ 
-				return Direction.DOWNLEFT;
-			}
-			
-			return Direction.UP;
-			
-		}
-		
-		
-		
-		
-		
-		private Direction getNextStepDescarga(){
-			int destination_x = goDescarga.getColumn();
-			int destination_y = goDescarga.getRow();
-			
-			System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
-			
-			if(my_x<destination_x && my_y==destination_y){ 
-				return Direction.RIGHT;	
-			
-			}if(my_x>destination_x && my_y==destination_y){ 
-				return Direction.LEFT;
-			}			
-			if(my_y<destination_y && my_x==destination_x){ 
-				 return Direction.DOWN;
-			}			
-			if(my_y>destination_y && my_x==destination_x){ 
-				return Direction.UP;
-			}
-			if(my_y>destination_y && my_x>destination_x){ 
-				return Direction.UPLEFT;
-			}
-			if(my_y<destination_y && my_x<destination_x){ 
-				return Direction.DOWNRIGHT;
-			}
-						
-			if(my_x<destination_x && my_y>destination_y){ 
-				return Direction.UPRIGHT;
-			}
-			if(my_x>destination_x && my_y<destination_y){ 
-				return Direction.DOWNLEFT;
-			}
-			
-			return Direction.UP;
-			
-		}
-		
-		private Direction getNextStepCarga(){
-			int destination_x = content.getColumn();
-			int destination_y = content.getRow();
-			
-			System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
-			
-			if(my_x<destination_x && my_y==destination_y){ 
-				return Direction.RIGHT;	
-			
-			}if(my_x>destination_x && my_y==destination_y){ 
-				return Direction.LEFT;
-			}			
-			if(my_y<destination_y && my_x==destination_x){ 
-				 return Direction.DOWN;
-			}			
-			if(my_y>destination_y && my_x==destination_x){ 
-				return Direction.UP;
-			}
-			if(my_y>destination_y && my_x>destination_x){ 
-				return Direction.UPLEFT;
-			}
-			if(my_y<destination_y && my_x<destination_x){ 
-				return Direction.DOWNRIGHT;
-			}
-						
-			if(my_x<destination_x && my_y>destination_y){ 
-				return Direction.UPRIGHT;
-			}
-			if(my_x>destination_x && my_y<destination_y){ 
-				return Direction.DOWNLEFT;
-			}
-			
-			return Direction.UP;
-			
-		}
 		
 		
 		
@@ -371,11 +287,11 @@ public class ProtocolContractNetResponder{
 					//System.out.println("Destination has garbage: "+content.getGarbageUnits());
 					if(content.getGarbageUnits()>1){
 						//System.out.println("Destination has more garbage than 0" );
-						ms.get(getNextStepCarga(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
 					}else{ // ultim garbatge
 						//System.out.println("Destination has more ****last**** garbage " );
-						ms.get(getNextStepCarga(),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
 					
 						System.out.println("-------------------ULTIMA BASURA FETA------------------------------------------------------------------------------");
@@ -402,9 +318,9 @@ public class ProtocolContractNetResponder{
 						
 							try {
 								try {
-									
+									System.out.println("KIKOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" );
 									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
-									
+									System.out.println("FERRRRRAAAAAAAAAANNNNNNNNNNN" );
 									
 								} catch (IOException e) {
 									e.printStackTrace();
@@ -443,4 +359,134 @@ public class ProtocolContractNetResponder{
 			System.out.println("I am the harvester "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
 		}
 	}
+	
+	
+
+	
+	private Direction getNextStep(){
+		int destination_x = short_path.getX(1);
+		int destination_y = short_path.getY(1);
+		
+		System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
+		
+		if(my_x<destination_x && my_y==destination_y){ 
+			return Direction.RIGHT;	
+		
+		}if(my_x>destination_x && my_y==destination_y){ 
+			return Direction.LEFT;
+		}			
+		if(my_y<destination_y && my_x==destination_x){ 
+			 return Direction.DOWN;
+		}			
+		if(my_y>destination_y && my_x==destination_x){ 
+			return Direction.UP;
+		}
+		if(my_y>destination_y && my_x>destination_x){ 
+			return Direction.UPLEFT;
+		}
+		if(my_y<destination_y && my_x<destination_x){ 
+			return Direction.DOWNRIGHT;
+		}
+					
+		if(my_x<destination_x && my_y>destination_y){ 
+			return Direction.UPRIGHT;
+		}
+		if(my_x>destination_x && my_y<destination_y){ 
+			return Direction.DOWNLEFT;
+		}
+		
+		return Direction.UP;
+		
+	}
+	
+	
+	
+	
+	
+	private Direction getNextStepDesti(Cell dest){
+		int destination_x = dest.getColumn();
+		int destination_y = dest.getRow();
+		
+		System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
+		
+		if(my_x<destination_x && my_y==destination_y){ 
+			return Direction.RIGHT;	
+		
+		}if(my_x>destination_x && my_y==destination_y){ 
+			return Direction.LEFT;
+		}			
+		if(my_y<destination_y && my_x==destination_x){ 
+			 return Direction.DOWN;
+		}			
+		if(my_y>destination_y && my_x==destination_x){ 
+			return Direction.UP;
+		}
+		if(my_y>destination_y && my_x>destination_x){ 
+			return Direction.UPLEFT;
+		}
+		if(my_y<destination_y && my_x<destination_x){ 
+			return Direction.DOWNRIGHT;
+		}
+					
+		if(my_x<destination_x && my_y>destination_y){ 
+			return Direction.UPRIGHT;
+		}
+		if(my_x>destination_x && my_y<destination_y){ 
+			return Direction.DOWNLEFT;
+		}
+		
+		return Direction.UP;
+		
+	}
+	
+	
+	private int evaluateAction(Cell cell){
+		
+		int xfinal = cell.getColumn();
+		int yfinal = cell.getRow();
+		
+		//System.out.println("Destination Cell "+cell);
+		
+		//retornem el cami mes curt
+		PathTest test = new PathTest(infoGame);
+		
+		//Em busco a mi mateix
+		my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+		my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+		
+		//System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
+		
+		
+		
+		// op1
+		
+		test.PosicioInicial(my_x,my_y,1); 
+		Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
+
+		
+					
+		// OPCIOOOOO 2
+		test.PosicioInicial(my_x,my_y,2);
+		Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
+		int distFinal=10000;
+		if(stepsPathFinal2!=null){
+			distFinal = test.distanciaPesos(stepsPathFinal2);
+			short_path = stepsPathFinal2;
+		
+			//Mirem que hi ha un cami descobert possible de comunicació
+			if(stepsPathFinal1!=null){
+				
+				int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
+				if(distFinal>distPesosOp1){
+					distFinal=distPesosOp1;
+					short_path = stepsPathFinal1;
+				}
+			}		
+		}
+		
+		return distFinal;
+	}
+	
+	
+	
 	}
