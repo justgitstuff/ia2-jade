@@ -15,6 +15,8 @@ public class InfoAgent extends Object implements java.io.Serializable {
 	static public int SCOUT = 0;
 	static public int HARVESTER = 1;
 
+	private int movements = 0;
+	
 	private int typeAgent = -1;
 	private AID aid;
 
@@ -127,6 +129,14 @@ public class InfoAgent extends Object implements java.io.Serializable {
 	 */
 	public InfoAgent(int agentType) throws Exception {
 		this.setAgentType(agentType);
+	}
+
+	public void setMovements(int movements) {
+		this.movements = movements;
+	}
+
+	public int getMovements() {
+		return movements;
 	}
 
 } //endof class InfoAgent
