@@ -204,8 +204,8 @@ private AID createAgent(String name, String type, Object args[])
 private void updatePublicGame()
 {
 	publicGame.setInfo(game.getInfo());
-	for(int r=0;r<game.getMap().length-1;r++)
-		for(int c=0;c<game.getMap()[r].length-1;c++)
+	for(int r=0;r<game.getMap().length;r++)
+		for(int c=0;c<game.getMap()[r].length;c++)
 		{
 			if (game.getCell(r, c).isDiscovered())
 			{
