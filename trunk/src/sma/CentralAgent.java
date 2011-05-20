@@ -135,7 +135,7 @@ public class CentralAgent extends Agent {
  
 
    //init Statistics
-   stats=new Statistics(game);
+   stats=new Statistics(game,gui);
    
    //add behaviours
 
@@ -285,6 +285,7 @@ private void updatePublicGame()
 				showMessage("General error writing game results");
 				e.printStackTrace();
 			}
+			stats.show();
 		}else{
 			//Send updated map to all Coordinator Agent
 		    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
@@ -361,6 +362,8 @@ private void updatePublicGame()
 			response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 		}
 		if(moveOrder!=null)
+			if(moveOrder.getAgent()!=null)
+				if(findAgent(moveOrder.getAgent())!=null)
 		{
 			//showMessage("Received movement order from "+moveOrder.getAgent().getLocalName());
 			origin=findAgent(moveOrder.getAgent());	
@@ -379,56 +382,64 @@ private void updatePublicGame()
 				case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;
 				case DOWNRIGHT:dx=1;dy=1;diagonal=true;break;
 			}
-			//showMessage("Will move "+dx+" "+dy);
-			destination=game.getMap()[y+dy][x+dx];
+
 			//showMessage("I have its destination "+destination);
-			
-			switch (moveOrder.getAction())
-			{
-			case GO:
-				try{
-					showMessage(origin.getAgent().getAgent()+" Moving");
-					if (diagonal) throw new Exception();
-					//showMessage("Its a go order");
-					ia=origin.getAgent();
-					//showMessage("Have the agent to remove");
-					origin.removeAgent(ia);
-					//showMessage("Agent Removed");
-					destination.addAgent(ia);
-					//showMessage("Agent added to new position");
-					response.setPerformative(ACLMessage.AGREE);
-				}catch (Exception e) {
-					response.setPerformative(ACLMessage.FAILURE);
-					//showMessage("Could not move to that position");
-					if(!origin.isThereAnAgent())
-						try {
-							origin.addAgent(ia);
-						} catch (Exception e1) {
-							showMessage("FATAL ERROR: Cannot Undo this action");
+			response.setPerformative(ACLMessage.FAILURE);
+			if(y+dy>=0)
+				if(y+dy<game.getMap()[0].length)
+					if(x+dx>=0)
+						if(x+dx<game.getMap().length)
+						{
+							//showMessage("Will move "+dx+" "+dy);
+							destination=game.getMap()[y+dy][x+dx];
+							switch (moveOrder.getAction())
+							{
+							case GO:
+								try{
+									showMessage(origin.getAgent().getAgent()+" Moving");
+									if (diagonal) throw new Exception();
+									//showMessage("Its a go order");
+									ia=origin.getAgent();
+									//showMessage("Have the agent to remove");
+									origin.removeAgent(ia);
+									//showMessage("Agent Removed");
+									destination.addAgent(ia);
+									//showMessage("Agent added to new position");
+									response.setPerformative(ACLMessage.AGREE);
+									stats.incMovement(ia);
+								}catch (Exception e) {
+									response.setPerformative(ACLMessage.FAILURE);
+									//showMessage("Could not move to that position");
+									if(!origin.isThereAnAgent())
+										try {
+											origin.addAgent(ia);
+										} catch (Exception e1) {
+											showMessage("FATAL ERROR: Cannot Undo this action");
+										}
+								}break;
+							case GET:
+								try
+								{
+									showMessage(origin.getAgent().getAgent()+" Getting Garbage");
+									getGarbage(moveOrder, origin, destination);
+									response.setPerformative(ACLMessage.AGREE);
+								}catch(Exception e){
+									showMessage("Failure GETTING");
+									response.setPerformative(ACLMessage.FAILURE);
+								}
+								break;
+							case PUT:
+								try {
+									showMessage(origin.getAgent().getAgent()+" Putting Garbage");
+									putGarbage(moveOrder, origin, destination);
+									response.setPerformative(ACLMessage.AGREE);
+								} catch (Exception e) {
+									response.setPerformative(ACLMessage.FAILURE);
+								}
+									
+								break;
+							}
 						}
-				}break;
-			case GET:
-				try
-				{
-					showMessage(origin.getAgent().getAgent()+" Getting Garbage");
-					getGarbage(moveOrder, origin, destination);
-					response.setPerformative(ACLMessage.AGREE);
-				}catch(Exception e){
-					showMessage("Failure GETTING");
-					response.setPerformative(ACLMessage.FAILURE);
-				}
-				break;
-			case PUT:
-				try {
-					showMessage(origin.getAgent().getAgent()+" Putting Garbage");
-					putGarbage(moveOrder, origin, destination);
-					response.setPerformative(ACLMessage.AGREE);
-				} catch (Exception e) {
-					response.setPerformative(ACLMessage.FAILURE);
-				}
-					
-				break;
-			}
 		}
 
 		return response;
@@ -490,8 +501,7 @@ private void updatePublicGame()
 		
 		// All OK, go ahead putting garbage
 		agent.setUnits(au-1);
-		int currentPoints=stats.getPoints();
-		stats.setPoints(currentPoints+points);
+		stats.scoreGarbage(points);
 		// TODO complete this
 		
 	}
