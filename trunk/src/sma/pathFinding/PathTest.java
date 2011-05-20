@@ -144,7 +144,7 @@ public class PathTest{
 			return 10000;
 		}
 		else{
-			for(int i=1;i<path.getLength()-1;i++){
+			for(int i=1;i<path.getLength();i++){
 				
 				//System.out.println(" Pas"+ (i+1) + ":  " + path.getStep(i).getX()+" "+ path.getStep(i).getY());
 				 x=path.getStep(i).getX();
