@@ -62,11 +62,17 @@ public class ProtocolContractNetResponder{
 			}
 			System.out.println("Scout: Receive from "+msg.getSender()+". Material:"+content.getGarbageType()+", x: "+content.getColumn()+", y: "+content.getRow());
 			ACLMessage reply = msg.createReply();
-			reply.setPerformative(ACLMessage.PROPOSE);
 			//Or refuse or not-understood.
 			//Content have a int with a distance.			
 			distance = evaluateAction(content);
-			reply.setContent(Integer.toString(distance));
+			
+			if(distance==10000){
+				reply.setPerformative(ACLMessage.REFUSE);
+			}else{
+				reply.setPerformative(ACLMessage.PROPOSE);
+				reply.setContent(Integer.toString(distance));					
+			}
+			
 			return reply;
 		}
 		
