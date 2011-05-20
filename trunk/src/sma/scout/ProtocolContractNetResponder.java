@@ -85,7 +85,9 @@ public class ProtocolContractNetResponder{
 			//Your code.
 			System.out.println("I am the scout "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
-			ms.go(getNextStep());
+			Direction dir = getNextStep();
+			System.out.println("--------------------"+dir);
+			ms.go(dir);
 
 			//Or failure.
 			return inform;
