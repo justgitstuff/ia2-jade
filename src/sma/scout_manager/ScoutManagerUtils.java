@@ -96,27 +96,27 @@ public class ScoutManagerUtils {
 		
 		int iIni = quadrant.x1;
 		int jIni = quadrant.y1;
-		boolean notUnchartedZone = false;
-		for (int i = quadrant.x1; i < quadrant.x2; i++) {
-			if (notUnchartedZone) {
-				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); // For when there is an end of line.
-				notUnchartedZone = false;
+		boolean unchartedZone = false;
+		for (int i = quadrant.x1; i < quadrant.x2; i++) { // For each row
+			if (unchartedZone) { // For when there is an end of line.
+				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.x2)); 
+				unchartedZone = false;
 			}
-			if (i == quadrant.x1) {
-				notUnchartedZone = true;
-			}
-			for (int j = quadrant.y1; j < quadrant.y2; j++) {
-				if (map[i][j] != null && notUnchartedZone) {
+//			if (i == quadrant.x1) {
+//				unchartedZone = true;
+//			}
+			for (int j = quadrant.y1; j < quadrant.y2; j++) { // For each column
+				if (map[i][j] != null && unchartedZone) {
 					unchartedRectangles.add(new Rectangle(iIni, i, jIni, j));
-					notUnchartedZone = false;
-				} else if (map[i][j] == null && !notUnchartedZone) {
-					notUnchartedZone = true;
+					unchartedZone = false;
+				} else if (map[i][j] == null && !unchartedZone) {
+					unchartedZone = true;
 					iIni = i;
 					jIni = j;
 				}
 			}
 		}
-		if (notUnchartedZone) {
+		if (unchartedZone) {
 			unchartedRectangles.add(new Rectangle(iIni, quadrant.x2, jIni, quadrant.y2)); // For the last line.
 		}
 		
@@ -127,9 +127,10 @@ public class ScoutManagerUtils {
 	 * It will choose a point in the biggest uncharted zone of the quadrant.
 	 * @param quadrant
 	 * @param map
+	 * @param lastPoint 
 	 * @return The point where the scouts are expected to discover.
 	 */
-	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map) {
+	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map, Point lastPoint) {
 		// TODO fer la suma de les files sense descobrir
 		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
 		
@@ -160,26 +161,59 @@ public class ScoutManagerUtils {
 			}
 		}
 		
-		// Determine the biggest group of uncharted rectangles
-		int biggestGroup = 0;
-		int biggestGroupSize = 0;
+		// Determine the central points of the uncharted areas and their size
+		Point[] points = new Point[groups.size()];
+		int[] sizes = new int[groups.size()];
+		int i = 0;
 		for (Integer key:groups.keySet()) {
+			// Determine the central point the area
+			int half = (groups.get(key).size() - 1) / 2;
+			int x = half + groups.get(key).get(0).x1;
+			int y = ((groups.get(key).get(half).y2 - groups.get(key).get(half).y1) / 2) + groups.get(key).get(half).y1;
+			points[i] = new Point(x, y);
+			
+			// Determine the size of the area
 			int groupSize = 0;
 			for (Rectangle rectangle:groups.get(key)) {
 				groupSize += rectangle.y2 - rectangle.y1 + 1;
 			}
+			sizes[i] = groupSize;
 			
-			if (groupSize > biggestGroupSize) {
-				biggestGroup = key;
-				biggestGroupSize = groupSize;
-			}
+			i++;
 		}
 		
-		// Determine a good point in the biggest uncharted zone
-		int half = (groups.get(biggestGroup).size() - 1) / 2;
-		int x = half + groups.get(biggestGroup).get(0).x1;
-		int y = ((groups.get(biggestGroup).get(half).y2 - groups.get(biggestGroup).get(half).y1) / 2) + groups.get(biggestGroup).get(half).y1;
+		// Determine which point is the best
+		Point targetPoint = null;
+		if (lastPoint != null) {
+			// Determine which point is the nearest to this
+			// FIXME Could be improved using the shortest path algorithm
+			double minimmumDistance = Double.MAX_VALUE;
+			Point nearestPoint = null;
+			for (int p = 0; p < points.length; p++) {
+				// Calculate distance to the point
+				double distance = Math.hypot(Math.abs(points[p].x - lastPoint.x), Math.abs(points[p].y - lastPoint.y));
+				
+				if (distance < minimmumDistance) {
+					nearestPoint = points[p];
+					minimmumDistance = distance;
+				}
+			}
+			targetPoint = nearestPoint;
+		} else {
+			// Determine the biggest uncharted area
+			int biggestGroup = 0;
+			int biggestGroupSize = 0;
+			for (int s = 0; s < sizes.length; s++) {
+				if (sizes[s] > biggestGroupSize) {
+					biggestGroup = s;
+					biggestGroupSize = sizes[s];
+				}
+			}
+			
+			// Point of the biggest zone
+			targetPoint = points[biggestGroup];
+		}
 		
-		return new Point(x, y);
+		return targetPoint;
 	}
 }

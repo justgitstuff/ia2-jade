@@ -39,7 +39,7 @@ public class ProvaForats {
 		    Point point = ScoutManagerUtils.chooseUnchartedPointToSendScout(new Quadrant(0, 9, 0, 9), map, new Point(2, 9));
 		    System.out.println("El millor punt és el " + point);
 		    
-		    point = ScoutManagerUtils.chooseUnchartedPointInAQuadrant(new Quadrant(0, 9, 0, 9), map);
+		    point = ScoutManagerUtils.chooseUnchartedPointInAQuadrant(new Quadrant(0, 9, 0, 9), map, null);
 		    System.out.println("El millor2 punt és el " + point);
 		    
 		} catch (Exception e) {
