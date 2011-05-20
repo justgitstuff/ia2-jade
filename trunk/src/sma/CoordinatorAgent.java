@@ -116,7 +116,7 @@ private AuxInfo info;
 	        	InfoGame game=(InfoGame)contentRebut;
     	
 	        	reply.setPerformative(ACLMessage.AGREE);
-	        	showMessage("Turn received: "+game.getInfo().getTurn());
+	        	//showMessage("Turn received: "+game.getInfo().getTurn());
   	
 	        	//Send map to all managers
 			    ACLMessage requestInicial = new ACLMessage(ACLMessage.REQUEST);
@@ -203,7 +203,7 @@ private AuxInfo info;
     
     public RequesterBehaviour(Agent myAgent, ACLMessage requestMsg) {
       super(myAgent, requestMsg);
-      showMessage("AchieveREInitiator starts...");
+      //showMessage("AchieveREInitiator starts...");
       msgSent = requestMsg;
     }
 
@@ -212,7 +212,7 @@ private AuxInfo info;
      * @param msg Message to handle
      */
     protected void handleAgree(ACLMessage msg) {
-      showMessage("AGREE received from "+ ( (AID)msg.getSender()).getLocalName());
+      //showMessage("AGREE received from "+ ( (AID)msg.getSender()).getLocalName());
     }
 
     /**
@@ -221,7 +221,7 @@ private AuxInfo info;
      */
     @SuppressWarnings("unchecked")
 	protected void handleInform(ACLMessage msg) {
-      showMessage("INFORM received from "+ ( (AID)msg.getSender()).getLocalName()+" ... [OK]");
+      //showMessage("INFORM received from "+ ( (AID)msg.getSender()).getLocalName()+" ... [OK]");
       try {
         info = (AuxInfo)msg.getContentObject();
         if (info instanceof AuxInfo) {
@@ -250,7 +250,7 @@ private AuxInfo info;
 
         }
       } catch (Exception e) {
-        showMessage("Incorrect content: "+e.toString());
+        //showMessage("Incorrect content: "+e.toString());
       }
     }
 
@@ -259,7 +259,7 @@ private AuxInfo info;
      * @param msg Message
      */
     protected void handleNotUnderstood(ACLMessage msg) {
-      showMessage("This message NOT UNDERSTOOD. \n");
+      //showMessage("This message NOT UNDERSTOOD. \n");
     }
 
     /**
@@ -267,7 +267,7 @@ private AuxInfo info;
      * @param msg Message
      */
     protected void handleFailure(ACLMessage msg) {
-      showMessage("The action has failed.");
+      //showMessage("The action has failed.");
 
     } //End of handleFailure
 
@@ -276,7 +276,7 @@ private AuxInfo info;
      * @param msg Message
      */
     protected void handleRefuse(ACLMessage msg) {
-      showMessage("Action refused.");
+      //showMessage("Action refused.");
     }
   } //Endof class RequesterBehaviour
 
