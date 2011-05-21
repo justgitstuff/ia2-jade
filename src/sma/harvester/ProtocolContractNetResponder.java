@@ -95,8 +95,18 @@ public class ProtocolContractNetResponder{
 			
 		}
 		
+		//Em busco a mi mateix
+		int var_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+		int var_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+		
+		Cell varAgent=infoGame.getCell(var_x, var_y);
 				
-				
+		if (varAgent.isThereAnAgent()){
+			if(varAgent.getAgent().getUnits()!=0)
+				existAgentGarbatge=true;
+		}
+		
+			
 		
 		//LA ULTIMA ITERACIO en el cas que no hi ha mes brosa a recollir
 		for(int x=0;x<infoGame.getMap().length ;x++){
@@ -105,14 +115,29 @@ public class ProtocolContractNetResponder{
 				Cell c=infoGame.getCell(x, y);
 				try {
 					if(c.getCellType()==Cell.BUILDING)
-						if (c.getGarbageUnits()!=0) existGarbatge=true;
+						// controlar tipus brosa d'acord harvester
+						if (c.getGarbageUnits()!=0){ 
+						
+							boolean tipusCarga=false;
+							//infoAgent.getCurrentType();
+							
+								if(c.getGarbageType()=='G'){
+									tipusCarga= infoAgent.getGarbageType()[0];					
+								}
+								else if(c.getGarbageType()=='P'){
+									tipusCarga= infoAgent.getGarbageType()[1];					
+								}
+								else if(c.getGarbageType()=='M'){
+									tipusCarga= infoAgent.getGarbageType()[2];					
+								}else if(c.getGarbageType()=='A'){
+									tipusCarga= infoAgent.getGarbageType()[3];					
+								}
+								
+							if(tipusCarga)
+								existGarbatge=true;
 					
-					if (c.isThereAnAgent())
-						if(c.getAgent().getUnits()!=0)
-							existAgentGarbatge=true;
-					
-					
-					
+						
+						}
 				} catch (Exception e) {
 					// Rarely will go here
 				}
@@ -280,7 +305,7 @@ public class ProtocolContractNetResponder{
 				
 				
 			
-			if((myState)&&(!accepted)){				
+			if(myState && !accepted && tipusCarga){				
 				//Content have a int with a distance.
 				
 				distance=evaluateAction(content);
@@ -293,7 +318,7 @@ public class ProtocolContractNetResponder{
 				}
 				//TODO mirar si puk karregar akest tipus de brosa(harvest pot rekullir akest tipus)
 			
-			}else if((myState)&&(accepted)){
+			}else if((myState && accepted)|| !tipusCarga ){
 				
 				reply.setPerformative(ACLMessage.REFUSE);
 					
