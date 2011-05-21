@@ -40,11 +40,54 @@ public class ProtocolContractNetResponder{
 		accepted=false;
 		
 
-		this.infoGame = infoGame;
+	
 		accepted=false;
 		existGarbatge=false;
 		existAgentGarbatge=false;
 		
+		infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
+		
+				
+		// Mirar si estic ple
+		
+		if( infoAgent.getMaxUnits()== infoAgent.getUnits()){
+			
+			// NOTIFICAR SEND FINISH LOAD
+			DistanceList list = new DistanceList();
+			 
+			for (int x=0;x<infoGame.getMap().length;x++){					
+				for (int y=0; y<infoGame.getMap()[x].length;y++)
+				{
+					Cell c=infoGame.getCell(x,y);
+					//if getGarbageunits is 0 -> no garbage.
+					if (c!=null)
+					{
+						if(c.getCellType() == Cell.RECYCLING_CENTER)
+						{
+							list.addDistance(evaluateAction(c));
+						}
+					}
+				}
+			}
+			
+			
+				try {
+					try {
+						goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}					
+			
+			myState=false;
+			
+		}
+		
+		
+		// Mirar si el content te basura
 		
 		
 		/*
@@ -305,47 +348,51 @@ public class ProtocolContractNetResponder{
 				
 				try {
 					//Haurà de ser >0 units
-					if(content.getGarbageUnits()>1){
+					if(content.getGarbageUnits()>0){
 						
 						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+						// part extreta a control a cada iteració setinfo
 						
-					}else{ // ultim garbatge
-						// TREURE DEL CONTRACT NETTTT
-						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
-						// NOTIFICAR SEND FINISH LOAD
-						DistanceList list = new DistanceList();
-						 
-						for (int x=0;x<infoGame.getMap().length;x++){					
-							for (int y=0; y<infoGame.getMap()[x].length;y++)
-							{
-								Cell c=infoGame.getCell(x,y);
-								//if getGarbageunits is 0 -> no garbage.
-								if (c!=null)
+						}
+					/*
+					else{ // ultim garbatge
+							// TREURE DEL CONTRACT NETTTT
+							ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
+							
+							// NOTIFICAR SEND FINISH LOAD
+							DistanceList list = new DistanceList();
+							 
+							for (int x=0;x<infoGame.getMap().length;x++){					
+								for (int y=0; y<infoGame.getMap()[x].length;y++)
 								{
-									if(c.getCellType() == Cell.RECYCLING_CENTER)
+									Cell c=infoGame.getCell(x,y);
+									//if getGarbageunits is 0 -> no garbage.
+									if (c!=null)
 									{
-										list.addDistance(evaluateAction(c));
+										if(c.getCellType() == Cell.RECYCLING_CENTER)
+										{
+											list.addDistance(evaluateAction(c));
+										}
 									}
 								}
 							}
-						}
-						
-						
-							try {
+							
+							
 								try {
-									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
-									
-								} catch (IOException e) {
+									try {
+										goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
+										
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								} catch (UnreadableException e) {
 									e.printStackTrace();
-								}
-							} catch (UnreadableException e) {
-								e.printStackTrace();
-							}					
-						
-						myState=false;
-						
-					}
+								}					
+							
+							myState=false;
+							
+						}*/
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
