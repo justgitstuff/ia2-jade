@@ -45,6 +45,41 @@ public class ProtocolContractNetResponder{
 		existGarbatge=false;
 		existAgentGarbatge=false;
 		
+		
+		
+		/*
+		 * 
+		 * TROS RECORREGUT PERIMETRE 
+		boolean go=false;
+		try {
+			//System.out.println("Destination has garbage: "+content.getGarbageUnits());
+			for(int colum=content.getColumn()-1;colum<=content.getColumn()+1;colum++){
+				for(int row=content.getRow()-1;row<=content.getRow()+1;row++){
+					
+					Cell c=infoGame.getCell(row, colum);
+					
+					try {
+						if(c !=null){
+							if(c.getCellType()==Cell.BUILDING){
+								if (c.getGarbageUnits()!=0){ go=true;
+								System.out.println("PERIMETROOOOOOOOOOOOOOOOOOOOOOOOO VACIOOOOO   "+ go);
+								
+								}
+							}
+						}
+						
+					} catch (Exception e) {
+						// Rarely will go here
+					}
+					
+				}
+			}
+		*/
+		
+		
+				
+		
+		//LA ULTIMA ITERACIO
 		for(int x=0;x<infoGame.getMap().length ;x++){
 			for(int y=0;y<infoGame.getMap()[x].length ;y++)
 			{
@@ -64,8 +99,6 @@ public class ProtocolContractNetResponder{
 				}
 			}
 		}
-		System.out.println("DAVIIIIIIIIDDDDDDDDD Basura   " + existGarbatge);
-		System.out.println("DAVIIIIIIIIDDDDDDDDDDDDD   " + existAgentGarbatge);
 		
 		if(existAgentGarbatge && !existGarbatge){
 			
@@ -103,8 +136,6 @@ public class ProtocolContractNetResponder{
 				
 				
 			} 	
-			
-			
 			
 			
 			
@@ -203,10 +234,6 @@ public class ProtocolContractNetResponder{
 			}else{
 				
 				reply.setPerformative(ACLMessage.REFUSE);
-				// S'acaba comunicacio
-				//controalr si moviment reciclatege o descarrega
-				//distance= evaluateAction(content);// Content cambiar per una cell pos basura
-				
 				Cell begin = new Cell(Cell.BUILDING);
 				distance=evaluateAction(content);
 				begin.setColumn(my_x);
@@ -262,11 +289,6 @@ public class ProtocolContractNetResponder{
 			//Your code.
 			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
-			
-			// aceptada la distancia miro si simplement em desplazo, 
-			// o stik al voltant i  carrego 
-			// si akabo de rekollo enviao sendFInishLoad( dic posteriroment les dist amb tots els reciclatges)
-			
 		
 			Cell begin = new Cell(Cell.STREET);
 			
@@ -278,25 +300,19 @@ public class ProtocolContractNetResponder{
 			begin.setRow(my_y);
 			
 						
-			
-			
 			// retorna 1 si sta al perimetre, llavors descarga
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
 				try {
-					//System.out.println("Destination has garbage: "+content.getGarbageUnits());
+					//Haurà de ser >0 units
 					if(content.getGarbageUnits()>1){
-						//System.out.println("Destination has more garbage than 0" );
+						
 						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
 					}else{ // ultim garbatge
-						//System.out.println("Destination has more ****last**** garbage " );
+						// TREURE DEL CONTRACT NETTTT
 						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						
-					
-						System.out.println("-------------------ULTIMA BASURA FETA------------------------------------------------------------------------------");
-					
-						//estic lliure
 						// NOTIFICAR SEND FINISH LOAD
 						DistanceList list = new DistanceList();
 						 
@@ -318,9 +334,7 @@ public class ProtocolContractNetResponder{
 						
 							try {
 								try {
-									System.out.println("KIKOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" );
-									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );
-									System.out.println("FERRRRRAAAAAAAAAANNNNNNNNNNN" );
+									goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
 									
 								} catch (IOException e) {
 									e.printStackTrace();
@@ -338,18 +352,15 @@ public class ProtocolContractNetResponder{
 				}
 				
 			}else{// decisio mourem
-				
-				
-											
-				//evaluateAction(endDescarga);
-				ms.go(getNextStep());
-				
-				
+					ms.go(getNextStep());				
 			} 
 			
 			
 		return inform;
 		}
+		
+		
+		
 		
 		/**
 		 * Execute when the message is Reject-proposal.
