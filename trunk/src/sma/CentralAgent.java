@@ -270,7 +270,7 @@ private void updatePublicGame()
 	@Override
 	protected void onTick() {
 		game.getInfo().incrTurn();
-		showMessage("Turn "+game.getInfo().getTurn());
+		showMessage(" ********** Turn "+game.getInfo().getTurn()+ " **********");
 		if ((game.getInfo().getTurn()==game.getInfo().getGameDuration())||(stats.isFinished()))
 		{
 			showMessage("Game Finished");
@@ -318,8 +318,8 @@ private void updatePublicGame()
 
 	@Override
 	protected void handleInform(ACLMessage arg0) {
-		// TODO Auto-generated method stub
-		super.handleInform(arg0);
+		// Auto-generated method stub
+		//super.handleInform(arg0);
 	}
 
 	/**
@@ -329,7 +329,6 @@ private void updatePublicGame()
 
 	public Informer(Agent arg0, ACLMessage arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 	  
 	
@@ -373,10 +372,10 @@ private void updatePublicGame()
 			boolean diagonal=false;
 			switch (moveOrder.getDirection())
 			{
-				case UP:dy=-1;showMessage("UP");break;
-				case DOWN:dy=1;showMessage("DOWN");break;
-				case LEFT:dx=-1;showMessage("LEFT");break;
-				case RIGHT:dx=1;showMessage("RIGHT");break;
+				case UP:dy=-1;/*showMessage("UP");*/break;
+				case DOWN:dy=1;/*showMessage("DOWN");*/break;
+				case LEFT:dx=-1;/*showMessage("LEFT");*/break;
+				case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
 				case UPLEFT:dx=-1;dy=-1;diagonal=true;break;
 				case UPRIGHT:dx=1;dy=-1;diagonal=true;break;
 				case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;

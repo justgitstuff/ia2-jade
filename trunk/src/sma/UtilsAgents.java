@@ -200,14 +200,15 @@ public class UtilsAgents {
 	{
 		double c1,c2,diagonal;
 		if ((begin!=null)&&(end!=null))
-		{c1=begin.getRow()-end.getRow();
-		c2=begin.getColumn()-end.getColumn();
-		c1=Math.pow(c1, 2);
-		c2=Math.pow(c2, 2);
-		diagonal=Math.sqrt(c1+c2);
-		int distance=(int)diagonal;
-		System.out.println("**************** Cell distance "+c1+" "+c2+" "+diagonal+" truncate to "+distance);
-		return distance;
+		{
+			c1=begin.getRow()-end.getRow();
+			c2=begin.getColumn()-end.getColumn();
+			c1=Math.pow(c1, 2);
+			c2=Math.pow(c2, 2);
+			diagonal=Math.sqrt(c1+c2);
+			int distance=(int)diagonal;
+			System.out.println("**************** Cell distance "+c1+" "+c2+" "+diagonal+" truncate to "+distance);
+			return distance;
 		}else{
 			return 100000;
 		}
