@@ -64,12 +64,30 @@ public class CentralAgent extends Agent {
       for(int k=0; k<currentGame.getInfo().getNumHarvesters(); k++) {
     	InfoAgent p = new InfoAgent(InfoAgent.HARVESTER);
         ((currentGame.getMap())[k+2][0]).addAgent(p);
+        fillHabilities(p,k);
         agents.add( currentGame.getCell(k+2,0));
       }
       return agents;
     }
-  
   /**
+   * Fills the hability to carry certain type of garbage
+   * @param p - the agent
+   * @param k - agent index
+   */
+  private void fillHabilities(InfoAgent p, int k) {
+	String list;
+	boolean habilities[]=new boolean[4];
+	list=game.getInfo().getTypeHarvesters()[k];
+	showMessage(k+" has habilities "+list);
+	if(list.contains("G")) habilities[0]=true; else habilities[0]=false;
+	if(list.contains("P")) habilities[1]=true; else habilities[1]=false;
+	if(list.contains("M")) habilities[2]=true; else habilities[2]=false;
+	if(list.contains("A")) habilities[3]=true; else habilities[3]=false;
+	showMessage(k+" in boolean: "+habilities);
+	p.setGarbageType(habilities);
+}
+
+/**
    * Agent setup method - called when it first come on-line. Configuration
    * of language to use, ontology and initialization of behaviours.
    */
