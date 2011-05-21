@@ -87,7 +87,7 @@ public class ProtocolContractNetInitiator {
 		protected void handleAllResponses(Vector responses, Vector acceptances) {
 			
 			// Evaluate proposals.
-			int bestProposal = -1;			
+			int bestProposal = Integer.MAX_VALUE;			
 			ACLMessage accept = null;
 			Enumeration e = responses.elements();
 			while (e.hasMoreElements()) {
@@ -103,12 +103,11 @@ public class ProtocolContractNetInitiator {
 					Quadrant quadrant = ((ScoutManagerAgent) this.myAgent).getScoutsQuadrants().get(sender);
 					if (targetCell.getRow() >= quadrant.x1 && targetCell.getRow() <= quadrant.x2
 							&& targetCell.getColumn() >= quadrant.y1 && targetCell.getColumn() <= quadrant.y2) {
-						if (proposal > bestProposal && proposal < 1000) {
+						if (proposal < bestProposal && proposal < 1000) {
 							bestProposal = proposal;						
 							accept = reply;
 						}
 					}
-					
 				}
 			}
 			// Accept the proposal of the best proposer

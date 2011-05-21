@@ -35,7 +35,9 @@ public class ScoutManagerAgent extends Agent{
 	private boolean justOneTime = true;
 	
 	private Map<AID, Quadrant> scoutsQuadrants = new HashMap<AID, Quadrant>();
+	List<Quadrant> quadrants = null;
 	private Point lastPoint = null;
+	private int numScouts = 0;
 	
 	/**
 	 * A message is shown in the log area of the GUI
@@ -86,28 +88,33 @@ public class ScoutManagerAgent extends Agent{
 	    DFAgentDescription descripcion = new DFAgentDescription();
         descripcion.addServices(sd1);
         
+        Cell[][] map = this.game.getMap();
+        
 		try {
 			if (justOneTime) {
 				// Get the scouts
 				DFAgentDescription[] scouts = DFService.search(this, descripcion);
+				numScouts = scouts.length;
 				
 				// Divide the map into quadrants and assign the scouts to them
-				Cell[][] map = this.game.getMap();
-				List<Quadrant> quadrants = ScoutManagerUtils.divideCity(map.length, map[0].length, scouts.length);
+				quadrants = ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts);
 				
 				// Assign each quadrant to each scout
-				for (int i = 0; i < scouts.length; i++) {
+				for (int i = 0; i < numScouts; i++) {
 					scoutsQuadrants.put(scouts[i].getName(), quadrants.get(i));
 				}
 				
 				justOneTime = false;
 			}
 			
+			ScoutManagerUtils.joinQuadrants(quadrants, this.game.getMap());
+			
 			// Get the target cell for each scout
 			// Each Scout has its quadrant
-			for (AID scout:scoutsQuadrants.keySet()) {
+			for (Quadrant quadrant:ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts)) {
+				
 				Point targetPoint = ScoutManagerUtils
-						.chooseUnchartedPointInAQuadrant(scoutsQuadrants.get(scout), this.game.getMap(), lastPoint);
+						.chooseUnchartedPointInAQuadrant(quadrant, this.game.getMap(), lastPoint);
 				Cell targetCell = new Cell(Cell.STREET);
 				targetCell.setRow(targetPoint.x);
 				targetCell.setColumn(targetPoint.y);
