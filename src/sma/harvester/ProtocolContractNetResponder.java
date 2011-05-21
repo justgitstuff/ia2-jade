@@ -47,12 +47,19 @@ public class ProtocolContractNetResponder{
 		
 		infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 		
+		/**
+		 * FALTA CONTROLAR LA RECOLECTA DELS DIFERENTS TIPUS DE BROSAAAAA
+		 * EN LA ITERACIO FINAL MIRAR NOMES AMB BROSA QUE PUC RECOLLIR
+		 * EN EL CONTRACT NET REBUTJAR SINO PUC ANAR A BUSCAR
+		 * 
+		 */
+		
+		
 				
-		// Mirar si estic ple
+		// Mirar si estic ple envio finish load per anar a descarregar això de forma dinamica durant l'execuccio
 		
 		if( infoAgent.getMaxUnits()== infoAgent.getUnits()){
 			
-			// NOTIFICAR SEND FINISH LOAD
 			DistanceList list = new DistanceList();
 			 
 			for (int x=0;x<infoGame.getMap().length;x++){					
@@ -86,43 +93,10 @@ public class ProtocolContractNetResponder{
 			
 		}
 		
-		
-		// Mirar si el content te basura
-		
-		
-		/*
-		 * 
-		 * TROS RECORREGUT PERIMETRE 
-		boolean go=false;
-		try {
-			//System.out.println("Destination has garbage: "+content.getGarbageUnits());
-			for(int colum=content.getColumn()-1;colum<=content.getColumn()+1;colum++){
-				for(int row=content.getRow()-1;row<=content.getRow()+1;row++){
-					
-					Cell c=infoGame.getCell(row, colum);
-					
-					try {
-						if(c !=null){
-							if(c.getCellType()==Cell.BUILDING){
-								if (c.getGarbageUnits()!=0){ go=true;
-								System.out.println("PERIMETROOOOOOOOOOOOOOOOOOOOOOOOO VACIOOOOO   "+ go);
-								
-								}
-							}
-						}
-						
-					} catch (Exception e) {
-						// Rarely will go here
-					}
-					
-				}
-			}
-		*/
-		
-		
+				
 				
 		
-		//LA ULTIMA ITERACIO
+		//LA ULTIMA ITERACIO en el cas que no hi ha mes brosa a recollir
 		for(int x=0;x<infoGame.getMap().length ;x++){
 			for(int y=0;y<infoGame.getMap()[x].length ;y++)
 			{
@@ -142,7 +116,7 @@ public class ProtocolContractNetResponder{
 				}
 			}
 		}
-		
+		// No existeix més brosa al mapa y ya s'ha enviat previament l'ordre de finishload per descarregar
 		if(existAgentGarbatge && !existGarbatge && !myState){
 			
 			Cell begin = new Cell(Cell.BUILDING);
@@ -181,12 +155,12 @@ public class ProtocolContractNetResponder{
 			} 	
 			
 			
-			
+		// NOTIFICAR SEND FINISH LOAD quan e recollit la brosa final del mapa encara k no estigui ple	
 		}else if(existAgentGarbatge && !existGarbatge && myState){
 			
 
 			
-			// NOTIFICAR SEND FINISH LOAD
+		
 			DistanceList list = new DistanceList();
 			 
 			for (int x=0;x<infoGame.getMap().length;x++){					
