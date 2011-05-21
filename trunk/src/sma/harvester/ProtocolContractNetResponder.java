@@ -143,7 +143,7 @@ public class ProtocolContractNetResponder{
 			}
 		}
 		
-		if(existAgentGarbatge && !existGarbatge){
+		if(existAgentGarbatge && !existGarbatge && !myState){
 			
 			Cell begin = new Cell(Cell.BUILDING);
 			int distance = evaluateAction(content);
@@ -180,6 +180,45 @@ public class ProtocolContractNetResponder{
 				
 			} 	
 			
+			
+			
+		}else if(existAgentGarbatge && !existGarbatge && myState){
+			
+
+			
+			// NOTIFICAR SEND FINISH LOAD
+			DistanceList list = new DistanceList();
+			 
+			for (int x=0;x<infoGame.getMap().length;x++){					
+				for (int y=0; y<infoGame.getMap()[x].length;y++)
+				{
+					Cell c=infoGame.getCell(x,y);
+					//if getGarbageunits is 0 -> no garbage.
+					if (c!=null)
+					{
+						if(c.getCellType() == Cell.RECYCLING_CENTER)
+						{
+							list.addDistance(evaluateAction(c));
+						}
+					}
+				}
+			}
+			
+			
+				try {
+					try {
+						goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}					
+			
+			myState=false;
+			
+		
 			
 			
 		}
