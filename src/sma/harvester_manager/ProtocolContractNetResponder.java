@@ -41,11 +41,9 @@ public class ProtocolContractNetResponder{
 				content = (Cell) msg.getContentObject();
 			} catch (UnreadableException e) {
 				e.printStackTrace();
-			}
-			System.out.println("Harvester: Receive from "+msg.getSender()+". Material:"+content.getGarbageType()+", x: "+content.getColumn()+", y: "+content.getRow());
+			}			
 			ACLMessage reply = msg.createReply();
-			reply.setPerformative(ACLMessage.PROPOSE);
-			//Or refuse or not-understood.
+			reply.setPerformative(ACLMessage.PROPOSE);			
 			//Content have a int with a distance.			
 			distance=1;
 			reply.setContent(Integer.toString(distance));
@@ -57,11 +55,9 @@ public class ProtocolContractNetResponder{
 		*/
 		protected ACLMessage prepareResultNotification (ACLMessage cfp, ACLMessage propose, ACLMessage accept)
 		{
-			ACLMessage inform = accept.createReply();
-			//Your code.
+			ACLMessage inform = accept.createReply();			
 			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
-			//Or failure.
 			return inform;
 		}
 		
