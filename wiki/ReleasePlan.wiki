@@ -16,3 +16,5 @@ This is an schematic to control our tasks to achieve final release
 ||Harvester||*Adapt to final data Structure*||*Adapt to ContractNet*||Documentation||
 ||Scout||*Adapt to final data Structure*||*Adapt to ContractNet*||Documentation||
 ||
+
+ALL BUT DOCUMENTATION IS FINISHED, BOLD DOES NOT SHOW PROPERLY ON SOME SYSTEMS
