@@ -69,7 +69,7 @@ public class ReceiveFinishLoad{
 						if(c.getCellType() == Cell.RECYCLING_CENTER)
 						{							
 							if (dist.getDistances().isEmpty()) System.out.println("Harvester Manager: Caution, list of distance recycling center is empty.");
-							//In distancia have integer with distance of harvester-recyclingCenter.
+							//In distancia have integer with distance between harvester-recyclingCenter.
 							distancia = dist.getDistances().get(pos);
 							pos++;						
 							try {
@@ -78,27 +78,25 @@ public class ReceiveFinishLoad{
 								int points=c.getGarbagePoints()[index];
 								if (points>0){
 									temp = c;
-									//El primer cop actualitzem el valor de cellRecyclingCenter final.
+									//In first time actualizing values.
 									if (cellRecyclingCenter==null){
 										cellRecyclingCenter = temp;
 										distanciaMinima = distancia;
 										pointsChoose=points;
-									}
-									
-									//Si la distancia que hi ha del harvester al centre de reciclatge actual es mes petita que l'anterior, o l'actual tingui més del doble de punts que l'escollit...
-									//En temp tenim el centre de reciclatge de la cel.la actual que mirem. En cellRecyclingCenter es el guardat com a millor opcio.
-									//Si la distancia actual es mes petita que la distancia escollida anteriorment...
-									if(distancia < distanciaMinima){									
-										//I el d'ara té el doble de punts que els punts escollits anteriorment, o
-										//la distancia es menys de la meitat de la distancia escollida anteriorment.
+									}																		
+									//temp have the recycling center of that cell. cellRecyclingCenter is the best option.
+									//If the current distance is less than distance choose before...
+									if(distancia < distanciaMinima){
+										//If recycling center previously chosen give less points that 2*current points, or
+										//the current distance is less than distance previously chosen /2. 
 										if ((pointsChoose<2*points)||(distancia<distanciaMinima/2)){
 											cellRecyclingCenter = temp;
 											distanciaMinima=distancia;
 											pointsChoose=points;
 										}
-									}else{
-										//Si la distancia d'ara es mes gran que l'escollida anteriorment 
-										//i té més del doble de punts que l'anterior però no té més del doble de la distancia anterior...
+									}else{										
+										//If current distance is longer than previously chosen,
+										//and have more than 2*points previously chosen, but current distance not is longer than double distance previously chosen...
 										if((points>2*pointsChoose)&&(distanciaMinima*2>distancia))
 										{
 											cellRecyclingCenter = temp;
@@ -115,11 +113,8 @@ public class ReceiveFinishLoad{
 				}
 			}
 			
-			if (cellRecyclingCenter == null) System.out.println("Harvester Manager: Not found any recycling center for "+index+".");
-			else System.out.println("Harvester Manager: cell chosse for download garbage: posx->"+cellRecyclingCenter.getColumn()+", posy->"+cellRecyclingCenter.getRow());
-			
+			if (cellRecyclingCenter == null) System.out.println("Harvester Manager: Not found any recycling center for "+index+".");			
 			r.setPerformative(ACLMessage.AGREE);
-			//Cell cel = getGame().getCell(3, 4);
 			try {
 				r.setContentObject(cellRecyclingCenter);
 			} catch (IOException e) {

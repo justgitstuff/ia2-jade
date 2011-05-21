@@ -4,10 +4,11 @@ import java.util.List;
 
 import jade.util.leap.Serializable;
 
+/**
+ * Class for make a list with all distance of recycling centers.
+ */
 public class DistanceList implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	
 	List <Integer> ldistance;

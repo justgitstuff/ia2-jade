@@ -57,37 +57,17 @@ public class HarvesterManagerAgent extends Agent{
 	    // Add a Behavior to receive Turns
 	    MessageTemplate mt=MessageTemplate.MatchProtocol(sma.UtilsAgents.PROTOCOL_TURN);
 	    this.addBehaviour(new QueriesReceiver(this,mt));
-	    
-	    // Add a Behaviour to receive finished dropped garbage from one harvester.
-	    //////Pel game s'hade fer despr�s
-	    /////////new ReceiveFinishLoad().addBehaviour(this,game);
-	    receiveFinishLoad = new ReceiveFinishLoad();  
-	    
-	    //Add a Behaviour to receive finished download garbage into recycling center.
-	    //new ReceiveFinishDownload().addBehaviour(this);
-	    //receiveFinishDownload = new ReceiveFinishDownload();
+	    	    
+	    receiveFinishLoad = new ReceiveFinishLoad();	        
 	    contractNetInitiator = new ProtocolContractNetInitiator();
-	    
-	    //new ProtocolContractNetResponder().addBehaviour(this);
-	    
-	    /*Code for harvester
-	    DistanceList l = new DistanceList(); 
-	    l.addDistance(2);
-	    l.addDistance(3);
-	    try {
-			new SendFinishLoad().addBehaviour(this, l);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		new SendFinishDownload().addBehaviour(this);
-		*/
+	    	    
 	    /**
-	     * Add a behavior to receive that harvester load successful garbage. 
+	     * Add a behavior to receive that the harvester load successful garbage. 
 	     */
 	    receiveFinishLoad.addBehaviour(this);
 	    
 	    /**
-	     * Add a behavior to receive that harvester download all garbage into recycling center. 
+	     * Add a behavior to receive that the harvester download all garbage into recycling center. 
 	     */
 		new ReceiveFinishDownload().addBehaviour(this);
 	    
@@ -151,32 +131,32 @@ public class HarvesterManagerAgent extends Agent{
 					message.setSender(this.myAgent.getAID());
 					message.setContentObject(game);
 					
+					//Actualizing game.
 					receiveFinishLoad.setGame(game);
 					
+					//Send new torn for all harvesters.
 					this.myAgent.send(message);
-					//fins aqu� enviat un nou torn a tots els harvesters.
-					
+										
 					//For each garbage do ContractNetInitiator
 					for (int r=0;r<game.getMap().length-1;r++)
 					{	
 						for (int c=0; c<game.getMap()[r].length-1;c++)
 						{
-							Cell cell=game.getCell(r,c);
-							//if getGarbageunits is 0 -> no garbage.
+							Cell cell=game.getCell(r,c);							
 							if (cell != null)
-							{
-								//showMessage("Comprobo cel.la "+cell.getRow()+" "+cell.getCellType());
+							{	//If that cell is building.
 								if (cell.getCellType()==Cell.BUILDING)
-								{	//showMessage("Es un edifici");
+								{	//And not is recycling_center.
 									if(cell.getCellType()!=Cell.RECYCLING_CENTER)
+										//if getGarbageunits is 0 -> no garbage.
 										if(cell.getGarbageUnits()>0) {
-											//showMessage("Tinc brossa pendent de recollir "+cell.getGarbageString());
+											//Execute ContratNet to send harvesters that cell with garbage. 
 											contractNetInitiator.addBehaviour(this.myAgent, cell);
 										}
 								}
 							}
 						}
-					}															
+					}
 				}
 				
 			} catch (UnreadableException e) {

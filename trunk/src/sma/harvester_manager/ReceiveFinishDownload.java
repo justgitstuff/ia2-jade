@@ -32,8 +32,7 @@ public class ReceiveFinishDownload{
 			
 			if(arg0.getContent().equals(sma.UtilsAgents.OK))
 			{
-				r.setContent(sma.UtilsAgents.BE_SCOUT);
-				System.out.println("Receive from Harvester ok, FINISH DOWNLOAD.");
+				r.setContent(sma.UtilsAgents.BE_SCOUT);				
 			}
 			if(arg0.getContent().equals(sma.UtilsAgents.FAILURE))
 			{
