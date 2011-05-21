@@ -17,7 +17,7 @@ public class ProtocolContractNetResponder{
 	private Path short_path;
 	private int my_x, my_y;
 	private MovementSender ms;
-	//private int state = 1;
+	private boolean contractAccepted = false;
 	private int lastTurn=0;
 	/**
 	 * Receive a cell where content the material and the position where manager harvester want to go the harvester.
@@ -27,6 +27,7 @@ public class ProtocolContractNetResponder{
 	
 	public void setInfoGame(InfoGame infoGame){
 		this.infoGame = infoGame;
+		contractAccepted = false;
 	}
 	
 	//public void setState(int state){
@@ -69,26 +70,19 @@ public class ProtocolContractNetResponder{
 			ACLMessage reply = msg.createReply();
 			//Or refuse or not-understood.
 			//Content have a int with a distance.			
-			
-			if(lastTurn == infoGame.getInfo().getTurn()){
-				lastTurn = infoGame.getInfo().getTurn();
+
+			if (contractAccepted) {
 				reply.setPerformative(ACLMessage.REFUSE);
-			}
-			else{
-				lastTurn = infoGame.getInfo().getTurn();
-					
+			} else {
 				distance = evaluateAction(content);
-				
-				
-				//if(state == )
-				if(distance==10000){
+	
+				// if(state == )
+				if (distance == 10000) {
 					reply.setPerformative(ACLMessage.REFUSE);
-				}else{
+				} else {
 					reply.setPerformative(ACLMessage.PROPOSE);
 					reply.setContent(Integer.toString(distance));
-					
-					
-					
+	
 				}
 			}
 			
@@ -107,6 +101,7 @@ public class ProtocolContractNetResponder{
 			Direction dir = getNextStep();
 			System.out.println("--------------------"+dir);
 			ms.go(dir);
+			contractAccepted = true;
 
 			//Or failure.
 			return inform;

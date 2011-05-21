@@ -131,7 +131,7 @@ public class ScoutManagerUtils {
 	 * @return The point where the scouts are expected to discover.
 	 */
 	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map, Point lastPoint) {
-		// TODO fer la suma de les files sense descobrir
+		// FIXME Quan els quadrants s'ajunten, sempre retorno els mateixos punts i això no pot ser.
 		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
 		
 		Map<Integer, List<Rectangle>> groups = new HashMap<Integer, List<Rectangle>>();
@@ -219,5 +219,41 @@ public class ScoutManagerUtils {
 		}
 		
 		return targetPoint;
+	}
+	
+	/**
+	 * When a quadrant is completly discovered, join it with another.
+	 * @param scoutsQuadrants The quadrants
+	 * @param map
+	 */
+	public static void joinQuadrants(List<Quadrant> quadrants, Cell[][] map) { 
+		for (Quadrant quadrant:quadrants) {
+			List<Rectangle> rectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
+			if (rectangles.size() == 0) {
+				// join with its immediatly right quadrant
+				for (Quadrant quadrantToJoin:quadrants) {
+					if (quadrant.x1 == quadrantToJoin.x1 && quadrant.y2 == quadrantToJoin.y1 - 1) {
+						quadrant.y2 = quadrantToJoin.y2;
+						quadrantToJoin.y1 = quadrant.y1;
+					}
+				}
+				
+				// join with its immediatly below quadrant
+				for (Quadrant quadrantToJoin:quadrants) {
+					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x2 == quadrantToJoin.x1 - 1) {
+						quadrant.x2 = quadrantToJoin.x2;
+						quadrantToJoin.x1 = quadrant.x1;
+					}
+				}
+				
+				// join with its immediatly above quadrant
+				for (Quadrant quadrantToJoin:quadrants) {
+					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x1 == quadrantToJoin.x2 + 1) {
+						quadrant.x1 = quadrantToJoin.x1;
+						quadrantToJoin.x2 = quadrant.x2;
+					}
+				}
+			}
+		}
 	}
 }
