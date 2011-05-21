@@ -49,7 +49,9 @@ public class ProtocolContractNetResponder{
 		
 		/**
 		 * FALTA CONTROLAR LA RECOLECTA DELS DIFERENTS TIPUS DE BROSAAAAA
+		 * 
 		 * EN LA ITERACIO FINAL MIRAR NOMES AMB BROSA QUE PUC RECOLLIR
+		 * 
 		 * EN EL CONTRACT NET REBUTJAR SINO PUC ANAR A BUSCAR
 		 * 
 		 */
@@ -248,12 +250,20 @@ public class ProtocolContractNetResponder{
 			//Or refuse or not-understood.
 			
 			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
-			//	if((myState)&&(!accepted)){	
-			System.out.println("MySTATE  "+ myState + "Accepted" + accepted+ "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
+
 			
-			//for(int x=0;x<infoAgent.getGarbageType().length;x++){
-		
+			for( int z=0;z<infoAgent.getGarbageType().length;z++){
+				
+				System.out.println("BASUUUUUUUURAAAvv  " + infoAgent.getGarbageType()[z]);
+				
+				
+			}
+			
+						
 			boolean tipusCarga=false;
+			//infoAgent.getCurrentType();
+			
 				if(content.getGarbageType()=='G'){
 					tipusCarga= infoAgent.getGarbageType()[0];					
 				}
@@ -266,7 +276,9 @@ public class ProtocolContractNetResponder{
 					tipusCarga= infoAgent.getGarbageType()[3];					
 				}
 				
-			//}
+			
+				
+				
 			
 			if((myState)&&(!accepted)){				
 				//Content have a int with a distance.
