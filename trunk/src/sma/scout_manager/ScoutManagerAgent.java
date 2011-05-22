@@ -109,17 +109,19 @@ public class ScoutManagerAgent extends Agent{
 			
 			ScoutManagerUtils.joinQuadrants(quadrants, this.game.getMap());
 			
-			// Get the target cell for each scout
-			// Each Scout has its quadrant
-			for (Quadrant quadrant:ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts)) {
-				
-				Point targetPoint = ScoutManagerUtils
-						.chooseUnchartedPointInAQuadrant(quadrant, this.game.getMap(), lastPoint);
-				Cell targetCell = new Cell(Cell.STREET);
-				targetCell.setRow(targetPoint.x);
-				targetCell.setColumn(targetPoint.y);
-				contract.addBehaviour(myAgent, targetCell);
-				lastPoint = targetPoint;
+			if (ScoutManagerUtils.mapNotEntirelyDiscoveredYet(this.game.getMap())) {
+				// Get the target cell for each scout
+				// Each Scout has its quadrant
+				for (Quadrant quadrant:ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts*2)) {
+					
+					Point targetPoint = ScoutManagerUtils
+							.chooseUnchartedPointInAQuadrant(quadrant, this.game.getMap(), lastPoint);
+					Cell targetCell = new Cell(Cell.STREET);
+					targetCell.setRow(targetPoint.x);
+					targetCell.setColumn(targetPoint.y);
+					contract.addBehaviour(myAgent, targetCell);
+					lastPoint = targetPoint;
+				}
 			}
 			
 		} catch (FIPAException e) {
