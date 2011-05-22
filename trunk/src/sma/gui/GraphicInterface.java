@@ -181,7 +181,7 @@ public class GraphicInterface extends JFrame {
    * @param msg String per mostrar
    */
   public void showStatistics(String msg) {
-    this.jStatisticsPanel.showMessage(msg);
+    this.jStatisticsPanel.showMessage(msg+"\n");
   }
 
 
