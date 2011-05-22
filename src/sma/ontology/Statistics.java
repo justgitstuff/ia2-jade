@@ -231,20 +231,20 @@ public class Statistics {
 	  }
 	
 	public void show(){
-		showMessage("");
-		showMessage("Simulation Finished");
-		showMessage("*******************");
-		showMessage("");
-		showMessage("Points earned: "+points);
-		showMessage("Max points: "+ maxPoints);
-		showMessage("Percentage earned: "+ (100.0*points)/maxPoints+"%");
-		showMessage("Garbage collected: "+unitsGarbaged);
-		showMessage("Total garbage: "+totalGarbage);
-		showMessage("Turns to finish: "+turnsToFinish);
-		showMessage("Buildings discovered: "+ (totalGarbageBuildings-garbageBuildings.size()));
-		showMessage("Total Garbage Buildings: "+ totalGarbageBuildings);
-		showMessage("Percentage of Garbage Buildings discovered :"+ (100- 100.0*garbageBuildings.size()/totalGarbageBuildings)+"%");
-		showMessage("Turns to find all garbage buildings: "+turnsToFindGarbageBuildings);
+		gui.showStatistics("");
+		gui.showStatistics("Simulation Finished");
+		gui.showStatistics("*******************");
+		gui.showStatistics("");
+		gui.showStatistics("Points earned: "+points);
+		gui.showStatistics("Max points: "+ maxPoints);
+		gui.showStatistics("Percentage earned: "+ (100.0*points)/maxPoints+"%");
+		gui.showStatistics("Garbage collected: "+unitsGarbaged);
+		gui.showStatistics("Total garbage: "+totalGarbage);
+		gui.showStatistics("Turns to finish: "+turnsToFinish);
+		gui.showStatistics("Buildings discovered: "+ (totalGarbageBuildings-garbageBuildings.size()));
+		gui.showStatistics("Total Garbage Buildings: "+ totalGarbageBuildings);
+		gui.showStatistics("Percentage of Garbage Buildings discovered :"+ (100- 100.0*garbageBuildings.size()/totalGarbageBuildings)+"%");
+		gui.showStatistics("Turns to find all garbage buildings: "+turnsToFindGarbageBuildings);
 		for(int x=0;x<game.getMap().length;x++)
 			for(int y=0;y<game.getMap()[x].length;y++)
 			{
@@ -253,14 +253,14 @@ public class Statistics {
 				{	
 					InfoAgent ia=c.getAgent();
 					try {
-						showMessage("Agent "+ia.getAID().getLocalName()+": "+ia.getMovements()+ " movements");
+						gui.showStatistics("Agent "+ia.getAID().getLocalName()+": "+ia.getMovements()+ " movements");
 					} catch (Exception e) {
 						// Nothing terrible
 					}
 				}
 			}
-		showMessage("");
-		showMessage("*******************");
+		gui.showStatistics("");
+		gui.showStatistics("*******************");
 
 	}
 	
