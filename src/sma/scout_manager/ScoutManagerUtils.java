@@ -131,7 +131,6 @@ public class ScoutManagerUtils {
 	 * @return The point where the scouts are expected to discover.
 	 */
 	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map, Point lastPoint) {
-		// FIXME Quan els quadrants s'ajunten, sempre retorno els mateixos punts i això no pot ser.
 		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
 		
 		Map<Integer, List<Rectangle>> groups = new HashMap<Integer, List<Rectangle>>();
@@ -230,30 +229,54 @@ public class ScoutManagerUtils {
 		for (Quadrant quadrant:quadrants) {
 			List<Rectangle> rectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
 			if (rectangles.size() == 0) {
-				// join with its immediatly right quadrant
-				for (Quadrant quadrantToJoin:quadrants) {
-					if (quadrant.x1 == quadrantToJoin.x1 && quadrant.y2 == quadrantToJoin.y1 - 1) {
-						quadrant.y2 = quadrantToJoin.y2;
-						quadrantToJoin.y1 = quadrant.y1;
-					}
-				}
 				
-				// join with its immediatly below quadrant
-				for (Quadrant quadrantToJoin:quadrants) {
-					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x2 == quadrantToJoin.x1 - 1) {
-						quadrant.x2 = quadrantToJoin.x2;
-						quadrantToJoin.x1 = quadrant.x1;
-					}
-				}
+				// join all quadrants
+				quadrant.x1 = 0;
+				quadrant.x2 = map.length;
+				quadrant.y1 = 0;
+				quadrant.y2 = map[0].length;
 				
-				// join with its immediatly above quadrant
-				for (Quadrant quadrantToJoin:quadrants) {
-					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x1 == quadrantToJoin.x2 + 1) {
-						quadrant.x1 = quadrantToJoin.x1;
-						quadrantToJoin.x2 = quadrant.x2;
-					}
+				
+				
+				
+//				// join with its immediatly right quadrant
+//				for (Quadrant quadrantToJoin:quadrants) {
+//					if (quadrant.x1 == quadrantToJoin.x1 && quadrant.y2 == quadrantToJoin.y1 - 1) {
+//						quadrant.y2 = quadrantToJoin.y2;
+//						quadrantToJoin.y1 = quadrant.y1;
+//					}
+//				}
+//				
+//				// join with its immediatly below quadrant
+//				for (Quadrant quadrantToJoin:quadrants) {
+//					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x2 == quadrantToJoin.x1 - 1) {
+//						quadrant.x2 = quadrantToJoin.x2;
+//						quadrantToJoin.x1 = quadrant.x1;
+//					}
+//				}
+//				
+//				// join with its immediatly above quadrant
+//				for (Quadrant quadrantToJoin:quadrants) {
+//					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x1 == quadrantToJoin.x2 + 1) {
+//						quadrant.x1 = quadrantToJoin.x1;
+//						quadrantToJoin.x2 = quadrant.x2;
+//					}
+//				}
+			}
+		}
+	}
+	
+	public static boolean mapNotEntirelyDiscoveredYet(Cell[][] map) {
+		boolean notEntirelyDiscovered = false;
+		for (int r = 0; r < map.length; r++) {
+			for (int c = 0; c < map[r].length; c++) {
+				if (map[r][c] == null || !map[r][c].isDiscovered()) {
+					notEntirelyDiscovered = true;
+					break;
 				}
 			}
 		}
+		
+		return notEntirelyDiscovered;
 	}
 }
