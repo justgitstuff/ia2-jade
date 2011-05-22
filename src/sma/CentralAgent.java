@@ -63,9 +63,9 @@ public class CentralAgent extends Agent {
       }
       for(int k=0; k<currentGame.getInfo().getNumHarvesters(); k++) {
     	InfoAgent p = new InfoAgent(InfoAgent.HARVESTER);
-        ((currentGame.getMap())[k+2][0]).addAgent(p);
+        ((currentGame.getMap())[k][0]).addAgent(p);
         fillHabilities(p,k);
-        agents.add( currentGame.getCell(k+2,0));
+        agents.add( currentGame.getCell(k,0));
       }
       return agents;
     }
