@@ -366,7 +366,7 @@ private void updatePublicGame()
 	@Override
 	protected ACLMessage prepareResponse(ACLMessage arg0)
 			throws NotUnderstoodException, RefuseException {
-		Cell origin = null,destination;
+		Cell origin = null,destination = null;
 		InfoAgent ia = null;
 		ACLMessage response=arg0.createReply();
 		int dx=0,dy=0,x,y;
@@ -388,93 +388,94 @@ private void updatePublicGame()
 			y=origin.getRow();
 			//showMessage("I have its position "+origin);
 			boolean diagonal=false;
-			switch (moveOrder.getDirection())
-			{
-				case UP:dy=-1;/*showMessage("UP");*/break;
-				case DOWN:dy=1;/*showMessage("DOWN");*/break;
-				case LEFT:dx=-1;/*showMessage("LEFT");*/break;
-				case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
-				case UPLEFT:dx=-1;dy=-1;diagonal=true;break;
-				case UPRIGHT:dx=1;dy=-1;diagonal=true;break;
-				case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;
-				case DOWNRIGHT:dx=1;dy=1;diagonal=true;break;
-			}
-
-			//showMessage("I have its destination "+destination);
-			response.setPerformative(ACLMessage.FAILURE);
-			if(y+dy>=0)
-				if(y+dy<game.getMap()[0].length)
-					if(x+dx>=0)
-						if(x+dx<game.getMap().length)
-							if(origin.getAgent().getLastTurn()<game.getInfo().getTimeout())
-						{
-							//showMessage("Will move "+dx+" "+dy);
-							destination=game.getMap()[y+dy][x+dx];
-							switch (moveOrder.getAction())
-							{
-							case GO:
-								try{
-									//showMessage(origin.getAgent().getAgent()+" Moving");
-									if (diagonal) throw new Exception();
-									//showMessage("Its a go order");
-									ia=origin.getAgent();
-									//showMessage("Have the agent to remove");
-									origin.removeAgent(ia);
-									//showMessage("Agent Removed");
-									destination.addAgent(ia);
-									//showMessage("Agent added to new position");
-									response.setPerformative(ACLMessage.AGREE);
-									stats.incMovement(ia);
-									showMessage(ia.getAID().getLocalName()+ " moved from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
-								}catch (Exception e) {
-									response.setPerformative(ACLMessage.FAILURE);
-									//showMessage("Could not move to that position");
-									if(!origin.isThereAnAgent())
-										{
-											try {
-												origin.addAgent(ia);
-											} catch (Exception e1) {
-												showMessage("FATAL ERROR: Cannot Undo this action");
+			if (moveOrder == null || moveOrder.getDirection() == null) {
+				response.setPerformative(ACLMessage.FAILURE);
+			} else {
+				switch (moveOrder.getDirection())
+				{
+					case UP:dy=-1;/*showMessage("UP");*/break;
+					case DOWN:dy=1;/*showMessage("DOWN");*/break;
+					case LEFT:dx=-1;/*showMessage("LEFT");*/break;
+					case RIGHT:dx=1;/*showMessage("RIGHT");*/break;
+					case UPLEFT:dx=-1;dy=-1;diagonal=true;break;
+					case UPRIGHT:dx=1;dy=-1;diagonal=true;break;
+					case DOWNLEFT:dx=-1;dy=1;diagonal=true;break;
+					case DOWNRIGHT:dx=1;dy=1;diagonal=true;break;
+				}
+	
+				//showMessage("I have its destination "+destination);
+				response.setPerformative(ACLMessage.FAILURE);
+				if(y+dy>=0)
+					if(y+dy<game.getMap()[0].length)
+						if(x+dx>=0)
+							if(x+dx<game.getMap().length)
+								//if(origin.getAgent().getLastTurn()<game.getInfo().getTimeout())	{
+								//showMessage("Will move "+dx+" "+dy);
+								destination=game.getMap()[y+dy][x+dx];
+								switch (moveOrder.getAction()) {
+								case GO:
+									try{
+										//showMessage(origin.getAgent().getAgent()+" Moving");
+										if (diagonal) throw new Exception();
+										//showMessage("Its a go order");
+										ia=origin.getAgent();
+										//showMessage("Have the agent to remove");
+										origin.removeAgent(ia);
+										//showMessage("Agent Removed");
+										destination.addAgent(ia);
+										//showMessage("Agent added to new position");
+										response.setPerformative(ACLMessage.AGREE);
+										stats.incMovement(ia);
+										showMessage(ia.getAID().getLocalName()+ " moved from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+									}catch (Exception e) {
+										response.setPerformative(ACLMessage.FAILURE);
+										//showMessage("Could not move to that position");
+										if(!origin.isThereAnAgent())
+											{
+												try {
+													origin.addAgent(ia);
+												} catch (Exception e1) {
+													showMessage("FATAL ERROR: Cannot Undo this action");
+												}
+												try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO MOVE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+												}catch(Exception e2){};
 											}
-											try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO MOVE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
-											}catch(Exception e2){};
-										}
-								}break;
-							case GET:
-								try
-								{
-									//showMessage(origin.getAgent().getAgent()+" Getting Garbage");
-									getGarbage(moveOrder, origin, destination);
-									response.setPerformative(ACLMessage.AGREE);
-									stats.incMovement(origin.getAgent());
-									showMessage(origin.getAgent().getAID().getLocalName()+ " gets GARBAGE from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
-								}catch(Exception e){
-									//showMessage("Failure GETTING");
-									response.setPerformative(ACLMessage.FAILURE);
-									try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO GET GARBAGE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
-									}catch(Exception e2){};
-									
+									}break;
+								case GET:
+									try
+									{
+										//showMessage(origin.getAgent().getAgent()+" Getting Garbage");
+										getGarbage(moveOrder, origin, destination);
+										response.setPerformative(ACLMessage.AGREE);
+										stats.incMovement(origin.getAgent());
+										showMessage(origin.getAgent().getAID().getLocalName()+ " gets GARBAGE from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+									}catch(Exception e){
+										//showMessage("Failure GETTING");
+										response.setPerformative(ACLMessage.FAILURE);
+										try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO GET GARBAGE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+										}catch(Exception e2){};
+										
+									}
+									break;
+								case PUT:
+									try {
+										//showMessage(origin.getAgent().getAgent()+" Putting Garbage");
+										putGarbage(moveOrder, origin, destination);
+										response.setPerformative(ACLMessage.AGREE);
+										stats.incMovement(origin.getAgent());
+										showMessage(origin.getAgent().getAID().getLocalName()+ " puts GARBAGE from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+									} catch (Exception e) {
+										response.setPerformative(ACLMessage.FAILURE);
+										try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO PUT GARBAGE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
+										}catch(Exception e2){};
+									}
+										
+									break;
 								}
-								break;
-							case PUT:
-								try {
-									//showMessage(origin.getAgent().getAgent()+" Putting Garbage");
-									putGarbage(moveOrder, origin, destination);
-									response.setPerformative(ACLMessage.AGREE);
-									stats.incMovement(origin.getAgent());
-									showMessage(origin.getAgent().getAID().getLocalName()+ " puts GARBAGE from "+ origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
-								} catch (Exception e) {
-									response.setPerformative(ACLMessage.FAILURE);
-									try{showMessage(origin.getAgent().getAID().getLocalName()+ " FAILED TO PUT GARBAGE from" + origin.getColumn()+" "+origin.getRow()+" to "+destination.getColumn()+" "+destination.getRow());
-									}catch(Exception e2){};
-								}
-									
-								break;
-							}
-						}else
-						{
-							response.setPerformative(ACLMessage.FAILURE);
-						}
+//							} else {
+//								response.setPerformative(ACLMessage.FAILURE);
+//							}
+			}
 		}
 
 		return response;
