@@ -21,7 +21,7 @@ public class ProtocolContractNetResponder{
 	private Path short_path;
 	private int my_x, my_y;
 	private MovementSender ms;
-	private boolean myState=true;// true = lliure false= transportar
+	private boolean freeAgent=true;// true = lliure false= transportar
 	private InfoAgent infoAgent;
 	private Cell goDescarga;
 	Cell content=null;
@@ -37,10 +37,6 @@ public class ProtocolContractNetResponder{
 	 */
 	public void setInfoGame(InfoGame infoGame) {
 		this.infoGame = infoGame;
-		accepted=false;
-		
-
-	
 		accepted=false;
 		existGarbatge=false;
 		existAgentGarbatge=false;
@@ -58,53 +54,31 @@ public class ProtocolContractNetResponder{
 		
 		
 				
-		// Mirar si estic ple envio finish load per anar a descarregar això de forma dinamica durant l'execuccio
-		
-		if( infoAgent.getMaxUnits()== infoAgent.getUnits()){
-			
-			DistanceList list = new DistanceList();
-			 
-			for (int x=0;x<infoGame.getMap().length;x++){					
-				for (int y=0; y<infoGame.getMap()[x].length;y++)
-				{
-					Cell c=infoGame.getCell(x,y);
-					//if getGarbageunits is 0 -> no garbage.
-					if (c!=null)
-					{
-						if(c.getCellType() == Cell.RECYCLING_CENTER)
-						{
-							list.addDistance(evaluateAction(c));
-						}
-					}
-				}
+		// Mirar si estic ple envio finish load per anar a descarregar aixï¿½ de forma dinamica durant l'execuccio
+		if (freeAgent)
+			if( (infoAgent.getMaxUnits()== infoAgent.getUnits())){
+				System.out.println("I am full");
+				notifyFinishedLoad(infoGame);
 			}
-			
-			
-				try {
-					try {
-						goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
-						
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} catch (UnreadableException e) {
-					e.printStackTrace();
-				}					
-			
-			myState=false;
-			
-		}
+
 		
 		//Em busco a mi mateix
-		int var_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-		int var_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
-		
-		Cell varAgent=infoGame.getCell(var_x, var_y);
-				
-		if (varAgent.isThereAnAgent()){
-			if(varAgent.getAgent().getUnits()!=0)
-				existAgentGarbatge=true;
-		}
+		//int var_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
+		//int var_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+		Cell varAgent=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame);
+
+		if(freeAgent)
+			if((infoAgent.getUnits()>0))
+					if(!sma.UtilsAgents.isGarbageArround(infoGame, infoAgent.getCurrentType(), varAgent))
+					{
+						System.out.println("no more garbage here");
+						notifyFinishedLoad(infoGame);
+					}
+
+			if (varAgent.isThereAnAgent()){
+				if(varAgent.getAgent().getUnits()!=0)
+					existAgentGarbatge=true;
+			}
 		
 			
 		
@@ -143,8 +117,8 @@ public class ProtocolContractNetResponder{
 				}
 			}
 		}
-		// No existeix més brosa al mapa y ya s'ha enviat previament l'ordre de finishload per descarregar
-		if(existAgentGarbatge && !existGarbatge && !myState){
+		// No existeix mï¿½s brosa al mapa y ya s'ha enviat previament l'ordre de finishload per descarregar
+		if(!freeAgent){
 			
 			Cell begin = new Cell(Cell.BUILDING);
 			int distance = evaluateAction(content);
@@ -164,7 +138,7 @@ public class ProtocolContractNetResponder{
 							// sendFInishDOwnlLOAD
 							protocolSendFinishDownload.addBehaviour(myAgent);
 							
-							myState= true;
+							freeAgent= true;
 							accepted=false;
 						}
 					} catch (Exception e) {
@@ -183,41 +157,12 @@ public class ProtocolContractNetResponder{
 			
 			
 		// NOTIFICAR SEND FINISH LOAD quan e recollit la brosa final del mapa encara k no estigui ple	
-		}else if(existAgentGarbatge && !existGarbatge && myState){
+		}else if(existAgentGarbatge && !existGarbatge && freeAgent){
 			
 
 			
 		
-			DistanceList list = new DistanceList();
-			 
-			for (int x=0;x<infoGame.getMap().length;x++){					
-				for (int y=0; y<infoGame.getMap()[x].length;y++)
-				{
-					Cell c=infoGame.getCell(x,y);
-					//if getGarbageunits is 0 -> no garbage.
-					if (c!=null)
-					{
-						if(c.getCellType() == Cell.RECYCLING_CENTER)
-						{
-							list.addDistance(evaluateAction(c));
-						}
-					}
-				}
-			}
-			
-			
-				try {
-					try {
-						goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
-						
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} catch (UnreadableException e) {
-					e.printStackTrace();
-				}					
-			
-			myState=false;
+			notifyFinishedLoad(infoGame);
 			
 		
 			
@@ -225,6 +170,43 @@ public class ProtocolContractNetResponder{
 		}
 		
 		
+	}
+
+
+
+
+
+	private void notifyFinishedLoad(InfoGame infoGame) {
+		DistanceList list = new DistanceList();
+		 
+		for (int x=0;x<infoGame.getMap().length;x++){					
+			for (int y=0; y<infoGame.getMap()[x].length;y++)
+			{
+				Cell c=infoGame.getCell(x,y);
+				//if getGarbageunits is 0 -> no garbage.
+				if (c!=null)
+				{
+					if(c.getCellType() == Cell.RECYCLING_CENTER)
+					{
+						list.addDistance(evaluateAction(c));
+					}
+				}
+			}
+		}
+		
+		
+			try {
+				try {
+					goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} catch (UnreadableException e) {
+				e.printStackTrace();
+			}					
+		
+		freeAgent=false;
 	}
 	
 	
@@ -274,55 +256,93 @@ public class ProtocolContractNetResponder{
 			ACLMessage reply = msg.createReply();
 			//Or refuse or not-understood.
 			
-			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
-
-
 			
-			for( int z=0;z<infoAgent.getGarbageType().length;z++){
-				
-				System.out.println("BASUUUUUUUURAAAvv  " + infoAgent.getGarbageType()[z]);
-				
-				
+			//if already accepted a contract, refuse the new one
+			if(accepted)
+			{
+				System.out.println("Already accepted a contract");
+				reply.setPerformative(ACLMessage.REFUSE);
+				return reply;
 			}
 			
+			infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
+
+			//if i cannot carry that, refuse
+			boolean canCarry=infoAgent.getGarbageType()[Cell.getGarbagePointsIndex(content.getGarbageType())];
+			if(!canCarry)
+			{
+				System.out.println("Cannot carry that");
+				reply.setPerformative(ACLMessage.REFUSE);
+				return reply;
+			}
+			
+			
+			boolean canAccept=false;
+			
+			//check if this agent is also carrying garbage of different type
+			if(infoAgent.getUnits()>0)
+			{
+				System.out.println("Carrying "+infoAgent.getCurrentType()+" there is "+Cell.getGarbagePointsIndex(content.getGarbageType()));
+				if(infoAgent.getCurrentType()!=Cell.getGarbagePointsIndex(content.getGarbageType()))
+					{
+						System.out.println("I am carrying another type of garbage");
+						reply.setPerformative(ACLMessage.REFUSE);
+						return reply;
+					}else{
+						canAccept=true;
+					}
+			}	
+				
+			if(freeAgent||canAccept)
+			{
+				System.out.println("i am free");
+				if(infoAgent.getUnits()==infoAgent.getMaxUnits())
+				{
+					System.out.println("At maximum load");
+					reply.setPerformative(ACLMessage.REFUSE);
+					return reply;
+				}else{
+					distance=evaluateAction(content);
+					
+					if(distance==10000){
+						System.out.println("Cannot reach that position");
+						reply.setPerformative(ACLMessage.REFUSE);
+						return reply;
+					}else{
+						System.out.println("ALL OK");
+						reply.setPerformative(ACLMessage.PROPOSE);
+						reply.setContent(Integer.toString(distance));
 						
-			boolean tipusCarga=false;
-			//infoAgent.getCurrentType();
-			
-				if(content.getGarbageType()=='G'){
-					tipusCarga= infoAgent.getGarbageType()[0];					
+						return reply;
+					}
 				}
-				else if(content.getGarbageType()=='P'){
-					tipusCarga= infoAgent.getGarbageType()[1];					
-				}
-				else if(content.getGarbageType()=='M'){
-					tipusCarga= infoAgent.getGarbageType()[2];					
-				}else if(content.getGarbageType()=='A'){
-					tipusCarga= infoAgent.getGarbageType()[3];					
-				}
-				
+			}
 			
-				
-				
+			System.out.println("CASE NOT DETECTED");
+			reply.setPerformative(ACLMessage.REFUSE);
+			return reply;
 			
-			if(myState && !accepted && tipusCarga){				
+			/*	
+			if(NOTReturningGarbage){
 				//Content have a int with a distance.
 				
 				distance=evaluateAction(content);
 				
 				if(distance==10000){
 					reply.setPerformative(ACLMessage.REFUSE);
+					return reply;
 				}else{
 					reply.setPerformative(ACLMessage.PROPOSE);
-					reply.setContent(Integer.toString(distance));					
+					reply.setContent(Integer.toString(distance));	
+					return reply;
 				}
-				//TODO mirar si puk karregar akest tipus de brosa(harvest pot rekullir akest tipus)
-			
-			}else if((myState && accepted)|| !tipusCarga ){
+			}
+		
+			}else if((NOTReturningGarbage)|| !canCarry ){
 				
 				reply.setPerformative(ACLMessage.REFUSE);
-					
-				
+				return reply;
+		
 				
 			}else{
 				
@@ -345,7 +365,7 @@ public class ProtocolContractNetResponder{
 								// sendFInishDOwnlLOAD
 								protocolSendFinishDownload.addBehaviour(myAgent);
 								
-								myState= true;
+								NOTReturningGarbage= true;
 								accepted=false;
 							}
 						} catch (Exception e) {
@@ -361,8 +381,8 @@ public class ProtocolContractNetResponder{
 					
 					
 				} 					
-			}			
-			return reply;
+			}*/			
+			//return reply;
 		}
 		
 		
@@ -380,7 +400,7 @@ public class ProtocolContractNetResponder{
 			accepted=true;
 			ACLMessage inform = accept.createReply();
 			//Your code.
-			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
+			//System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 		
 			Cell begin = new Cell(Cell.STREET);
@@ -397,11 +417,11 @@ public class ProtocolContractNetResponder{
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
 				try {
-					//Haurà de ser >0 units
+					//Haurï¿½ de ser >0 units
 					if(content.getGarbageUnits()>0){
 						
 						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-						// part extreta a control a cada iteració setinfo
+						// part extreta a control a cada iteraciï¿½ setinfo
 						
 						
 						}
@@ -464,7 +484,8 @@ public class ProtocolContractNetResponder{
 		 */
 		protected void handleRejectProposal (ACLMessage cfp, ACLMessage propose, ACLMessage reject)
 		{
-			System.out.println("I am the harvester "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
+			//System.out.println("I am the harvester "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
+			//PROPOSAL REJECTED
 		}
 	}
 	
@@ -515,7 +536,7 @@ public class ProtocolContractNetResponder{
 		int destination_x = dest.getColumn();
 		int destination_y = dest.getRow();
 		
-		System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
+		//System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
 		
 		if(my_x<destination_x && my_y==destination_y){ 
 			return Direction.RIGHT;	
