@@ -38,6 +38,7 @@ public class ScoutManagerAgent extends Agent{
 	List<Quadrant> quadrants = null;
 	private Point lastPoint = null;
 	private int numScouts = 0;
+	private boolean quadrantsJoined = false;
 	
 	/**
 	 * A message is shown in the log area of the GUI
@@ -107,7 +108,10 @@ public class ScoutManagerAgent extends Agent{
 				justOneTime = false;
 			}
 			
-			ScoutManagerUtils.joinQuadrants(ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts*2), this.game.getMap());
+			if (!quadrantsJoined) {
+				quadrantsJoined = ScoutManagerUtils.joinQuadrants(ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts*2), 
+						this.game.getMap(), scoutsQuadrants);
+			}
 			
 			
 			boolean canTheymove = false;

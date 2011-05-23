@@ -1,5 +1,7 @@
 package sma.scout_manager;
 
+import jade.core.AID;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -144,6 +146,7 @@ public class ScoutManagerUtils {
 		
 		Map<Integer, List<Rectangle>> groups = new HashMap<Integer, List<Rectangle>>();
 		
+		// Group the rectangles if they are in contact in order to get entire zones.
 		boolean inContact = false;
 		for (Rectangle rectangleToCheck : unchartedRectangles) {
 			inContact = false;
@@ -232,19 +235,23 @@ public class ScoutManagerUtils {
 	 * When a quadrant is completly discovered, join it with another.
 	 * @param scoutsQuadrants The quadrants
 	 * @param map
+	 * @param scoutsQuadrants 
+	 * @return Indicates if the quadrants are joined
 	 */
-	public static void joinQuadrants(List<Quadrant> quadrants, Cell[][] map) { 
+	public static boolean joinQuadrants(List<Quadrant> quadrants, Cell[][] map, Map<AID, Quadrant> scoutsQuadrants) { 
+		boolean joined = false;
 		for (Quadrant quadrant:quadrants) {
 			List<Rectangle> rectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
 			if (rectangles.size() == 0) {
 				
 				// join all quadrants
-				quadrant.x1 = 0;
-				quadrant.x2 = map.length;
-				quadrant.y1 = 0;
-				quadrant.y2 = map[0].length;
-				
-				
+				for (Quadrant scoutQuadrant:scoutsQuadrants.values()) {
+					scoutQuadrant.x1 = 0;
+					scoutQuadrant.x2 = map.length;
+					scoutQuadrant.y1 = 0;
+					scoutQuadrant.y2 = map[0].length;
+					joined = true;
+				}
 				
 				
 //				// join with its immediatly right quadrant
@@ -272,6 +279,7 @@ public class ScoutManagerUtils {
 //				}
 			}
 		}
+		return joined;
 	}
 	
 	/**
