@@ -107,8 +107,10 @@ public class ScoutManagerAgent extends Agent{
 				justOneTime = false;
 			}
 			
-			ScoutManagerUtils.joinQuadrants(quadrants, this.game.getMap());
+			ScoutManagerUtils.joinQuadrants(ScoutManagerUtils.divideCity(map.length, map[0].length, numScouts*2), this.game.getMap());
 			
+			
+			boolean canTheymove = false;
 			if (ScoutManagerUtils.mapNotEntirelyDiscoveredYet(this.game.getMap())) {
 				// Get the target cell for each scout
 				// Each Scout has its quadrant
@@ -116,12 +118,35 @@ public class ScoutManagerAgent extends Agent{
 					
 					Point targetPoint = ScoutManagerUtils
 							.chooseUnchartedPointInAQuadrant(quadrant, this.game.getMap(), lastPoint);
+					if (targetPoint != null) {
+						Cell targetCell = new Cell(Cell.STREET);
+						targetCell.setRow(targetPoint.x);
+						targetCell.setColumn(targetPoint.y);
+						contract.addBehaviour(myAgent, targetCell);
+						lastPoint = targetPoint;
+						canTheymove = true;
+					}
+				}
+			} else {
+				for (int i = 0; i < numScouts; i++) {
+					// Send the scouts to a corner where they can't interfere with the harvesters
+					Point targetPoint = ScoutManagerUtils.chooseCornerPoint(this.game.getMap(), this.game.getInfo().getTurn());
 					Cell targetCell = new Cell(Cell.STREET);
 					targetCell.setRow(targetPoint.x);
 					targetCell.setColumn(targetPoint.y);
 					contract.addBehaviour(myAgent, targetCell);
 					lastPoint = targetPoint;
 				}
+			}
+			
+			if (!canTheymove) {
+				// Send the scouts to a corner where they can't interfere with the harvesters
+				Point targetPoint = ScoutManagerUtils.chooseCornerPoint(this.game.getMap(), this.game.getInfo().getTurn());
+				Cell targetCell = new Cell(Cell.STREET);
+				targetCell.setRow(targetPoint.x);
+				targetCell.setColumn(targetPoint.y);
+				contract.addBehaviour(myAgent, targetCell);
+				lastPoint = targetPoint;
 			}
 			
 		} catch (FIPAException e) {

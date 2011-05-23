@@ -175,6 +175,10 @@ public class ProtocolContractNetResponder{
 		
 		private Direction getNextStep(){// com estan distribuits els index de la matriu del mapa??
 			//Movement m = new Movement();
+			if (short_path == null) {
+				return Direction.UP;
+			}
+			
 			int destination_x = short_path.getX(1);
 			int destination_y = short_path.getY(1);
 			
