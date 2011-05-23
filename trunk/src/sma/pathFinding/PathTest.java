@@ -155,7 +155,6 @@ public class PathTest{
 				 
 				// System.out.println(map.getTerrain(x, y));
 			}			
-			System.out.println(dist);
 			return dist;
 		}
 	}

@@ -221,28 +221,21 @@ private AuxInfo info;
      */
     @SuppressWarnings("unchecked")
 	protected void handleInform(ACLMessage msg) {
-      //showMessage("INFORM received from "+ ( (AID)msg.getSender()).getLocalName()+" ... [OK]");
       try {
         info = (AuxInfo)msg.getContentObject();
         if (info instanceof AuxInfo) {
-          //showMessage("Visual range for each agent: ");
           HashMap<?, ?> hm = info.getAgentsInitialPosition();
           Iterator<?> it = hm.keySet().iterator();
           while (it.hasNext()){
         	  InfoAgent ia = (InfoAgent)it.next();
-              //System.out.println(ia);
               java.util.List<Cell> pos = (java.util.List<Cell>)hm.get(ia);
               Iterator<Cell> it2 = pos.iterator();
               while (it2.hasNext()){
             	  it2.next();
-              }
-              //System.out.println();              
+              }            
           }
-          System.out.println();
-          //showMessage("Cells with recycling centers: ");
           it = info.getRecyclingCenters().iterator();
-          while (it.hasNext()){
-        	 // System.out.println("cell: " + it.next()); 
+          while (it.hasNext()){ 
           }
         
          
@@ -250,7 +243,6 @@ private AuxInfo info;
 
         }
       } catch (Exception e) {
-        //showMessage("Incorrect content: "+e.toString());
       }
     }
 
@@ -259,7 +251,6 @@ private AuxInfo info;
      * @param msg Message
      */
     protected void handleNotUnderstood(ACLMessage msg) {
-      //showMessage("This message NOT UNDERSTOOD. \n");
     }
 
     /**
@@ -267,7 +258,6 @@ private AuxInfo info;
      * @param msg Message
      */
     protected void handleFailure(ACLMessage msg) {
-      //showMessage("The action has failed.");
 
     } //End of handleFailure
 
@@ -276,7 +266,6 @@ private AuxInfo info;
      * @param msg Message
      */
     protected void handleRefuse(ACLMessage msg) {
-      //showMessage("Action refused.");
     }
   } //Endof class RequesterBehaviour
 

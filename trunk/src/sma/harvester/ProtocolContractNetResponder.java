@@ -49,7 +49,6 @@ public class ProtocolContractNetResponder{
 		//Let's see if the harvester is full and then send a list of distances to points of recycling
 		if (freeAgent)
 			if( (infoAgent.getMaxUnits()== infoAgent.getUnits())){
-				System.out.println("I am full");
 				notifyFinishedLoad(infoGame);
 			}
 
@@ -61,7 +60,6 @@ public class ProtocolContractNetResponder{
 			if((infoAgent.getUnits()>0))
 					if(!sma.UtilsAgents.isGarbageArround(infoGame, infoAgent.getCurrentType(), varAgent))
 					{
-						System.out.println("no more garbage here");
 						notifyFinishedLoad(infoGame);
 					}
 		// look if the harvester have some unit of garbatge
@@ -221,7 +219,6 @@ public class ProtocolContractNetResponder{
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Harvester: Receive from "+msg.getSender()+". Material:"+content.getGarbageType()+", x: "+content.getColumn()+", y: "+content.getRow());
 			ACLMessage reply = msg.createReply();
 			//Or refuse or not-understood.
 			
@@ -229,7 +226,6 @@ public class ProtocolContractNetResponder{
 			//if already accepted a contract, refuse the new one
 			if(accepted)
 			{
-				System.out.println("Already accepted a contract");
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
 			}
@@ -240,7 +236,6 @@ public class ProtocolContractNetResponder{
 			boolean canCarry=infoAgent.getGarbageType()[Cell.getGarbagePointsIndex(content.getGarbageType())];
 			if(!canCarry)
 			{
-				System.out.println("Cannot carry that");
 				reply.setPerformative(ACLMessage.REFUSE);
 				return reply;
 			}
@@ -251,10 +246,8 @@ public class ProtocolContractNetResponder{
 			//check if this agent is also carrying garbage of different type
 			if(infoAgent.getUnits()>0)
 			{
-				System.out.println("Carrying "+infoAgent.getCurrentType()+" there is "+Cell.getGarbagePointsIndex(content.getGarbageType()));
 				if(infoAgent.getCurrentType()!=Cell.getGarbagePointsIndex(content.getGarbageType()))
 					{
-						System.out.println("I am carrying another type of garbage");
 						reply.setPerformative(ACLMessage.REFUSE);
 						return reply;
 					}else{
@@ -264,21 +257,17 @@ public class ProtocolContractNetResponder{
 				
 			if(freeAgent||canAccept)
 			{
-				System.out.println("i am free");
 				if(infoAgent.getUnits()==infoAgent.getMaxUnits())
 				{
-					System.out.println("At maximum load");
 					reply.setPerformative(ACLMessage.REFUSE);
 					return reply;
 				}else{
 					distance=evaluateAction(content);
 					
 					if(distance==10000){
-						System.out.println("Cannot reach that position");
 						reply.setPerformative(ACLMessage.REFUSE);
 						return reply;
 					}else{
-						System.out.println("ALL OK");
 						reply.setPerformative(ACLMessage.PROPOSE);
 						reply.setContent(Integer.toString(distance));
 						
@@ -287,7 +276,6 @@ public class ProtocolContractNetResponder{
 				}
 			}
 			
-			System.out.println("CASE NOT DETECTED");
 			reply.setPerformative(ACLMessage.REFUSE);
 			return reply;			
 		
@@ -303,7 +291,6 @@ public class ProtocolContractNetResponder{
 			accepted=true;freeAgent=true;
 			ACLMessage inform = accept.createReply();
 			//Your code.
-			//System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 		
 			Cell begin = new Cell(Cell.STREET);
@@ -345,7 +332,6 @@ public class ProtocolContractNetResponder{
 		 */
 		protected void handleRejectProposal (ACLMessage cfp, ACLMessage propose, ACLMessage reject)
 		{
-			//System.out.println("I am the harvester "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
 			//PROPOSAL REJECTED
 		}
 	}
@@ -360,7 +346,6 @@ public class ProtocolContractNetResponder{
 		int destination_x = short_path.getX(1);
 		int destination_y = short_path.getY(1);
 		
-		System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
 		
 		if(my_x<destination_x && my_y==destination_y){ 
 			return Direction.RIGHT;	

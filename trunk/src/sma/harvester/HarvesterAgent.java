@@ -96,7 +96,6 @@ public class HarvesterAgent extends Agent{
 		@Override
 		protected ACLMessage prepareResultNotification(ACLMessage arg0,
 				ACLMessage arg1) throws FailureException {
-			// TODO Auto-generated method stub
 			return null;
 		}
 

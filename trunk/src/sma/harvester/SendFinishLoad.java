@@ -69,7 +69,7 @@ public class SendFinishLoad{
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Receive from HarvesterManager, cell x: "+cell.getColumn()+", cell y: "+cell.getRow());
+			//System.out.println("Receive from HarvesterManager, cell x: "+cell.getColumn()+", cell y: "+cell.getRow());
 		}
 
 		/**
@@ -77,7 +77,7 @@ public class SendFinishLoad{
 		 */
 		@Override
 		protected void handleRefuse(ACLMessage arg0) {			
-			System.out.println("From Harvester Manager: refuse in finish load.");
+			//System.out.println("From Harvester Manager: refuse in finish load.");
 		}		
 	}	
 }
