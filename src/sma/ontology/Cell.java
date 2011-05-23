@@ -120,7 +120,7 @@ public Cell(int type) {
   }
   
   public void addAgent(InfoAgent newAgent) throws Exception {
-	  System.out.println("Posem un agent a " +this.toString());
+	  //System.out.println("Posem un agent a " +this.toString());
     if((this.getCellType()==BUILDING) || (this.getCellType()==RECYCLING_CENTER))
       throw new Exception("Wrong operation");
     if((this.getCellType()==STREET) && (this.isThereAnAgent()))

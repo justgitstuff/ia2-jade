@@ -66,7 +66,7 @@ public class ProtocolContractNetResponder{
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Scout: Receive from "+msg.getSender()+". Material:"+content.getGarbageType()+", x: "+content.getColumn()+", y: "+content.getRow());
+			//System.out.println("Scout: Receive from "+msg.getSender()+". Material:"+content.getGarbageType()+", x: "+content.getColumn()+", y: "+content.getRow());
 			ACLMessage reply = msg.createReply();
 			//Or refuse or not-understood.
 			//Content have a int with a distance.			
@@ -96,10 +96,10 @@ public class ProtocolContractNetResponder{
 		{
 			ACLMessage inform = accept.createReply();
 			//Your code.
-			System.out.println("I am the scout "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
+			//System.out.println("I am the scout "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 			Direction dir = getNextStep();
-			System.out.println("--------------------"+dir);
+			//System.out.println("--------------------"+dir);
 			ms.go(dir);
 			contractAccepted = true;
 
@@ -112,7 +112,7 @@ public class ProtocolContractNetResponder{
 		 */
 		protected void handleRejectProposal (ACLMessage cfp, ACLMessage propose, ACLMessage reject)
 		{
-			System.out.println("I am the scout "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
+			//System.out.println("I am the scout "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
 		}  
 		
 		
@@ -122,7 +122,7 @@ public class ProtocolContractNetResponder{
 			int xfinal = cell.getColumn();
 			int yfinal = cell.getRow();
 			
-			System.out.println("Destination Cell "+cell);
+			//System.out.println("Destination Cell "+cell);
 			
 			//retornem el cami mes curt
 			PathTest test = new PathTest(infoGame);
@@ -133,7 +133,7 @@ public class ProtocolContractNetResponder{
 			
 			 
 			
-			System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
+			//System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
 			
 			if(my_x==xfinal && my_y==yfinal) 
 				return 0;

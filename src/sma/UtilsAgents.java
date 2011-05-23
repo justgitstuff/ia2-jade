@@ -234,5 +234,49 @@ public class UtilsAgents {
 			}
 		return centers;
 	}
+	/**
+	 * Is there garbage of that type arround this cell
+	 * @param game - your infoGame
+	 * @param type - type of garbage to find
+	 * @param c - cell arround witch to find
+	 * @return true if there is garbage of that type arround
+	 */
+	public static boolean isGarbageArround(InfoGame game, int type, Cell c)
+	{
+		boolean isArround=false;
+		int x,y;
+		x=c.getColumn();
+		y=c.getRow();
+		System.out.println("Testing "+type+" arround cell "+c);
+		for(int i=x-2;i<=x+2;i++)
+			for(int j=y-2;j<=y+2;j++)
+			{
+				System.out.println("Coordinates "+i+" "+j);
+				if(i>=0)
+					if(i<game.getMap().length)
+						if(j>=0)
+							if(j<game.getMap()[0].length)
+							{
+								Cell cell=game.getCell(j, i);
+								System.out.println("with cell "+cell);
+								if(cell!=null)
+								{
+									if (cell.getCellType()==Cell.BUILDING)
+									{
+										try {
+											if(cell.getGarbageUnits()>0)
+											{
+												System.out.println("Found garbage type "+cell.getCellType()+" agent has type "+type);
+												if(Cell.getGarbagePointsIndex(cell.getGarbageType())==type)
+													return true;
+											}
+										} catch (Exception e) {
+										}
+									}
+								}
+							}
+			}
+		return false;
+	}
   
 } //endof UtilsAgents

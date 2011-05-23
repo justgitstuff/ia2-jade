@@ -99,7 +99,7 @@ public class PathTest{
 					}
 			//	}
 			}
-			System.out.printf("Selected: "+selectedx+" "+selectedy);
+			//System.out.printf("Selected: "+selectedx+" "+selectedy);
 		}
 
 	/**
