@@ -15,6 +15,10 @@ import java.util.Vector;
 import sma.gui.Quadrant;
 import sma.ontology.Cell;
 
+/**
+ * Contract Net Initiator for the Scout Manager
+ * @author Ferran
+ */
 public class ProtocolContractNetInitiator {
 	
 	/**
@@ -114,8 +118,6 @@ public class ProtocolContractNetInitiator {
 			if (accept != null) {
 				//System.out.println("Accepting proposal "+bestProposal);
 				accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				// FIXME debug
-				System.out.println(accept.getAllReceiver().next() + " to (" + targetCell.getColumn() + "," + targetCell.getRow() + ")");
 			}				
 		}
 	

@@ -10,6 +10,10 @@ import java.util.Map;
 import sma.gui.Quadrant;
 import sma.ontology.Cell;
 
+/**
+ * Set of utils for the Scout Manager Agent
+ * @author Ferran
+ */
 public class ScoutManagerUtils {
 
 	private static int counter = 0;
@@ -252,31 +256,6 @@ public class ScoutManagerUtils {
 					scoutQuadrant.y2 = map[0].length;
 					joined = true;
 				}
-				
-				
-//				// join with its immediatly right quadrant
-//				for (Quadrant quadrantToJoin:quadrants) {
-//					if (quadrant.x1 == quadrantToJoin.x1 && quadrant.y2 == quadrantToJoin.y1 - 1) {
-//						quadrant.y2 = quadrantToJoin.y2;
-//						quadrantToJoin.y1 = quadrant.y1;
-//					}
-//				}
-//				
-//				// join with its immediatly below quadrant
-//				for (Quadrant quadrantToJoin:quadrants) {
-//					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x2 == quadrantToJoin.x1 - 1) {
-//						quadrant.x2 = quadrantToJoin.x2;
-//						quadrantToJoin.x1 = quadrant.x1;
-//					}
-//				}
-//				
-//				// join with its immediatly above quadrant
-//				for (Quadrant quadrantToJoin:quadrants) {
-//					if (quadrant.y1 == quadrantToJoin.y1 && quadrant.x1 == quadrantToJoin.x2 + 1) {
-//						quadrant.x1 = quadrantToJoin.x1;
-//						quadrantToJoin.x2 = quadrant.x2;
-//					}
-//				}
 			}
 		}
 		return joined;

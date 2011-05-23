@@ -25,6 +25,11 @@ import sma.ontology.Cell;
 import sma.ontology.InfoAgent;
 import sma.ontology.InfoGame;
 
+
+/**
+ * Manage the scouts in order to discover the map, doing it in an efficient and fast and manner.
+ * @author Ferran
+ */
 public class ScoutManagerAgent extends Agent{
 
 	private static final long serialVersionUID = -3186674807204123899L;
