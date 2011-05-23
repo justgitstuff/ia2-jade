@@ -89,9 +89,7 @@ public class UtilsAgents {
       }
    } catch( Exception fe ) {
      fe.printStackTrace();
-     System.out.println( parent.getLocalName() +
-                         " search with DF is not succeeded because of " +
-                         fe.getMessage() );
+     
      parent.doDelete();
    }
    return agentBuscat;
@@ -207,7 +205,6 @@ public class UtilsAgents {
 			c2=Math.pow(c2, 2);
 			diagonal=Math.sqrt(c1+c2);
 			int distance=(int)diagonal;
-			//System.out.println("**************** Cell distance "+c1+" "+c2+" "+diagonal+" truncate to "+distance);
 			return distance;
 		}else{
 			return 100000;
@@ -247,18 +244,15 @@ public class UtilsAgents {
 		int x,y;
 		x=c.getColumn();
 		y=c.getRow();
-		System.out.println("Testing "+type+" arround cell "+c);
 		for(int i=x-2;i<=x+2;i++)
 			for(int j=y-2;j<=y+2;j++)
 			{
-				System.out.println("Coordinates "+i+" "+j);
 				if(i>=0)
 					if(i<game.getMap().length)
 						if(j>=0)
 							if(j<game.getMap()[0].length)
 							{
 								Cell cell=game.getCell(j, i);
-								System.out.println("with cell "+cell);
 								if(cell!=null)
 								{
 									if (cell.getCellType()==Cell.BUILDING)
@@ -266,7 +260,6 @@ public class UtilsAgents {
 										try {
 											if(cell.getGarbageUnits()>0)
 											{
-												System.out.println("Found garbage type "+cell.getCellType()+" agent has type "+type);
 												if(Cell.getGarbagePointsIndex(cell.getGarbageType())==type)
 													return true;
 											}

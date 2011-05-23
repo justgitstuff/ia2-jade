@@ -4,6 +4,7 @@ import sma.ontology.Cell;
 import sma.ontology.InfoAgent;
 import sma.ontology.InfoGame;
 import jade.core.*;
+import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.*;
@@ -22,6 +23,12 @@ public class ReceiveFinishLoad{
 	}
 	
 	public class RecieveFinishL extends AchieveREResponder{		
+		@Override
+		protected ACLMessage prepareResultNotification(ACLMessage arg0,
+				ACLMessage arg1) throws FailureException {
+			return null;
+		}
+
 		/**
 		 * 
 		 */

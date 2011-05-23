@@ -4,6 +4,7 @@ import sma.UtilsAgents;
 import sma.moves.Movement;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -38,6 +39,13 @@ public class MovementRely{
 
 	private class MessageReceiver extends AchieveREResponder
 	{
+		@Override
+		protected ACLMessage prepareResultNotification(ACLMessage arg0,
+				ACLMessage arg1) throws FailureException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 		private static final long serialVersionUID = -3474714465765086672L;
 
 		public MessageReceiver(Agent arg0, MessageTemplate arg1) {
