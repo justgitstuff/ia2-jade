@@ -113,8 +113,8 @@ public class HarvesterManagerAgent extends Agent{
 					
 					//Find all my agents and send them the new turn
 					ACLMessage message= new ACLMessage(ACLMessage.REQUEST);
-					for(int r=0;r<game.getMap().length-1;r++)
-						for(int c=0;c<game.getMap()[c].length-1;c++)
+					for(int r=0;r<game.getMap().length;r++)
+						for(int c=0;c<game.getMap()[0].length;c++)
 						{
 							Cell cell=game.getCell(r,c);
 							if (cell!=null)
@@ -138,9 +138,9 @@ public class HarvesterManagerAgent extends Agent{
 					this.myAgent.send(message);
 										
 					//For each garbage do ContractNetInitiator
-					for (int r=0;r<game.getMap().length-1;r++)
+					for (int r=0;r<game.getMap().length;r++)
 					{	
-						for (int c=0; c<game.getMap()[r].length-1;c++)
+						for (int c=0; c<game.getMap()[r].length;c++)
 						{
 							Cell cell=game.getCell(r,c);							
 							if (cell != null)
