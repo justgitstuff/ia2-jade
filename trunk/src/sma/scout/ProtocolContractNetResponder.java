@@ -18,7 +18,6 @@ public class ProtocolContractNetResponder{
 	private int my_x, my_y;
 	private MovementSender ms;
 	private boolean contractAccepted = false;
-	private int lastTurn=0;
 	/**
 	 * Receive a cell where content the material and the position where manager harvester want to go the harvester.
 	 * @param Agent
@@ -30,8 +29,6 @@ public class ProtocolContractNetResponder{
 		contractAccepted = false;
 	}
 	
-	//public void setState(int state){
-	//}
 	
 	public void addBehaviour (Agent agent)
 	{
@@ -66,11 +63,8 @@ public class ProtocolContractNetResponder{
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
-			//System.out.println("Scout: Receive from "+msg.getSender()+". Material:"+content.getGarbageType()+", x: "+content.getColumn()+", y: "+content.getRow());
 			ACLMessage reply = msg.createReply();
-			//Or refuse or not-understood.
-			//Content have a int with a distance.			
-
+			
 			if (contractAccepted) {
 				reply.setPerformative(ACLMessage.REFUSE);
 			} else {
@@ -95,15 +89,10 @@ public class ProtocolContractNetResponder{
 		protected ACLMessage prepareResultNotification (ACLMessage cfp, ACLMessage propose, ACLMessage accept)
 		{
 			ACLMessage inform = accept.createReply();
-			//Your code.
-			//System.out.println("I am the scout "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 			Direction dir = getNextStep();
-			//System.out.println("--------------------"+dir);
 			ms.go(dir);
 			contractAccepted = true;
-
-			//Or failure.
 			return inform;
 		}
 		
@@ -116,67 +105,59 @@ public class ProtocolContractNetResponder{
 		}  
 		
 		
-		
+		/**
+		 * It calculates the distance between the localization of the agent and the cell position passed by parameter
+		 * @param cell
+		 * @return distance
+		 */
 		private int evaluateAction(Cell cell){
 			
 			int xfinal = cell.getColumn();
 			int yfinal = cell.getRow();
-			
-			//System.out.println("Destination Cell "+cell);
-			
-			//retornem el cami mes curt
+		
 			PathTest test = new PathTest(infoGame);
 			
-			//Em busco a mi mateix
+			//Searching myself
 			my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			
 			 
-			
-			//System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
-			
 			if(my_x==xfinal && my_y==yfinal) 
 				return 0;
 			
 			
-			// op1
-			
+			// op1, it calculates the path crossing discovered cells 
 			test.PosicioInicial(my_x,my_y,1); 
-			//Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 			Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 
 			
 						
-			// OPCIOOOOO 2
+			// op2, it calculates the path crossing undiscovered cells 
 			test.PosicioInicial(my_x,my_y,2);
 			Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
 			
 			int distFinal = test.distanciaPesos(stepsPathFinal2);
 			short_path = stepsPathFinal2;
 			
-			//Mirem que hi ha un cami descobert possible de comunicació
 			if(stepsPathFinal1!=null){
-				
 				int distPesosOp1= test.distanciaPesos(stepsPathFinal1);
-						
-				
 				if(distFinal>distPesosOp1){
 					distFinal=distPesosOp1;
 					short_path = stepsPathFinal1;
 				}
 			}
-			
-			
 			return distFinal;
 		}
 		
 		
 		
-		
-		private Direction getNextStep(){// com estan distribuits els index de la matriu del mapa??
-			//Movement m = new Movement();
+		/**
+		 * Function that return the next step of short_path calculated in evaluateAction
+		 * @return
+		 */
+		private Direction getNextStep(){
+			
 			if (short_path == null) {
-				//return Direction.UP;
 				return null;
 			}
 			
@@ -184,18 +165,18 @@ public class ProtocolContractNetResponder{
 			int destination_y = short_path.getY(1);
 			
 			if(my_x<destination_x){ 
-				return Direction.RIGHT;	//m.setDirection(sma.moves.Movement.Direction.DOWN);}
+				return Direction.RIGHT;
 			
 			}else if(my_x>destination_x){ 
-				return Direction.LEFT;//m.setDirection(sma.moves.Movement.Direction.UP);
+				return Direction.LEFT;
 			}
 			
 			else if(my_y<destination_y){ 
-				 return Direction.DOWN;//m.setDirection(sma.moves.Movement.Direction.LEFT);
+				 return Direction.DOWN;
 			}
 			
 			else if(my_y>destination_y){ 
-				return Direction.UP;//m.setDirection(sma.moves.Movement.Direction.RIGHT);
+				return Direction.UP;
 			}
 			
 			return Direction.UP;
