@@ -106,16 +106,16 @@ public class ProtocolContractNetInitiator{
 		}
 	
 		protected void handleNotUnderstood (ACLMessage msg) {
-			System.out.println("HandleNoutUnderstood");
+			//System.out.println("HandleNoutUnderstood");
 		}
 		protected void handleRefuse (ACLMessage msg) {
-			System.out.println("handlerefuse");
+			//System.out.println("handlerefuse");
 		}
 		protected void handleInform (ACLMessage msg) {
-			System.out.println("Handleinform");
+			//System.out.println("Handleinform");
 		}
 		protected void handleFailure (ACLMessage msg){
-			System.out.println("Handlefailure");
+			//System.out.println("Handlefailure");
 		}
 	}
 }

@@ -56,7 +56,7 @@ public class ProtocolContractNetResponder{
 		protected ACLMessage prepareResultNotification (ACLMessage cfp, ACLMessage propose, ACLMessage accept)
 		{
 			ACLMessage inform = accept.createReply();			
-			System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
+			//System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
 			inform.setPerformative(ACLMessage.CONFIRM);
 			return inform;
 		}
@@ -66,7 +66,7 @@ public class ProtocolContractNetResponder{
 		 */
 		protected void handleRejectProposal (ACLMessage cfp, ACLMessage propose, ACLMessage reject)
 		{
-			System.out.println("I am the harvester "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
+			//System.out.println("I am the harvester "+this.myAgent.getName()+". Refuse my propouse "+propose.getContent()+".");
 		}
 	}
 	}

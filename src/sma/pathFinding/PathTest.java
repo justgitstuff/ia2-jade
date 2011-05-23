@@ -73,7 +73,7 @@ public class PathTest{
 		 */
 		public void PosicioInicial(int x, int y, int option) {
 		
-			System.out.println("Posicio Inicial "+x+" "+y);
+			//System.out.println("Posicio Inicial "+x+" "+y);
 			if ((x < 0) || (y < 0) || (x >= map.getWidthInTiles()) || (y >= map.getHeightInTiles())) {
 				return;
 			}
@@ -140,7 +140,7 @@ public class PathTest{
 		
 		if(path==null)
 		{
-			System.out.println("Path es null");
+			//System.out.println("Path es null");
 			return 10000;
 		}
 		else{
@@ -162,12 +162,12 @@ public class PathTest{
 	
 	public void stepsFinals(Path path){
 		
-		System.out.println("----Passsos a seguir-----");
+		//System.out.println("----Passsos a seguir-----");
 		// Imprimeix els passos k realitza!
 		for(int i=0;i<path.getLength();i++){
 			System.out.println(" Pas"+ (i+1) + ":  " + path.getStep(i).getX()+" "+ path.getStep(i).getY());
 		}								
-		System.out.println("-----------------------");
+		//System.out.println("-----------------------");
 }
 
 	
