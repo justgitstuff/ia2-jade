@@ -21,7 +21,7 @@ public class ProtocolContractNetResponder{
 	private Path short_path;
 	private int my_x, my_y;
 	private MovementSender ms;
-	private boolean freeAgent=true;// true = lliure false= transportar
+	private boolean freeAgent=true;// true = free false= transport
 	private InfoAgent infoAgent;
 	private Cell goDescarga;
 	Cell content=null;
@@ -33,6 +33,7 @@ public class ProtocolContractNetResponder{
 	private Agent myAgent;
 		
 	/**
+	 * Control for each turn
 	 * @param infoGame the infoGame to set
 	 */
 	public void setInfoGame(InfoGame infoGame) {
@@ -43,18 +44,9 @@ public class ProtocolContractNetResponder{
 		
 		infoAgent=sma.UtilsAgents.findAgent(myAgent.getAID(), infoGame).getAgent();
 		
-		/**
-		 * FALTA CONTROLAR LA RECOLECTA DELS DIFERENTS TIPUS DE BROSAAAAA
-		 * 
-		 * EN LA ITERACIO FINAL MIRAR NOMES AMB BROSA QUE PUC RECOLLIR
-		 * 
-		 * EN EL CONTRACT NET REBUTJAR SINO PUC ANAR A BUSCAR
-		 * 
-		 */
-		
 		
 				
-		// Mirar si estic ple envio finish load per anar a descarregar aix� de forma dinamica durant l'execuccio
+		//Let's see if the harvester is full and then send a list of distances to points of recycling
 		if (freeAgent)
 			if( (infoAgent.getMaxUnits()== infoAgent.getUnits())){
 				System.out.println("I am full");
@@ -62,11 +54,9 @@ public class ProtocolContractNetResponder{
 			}
 
 		
-		//Em busco a mi mateix
-		//int var_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
-		//int var_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
+		
 		Cell varAgent=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame);
-
+		//Control that the harvester has garbage but hasn't garbage arround
 		if(freeAgent)
 			if((infoAgent.getUnits()>0))
 					if(!sma.UtilsAgents.isGarbageArround(infoGame, infoAgent.getCurrentType(), varAgent))
@@ -74,27 +64,24 @@ public class ProtocolContractNetResponder{
 						System.out.println("no more garbage here");
 						notifyFinishedLoad(infoGame);
 					}
-
+		// look if the harvester have some unit of garbatge
 			if (varAgent.isThereAnAgent()){
 				if(varAgent.getAgent().getUnits()!=0)
 					existAgentGarbatge=true;
 			}
+					
 		
-			
-		
-		//LA ULTIMA ITERACIO en el cas que no hi ha mes brosa a recollir
+		//look that the game does not have more garbage of the same type that harvester can to catch
 		for(int x=0;x<infoGame.getMap().length ;x++){
 			for(int y=0;y<infoGame.getMap()[x].length ;y++)
 			{
 				Cell c=infoGame.getCell(x, y);
 				try {
 					if(c.getCellType()==Cell.BUILDING)
-						// controlar tipus brosa d'acord harvester
 						if (c.getGarbageUnits()!=0){ 
 						
 							boolean tipusCarga=false;
-							//infoAgent.getCurrentType();
-							
+												
 								if(c.getGarbageType()=='G'){
 									tipusCarga= infoAgent.getGarbageType()[0];					
 								}
@@ -117,25 +104,22 @@ public class ProtocolContractNetResponder{
 				}
 			}
 		}
-		// No existeix m�s brosa al mapa y ya s'ha enviat previament l'ordre de finishload per descarregar
+		// control if harvester is transport the garbage
 		if(!freeAgent){
 			
 			Cell begin = new Cell(Cell.BUILDING);
 			int distance = evaluateAction(content);
 			begin.setColumn(my_x);
 			begin.setRow(my_y);
-			
 
 
-			// retorna 1 si sta al perimetre, llavors descarga
+			// look at the perimeter
 			if(sma.UtilsAgents.cellDistance(begin, goDescarga)==1){
 				
 					try {
 						if(infoAgent.getUnits()!=0){
 							ms.put(getNextStepDesti(goDescarga),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
 						}else{
-							// ENVIAR K STIK DESCARREGAT
-							// sendFInishDOwnlLOAD
 							protocolSendFinishDownload.addBehaviour(myAgent);
 							
 							freeAgent= true;
@@ -144,38 +128,23 @@ public class ProtocolContractNetResponder{
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					}				
 				
-				
-			}else{// decisio mourem
+			}else{
 				
 				evaluateAction(goDescarga);
-				ms.go(getNextStep());
-				
+				ms.go(getNextStep());			
 				
 			} 	
-			
-			
-		// NOTIFICAR SEND FINISH LOAD quan e recollit la brosa final del mapa encara k no estigui ple	
-		}else if(existAgentGarbatge && !existGarbatge && freeAgent){
-			
-
-			
-		
-			notifyFinishedLoad(infoGame);
-			
-		
-			
-			
-		}
-		
-		
+						
+			// Communicate that harvester have garbage if harvester isn't full but in the game haven't more garbage	
+		}else if(existAgentGarbatge && !existGarbatge && freeAgent){		
+			notifyFinishedLoad(infoGame);			
+		}		
 	}
 
 
-
-
-
+	// Search the list of distances to points of recycling and send that I am full to know the site of recycling
 	private void notifyFinishedLoad(InfoGame infoGame) {
 		DistanceList list = new DistanceList();
 		 
@@ -197,6 +166,7 @@ public class ProtocolContractNetResponder{
 		
 			try {
 				try {
+					//point of recycling
 					goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
 					
 				} catch (IOException e) {
@@ -227,7 +197,7 @@ public class ProtocolContractNetResponder{
 
 	public class ProtocolContractNetRes extends ContractNetResponder{
 		/**
-		 * 
+		 * ProtocolContractNet
 		 */
 		private static final long serialVersionUID = 1L;
 	
@@ -246,7 +216,6 @@ public class ProtocolContractNetResponder{
 		protected ACLMessage prepareResponse (ACLMessage msg)
 		{	
 			int distance;
-			//Cell content=null;
 			try {
 				content = (Cell) msg.getContentObject();
 			} catch (UnreadableException e) {
@@ -320,75 +289,9 @@ public class ProtocolContractNetResponder{
 			
 			System.out.println("CASE NOT DETECTED");
 			reply.setPerformative(ACLMessage.REFUSE);
-			return reply;
-			
-			/*	
-			if(NOTReturningGarbage){
-				//Content have a int with a distance.
-				
-				distance=evaluateAction(content);
-				
-				if(distance==10000){
-					reply.setPerformative(ACLMessage.REFUSE);
-					return reply;
-				}else{
-					reply.setPerformative(ACLMessage.PROPOSE);
-					reply.setContent(Integer.toString(distance));	
-					return reply;
-				}
-			}
+			return reply;			
 		
-			}else if((NOTReturningGarbage)|| !canCarry ){
-				
-				reply.setPerformative(ACLMessage.REFUSE);
-				return reply;
-		
-				
-			}else{
-				
-				reply.setPerformative(ACLMessage.REFUSE);
-				Cell begin = new Cell(Cell.BUILDING);
-				distance=evaluateAction(content);
-				begin.setColumn(my_x);
-				begin.setRow(my_y);
-				
-
-
-				// retorna 1 si sta al perimetre, llavors descarga
-				if(sma.UtilsAgents.cellDistance(begin, goDescarga)==1){
-					
-						try {
-							if(infoAgent.getUnits()!=0){
-								ms.put(getNextStepDesti(goDescarga),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-							}else{
-								// ENVIAR K STIK DESCARREGAT
-								// sendFInishDOwnlLOAD
-								protocolSendFinishDownload.addBehaviour(myAgent);
-								
-								NOTReturningGarbage= true;
-								accepted=false;
-							}
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					
-					
-				}else{// decisio mourem
-					
-					evaluateAction(goDescarga);
-					ms.go(getNextStep());
-					
-					
-				} 					
-			}*/			
-			//return reply;
 		}
-		
-		
-		
-		
-		
 		
 		
 		
@@ -405,7 +308,7 @@ public class ProtocolContractNetResponder{
 		
 			Cell begin = new Cell(Cell.STREET);
 			
-			//Em busco a mi mateix
+			//Search my position
 			int my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 			int my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 			
@@ -413,62 +316,20 @@ public class ProtocolContractNetResponder{
 			begin.setRow(my_y);
 			
 						
-			// retorna 1 si sta al perimetre, llavors descarga
+			// look at the perimeter
 			if(sma.UtilsAgents.cellDistance(begin, content)==1){
 				
 				try {
-					//Haur� de ser >0 units
-					if(content.getGarbageUnits()>0){
-						
-						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-						// part extreta a control a cada iteraci� setinfo
-						
-						
-						}
-					/*
-					else{ // ultim garbatge
-							// TREURE DEL CONTRACT NETTTT
-							ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));
-							
-							// NOTIFICAR SEND FINISH LOAD
-							DistanceList list = new DistanceList();
-							 
-							for (int x=0;x<infoGame.getMap().length;x++){					
-								for (int y=0; y<infoGame.getMap()[x].length;y++)
-								{
-									Cell c=infoGame.getCell(x,y);
-									//if getGarbageunits is 0 -> no garbage.
-									if (c!=null)
-									{
-										if(c.getCellType() == Cell.RECYCLING_CENTER)
-										{
-											list.addDistance(evaluateAction(c));
-										}
-									}
-								}
-							}
-							
-							
-								try {
-									try {
-										goDescarga = protocolSendFinishLoad.blockingMessage(myAgent,list );								
-										
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								} catch (UnreadableException e) {
-									e.printStackTrace();
-								}					
-							
-							myState=false;
-							
-						}*/
+					if(content.getGarbageUnits()>0){						
+						ms.get(getNextStepDesti(content),sma.moves.Movement.typeFromInt(infoAgent.getCurrentType()));											
+					}
+					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-			}else{// decisio mourem
+			}else{
 					ms.go(getNextStep());				
 			} 
 			
@@ -491,7 +352,10 @@ public class ProtocolContractNetResponder{
 	
 	
 
-	
+	/**
+	 * 
+	 * @return the next Direction where harvester have go, this Direction is calculated in short Path
+	 */
 	private Direction getNextStep(){
 		int destination_x = short_path.getX(1);
 		int destination_y = short_path.getY(1);
@@ -531,12 +395,15 @@ public class ProtocolContractNetResponder{
 	
 	
 	
-	
+	/**
+	 * 
+	 * @param dest 
+	 * @return the next Direction where harvester have go 
+	 */
 	private Direction getNextStepDesti(Cell dest){
 		int destination_x = dest.getColumn();
 		int destination_y = dest.getRow();
 		
-		//System.out.println("From "+my_x+" "+my_y+" to "+ destination_x + " "+ destination_y );
 		
 		if(my_x<destination_x && my_y==destination_y){ 
 			return Direction.RIGHT;	
@@ -568,41 +435,41 @@ public class ProtocolContractNetResponder{
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @param cell
+	 * @return the best distance for harvester to go a one cell
+	 */
 	private int evaluateAction(Cell cell){
 		
 		int xfinal = cell.getColumn();
 		int yfinal = cell.getRow();
 		
-		//System.out.println("Destination Cell "+cell);
-		
-		//retornem el cami mes curt
+		//return the short path
 		PathTest test = new PathTest(infoGame);
 		
-		//Em busco a mi mateix
+		//Search my position
 		my_x=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getColumn();
 		my_y=sma.UtilsAgents.findAgent(this.myAgent.getAID(), infoGame).getRow();
 		
-		//System.out.println("Finding path from "+ my_x+" "+my_y+" to "+xfinal+" "+yfinal);
-		
-		
-		
-		// op1
-		
+	
+		// option 1			
 		test.PosicioInicial(my_x,my_y,1); 
 		Path stepsPathFinal1= test.PosicioFinal(xfinal,yfinal,1);
 
 		
 					
-		// OPCIOOOOO 2
+		// option 2
 		test.PosicioInicial(my_x,my_y,2);
 		Path stepsPathFinal2= test.PosicioFinal(xfinal,yfinal,2);
 		int distFinal=10000;
+		//Control if possible the second option
 		if(stepsPathFinal2!=null){
 			distFinal = test.distanciaPesos(stepsPathFinal2);
 			short_path = stepsPathFinal2;
 		
-			//Mirem que hi ha un cami descobert possible de comunicació
+			
+			//Control if possible the first option
 			if(stepsPathFinal1!=null){
 				
 				int distPesosOp1= test.distanciaPesos(stepsPathFinal1);

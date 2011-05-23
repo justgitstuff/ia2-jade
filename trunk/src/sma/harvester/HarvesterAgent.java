@@ -2,12 +2,9 @@ package sma.harvester;
 
 import sma.UtilsAgents;
 import sma.ontology.InfoGame;
-import sma.pathFinding.Path;
-import sma.pathFinding.PathTest;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -17,14 +14,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.AchieveREResponder;
-import jade.proto.ContractNetResponder;
+
 
 public class HarvesterAgent extends Agent{
 
 	private static final long serialVersionUID = 2649857519665884242L;
-	private Path short_path;
-	private int my_x, my_y;
-	private DFAgentDescription dfd;
 	private ProtocolContractNetResponder protocolContractNetResponder;
 	private sma.ontology.InfoGame game;
 	  /**
@@ -74,8 +68,7 @@ public class HarvesterAgent extends Agent{
 	 
 	 protocolContractNetResponder = new ProtocolContractNetResponder();
 	 protocolContractNetResponder.addBehaviour(this);
-	// protocolContractNetResponder.setInfoGame(game);   
-	    
+	  
 	    
 		super.setup();
 	}
