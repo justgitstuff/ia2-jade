@@ -89,7 +89,7 @@ public class ReceiveFinishLoad{
 									if(distancia < distanciaMinima){
 										//If recycling center previously chosen give less points that 2*current points, or
 										//the current distance is less than distance previously chosen /2. 
-										if ((pointsChoose<2*points)||(distancia<distanciaMinima/2)){
+										if ((pointsChoose<=2*points)||(distancia<=distanciaMinima/2)){
 											cellRecyclingCenter = temp;
 											distanciaMinima=distancia;
 											pointsChoose=points;
@@ -97,7 +97,7 @@ public class ReceiveFinishLoad{
 									}else{										
 										//If current distance is longer than previously chosen,
 										//and have more than 2*points previously chosen, but current distance not is longer than double distance previously chosen...
-										if((points>2*pointsChoose)&&(distanciaMinima*2>distancia))
+										if((points>=2*pointsChoose)&&(distanciaMinima*2>=distancia))
 										{
 											cellRecyclingCenter = temp;
 											distanciaMinima=distancia;
