@@ -10,6 +10,9 @@ import sma.ontology.Cell;
 
 public class ScoutManagerUtils {
 
+	private static int counter = 0;
+	private static int turn = 0;
+	
 	/**
 	 * Divide the map into x quadrants, where x is the number of scouts (+1 if that number is odd)
 	 * @param x number of cells for the x
@@ -97,7 +100,8 @@ public class ScoutManagerUtils {
 		int iIni = quadrant.x1;
 		int jIni = quadrant.y1;
 		boolean unchartedZone = false;
-		for (int i = quadrant.x1; i < quadrant.x2; i++) { // For each row
+		int iLimit = (quadrant.x2 < map.length - 1) ? quadrant.x2 : map.length - 1;
+		for (int i = quadrant.x1; i <= iLimit; i++) { // For each row
 			if (unchartedZone) { // For when there is an end of line.
 				unchartedRectangles.add(new Rectangle(iIni, i-1, jIni, quadrant.y2)); 
 				unchartedZone = false;
@@ -105,7 +109,8 @@ public class ScoutManagerUtils {
 //			if (i == quadrant.x1) {
 //				unchartedZone = true;
 //			}
-			for (int j = quadrant.y1; j < quadrant.y2; j++) { // For each column
+			int jLimit = (quadrant.y2 < map[0].length - 1) ? quadrant.y2 : map[0].length - 1;
+			for (int j = quadrant.y1; j <= jLimit; j++) { // For each column
 				if (map[i][j] != null && unchartedZone) {
 					unchartedRectangles.add(new Rectangle(iIni, i, jIni, j));
 					unchartedZone = false;
@@ -132,6 +137,10 @@ public class ScoutManagerUtils {
 	 */
 	public static Point chooseUnchartedPointInAQuadrant(Quadrant quadrant, Cell[][] map, Point lastPoint) {
 		List<Rectangle> unchartedRectangles = divideQuadrantIntoSmallerRectangles(quadrant, map);
+		
+		if (unchartedRectangles.isEmpty()) {
+			return null;
+		}
 		
 		Map<Integer, List<Rectangle>> groups = new HashMap<Integer, List<Rectangle>>();
 		
@@ -185,7 +194,6 @@ public class ScoutManagerUtils {
 		Point targetPoint = null;
 		if (lastPoint != null) {
 			// Determine which point is the nearest to this
-			// FIXME Could be improved using the shortest path algorithm
 			double minimmumDistance = Double.MAX_VALUE;
 			Point nearestPoint = null;
 			for (int p = 0; p < points.length; p++) {
@@ -266,6 +274,11 @@ public class ScoutManagerUtils {
 		}
 	}
 	
+	/**
+	 * Determines if the map has some cells still uncharted
+	 * @param map
+	 * @return True if there are still some uncharted cells
+	 */
 	public static boolean mapNotEntirelyDiscoveredYet(Cell[][] map) {
 		boolean notEntirelyDiscovered = false;
 		for (int r = 0; r < map.length; r++) {
@@ -278,5 +291,67 @@ public class ScoutManagerUtils {
 		}
 		
 		return notEntirelyDiscovered;
+	}
+
+	/**
+	 * Chooses a corner point of the map
+	 * @param map
+	 * @return
+	 */
+	public static Point chooseCornerPoint(Cell[][] map, int realTurn) {
+		Point targetPoint = null;
+		int row = 0;
+		int column = 0;
+		
+		if (turn != realTurn) {
+			turn = realTurn;
+			counter = 0;
+		}
+		
+		switch (counter) {
+		case 0: 
+			row = 0;
+			column = 0;
+			targetPoint =  new Point(row, column);
+			counter++;
+			break;
+		case 1: 
+			row = 0;
+			column = map[0].length - 1;
+			targetPoint =  new Point(row, column);
+			counter++;
+			break;
+		case 2: 
+			row = map.length - 1;
+			column = 0;
+			targetPoint =  new Point(row, column);
+			counter++;
+			break;
+		case 3: 
+			row = map.length - 1;
+			column = map[0].length - 1;
+			targetPoint =  new Point(row, column);
+			counter++;
+			break;
+		case 4: 
+			row = map.length - 1;
+			column = (map[0].length - 1) / 2;
+			targetPoint =  new Point(row, column);
+			counter++;
+			break;
+		case 5: 
+			row = (map.length - 1) / 2;
+			column = 0;
+			targetPoint =  new Point(row, column);
+			counter++;
+			break;
+		default:
+			row = map.length - 1;
+			column = map[0].length - 1;
+			targetPoint =  new Point(row, column);
+			counter++;
+		}
+		
+		return targetPoint;
 	}
 }
