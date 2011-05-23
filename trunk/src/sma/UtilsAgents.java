@@ -207,7 +207,7 @@ public class UtilsAgents {
 			c2=Math.pow(c2, 2);
 			diagonal=Math.sqrt(c1+c2);
 			int distance=(int)diagonal;
-			System.out.println("**************** Cell distance "+c1+" "+c2+" "+diagonal+" truncate to "+distance);
+			//System.out.println("**************** Cell distance "+c1+" "+c2+" "+diagonal+" truncate to "+distance);
 			return distance;
 		}else{
 			return 100000;
