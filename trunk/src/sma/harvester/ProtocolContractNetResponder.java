@@ -289,7 +289,7 @@ public class ProtocolContractNetResponder{
 						reply.setPerformative(ACLMessage.REFUSE);
 						return reply;
 					}else{
-						canAccept=true;
+						canAccept=false;
 					}
 			}	
 				
@@ -397,7 +397,7 @@ public class ProtocolContractNetResponder{
 		*/
 		protected ACLMessage prepareResultNotification (ACLMessage cfp, ACLMessage propose, ACLMessage accept)
 		{
-			accepted=true;
+			accepted=true;freeAgent=true;
 			ACLMessage inform = accept.createReply();
 			//Your code.
 			//System.out.println("I am the harvester "+this.myAgent.getName()+", received from "+accept.getSender()+" accepted my propouse: "+propose.getContent()+".");
