@@ -185,7 +185,7 @@ public class ScoutManagerAgent extends Agent{
 				if (arg0.getContentObject() instanceof InfoGame) {
 					response.setPerformative(ACLMessage.AGREE);
 					game = (InfoGame) arg0.getContentObject();
-					showMessage("New turn " + game.getInfo().getTurn());
+					//showMessage("New turn " + game.getInfo().getTurn());
 					
 					manageScouts(this.myAgent);
 				} else if (arg0.getPerformative() == ACLMessage.AGREE) {
@@ -218,7 +218,7 @@ public class ScoutManagerAgent extends Agent{
 				if (objectReceived instanceof InfoGame) {
 					// Is the coordinator informing of a new turn
 					game = (InfoGame) objectReceived;
-					showMessage("New turn received from coordinator: " + game.getInfo().getTurn());
+					//showMessage("New turn received from coordinator: " + game.getInfo().getTurn());
 
 					// Find all my agents and send them the new turn
 					ACLMessage message = new ACLMessage(ACLMessage.REQUEST);

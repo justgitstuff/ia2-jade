@@ -109,7 +109,7 @@ public class HarvesterManagerAgent extends Agent{
 				{
 					//Is the coordinator informing of a new turn
 					game=(InfoGame)objectReceived;
-					showMessage("New turn received from coordinator: "+game.getInfo().getTurn());
+					//showMessage("New turn received from coordinator: "+game.getInfo().getTurn());
 					
 					//Find all my agents and send them the new turn
 					ACLMessage message= new ACLMessage(ACLMessage.REQUEST);
