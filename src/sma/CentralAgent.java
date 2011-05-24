@@ -409,7 +409,7 @@ private void updatePublicGame()
 					if(y+dy<game.getMap()[0].length)
 						if(x+dx>=0)
 							if(x+dx<game.getMap().length)
-								//if(origin.getAgent().getLastTurn()<game.getInfo().getTimeout())	{
+								if(origin.getAgent().getLastTurn()<game.getInfo().getTurn())	{
 								//showMessage("Will move "+dx+" "+dy);
 								destination=game.getMap()[y+dy][x+dx];
 								switch (moveOrder.getAction()) {
@@ -472,9 +472,9 @@ private void updatePublicGame()
 										
 									break;
 								}
-//							} else {
-//								response.setPerformative(ACLMessage.FAILURE);
-//							}
+							} else {
+								response.setPerformative(ACLMessage.FAILURE);
+							}
 			}
 		}
 

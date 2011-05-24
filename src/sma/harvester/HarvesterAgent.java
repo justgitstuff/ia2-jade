@@ -110,7 +110,7 @@ public class HarvesterAgent extends Agent{
 					
 					response.setPerformative(ACLMessage.AGREE);
 					game=(InfoGame) arg0.getContentObject();
-					showMessage("New turn "+ game.getInfo().getTurn());
+					//showMessage("New turn "+ game.getInfo().getTurn());
 					protocolContractNetResponder.setInfoGame(game);				
 					//TODO you have the new game info on game
 				}else{

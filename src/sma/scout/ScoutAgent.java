@@ -117,7 +117,7 @@ public class ScoutAgent extends Agent {
 				{
 					response.setPerformative(ACLMessage.AGREE);
 					game=(InfoGame) arg0.getContentObject();
-					showMessage("New turn "+ game.getInfo().getTurn());
+					//showMessage("New turn "+ game.getInfo().getTurn());
 					 
 					protocolContractNetResponder.setInfoGame(game);
 					//my_zone = 1;
